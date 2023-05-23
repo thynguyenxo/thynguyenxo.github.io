@@ -1,34 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio</title>
+  <meta charset=UTF-8>
+  <meta http-equiv=X-UA-Compatible content="IE=edge">
+  <meta name=viewport content="width=device-width,initial-scale=1">
+  <link rel=icon type=image/svg+xml sizes=any
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍵</text></svg>">
+  <link rel=preconnect href=https://fonts.googleapis.com>
+  <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel=stylesheet>
+  <link rel=stylesheet
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,0,0">
+  <link rel=stylesheet href=style.css>
+  <title>Thy Nguyen | GitHub Portfolio</title>
 </head>
 
 <body>
-  <h1>hello there!</h1>
-
-  Here is a list of front-end projects that I've been working on. This is a work in process and I will continue to add
-  to the list as we go!
-
-  <ul>
-    <!-- must update css link in the subfolder -->
-    <li><a href="https://thynguyenxo.github.io/frontend-portfolio/single-price-grid/index.html" target="_blank">Single
-        Price
-        Grid</a>
-    </li>
-    <li><a href="https://thynguyenxo.github.io/frontend-portfolio/testimonials-grid/index.html"
-        target="_blank">Testimonials
-        Grid</a></li>
-    <li><a href="https://thynguyenxo.github.io/frontend-portfolio/simple-qr-code/index.html" target="_blank">Simple QR
-        Code</a></li>
-
-  </ul>
-
-
+  <div class=container>
+    <section id=intro>
+      <img id=avatar src=./images/avatars-pinkbg.png alt=creator-avatar>
+      <p class=intro-text><span>hello there! i'm</span><span id=name>Thy Nguyen 👋</span></p>
+    </section>
+    <section id=projects>
+      <h2 class=header>projects</h2>
+      <ul>
+        <li><a class=project-link href=https://thynguyenxo.github.io/frontend-portfolio/single-price-grid/index.html
+            target=_blank>single price grid</a>
+        </li>
+        <li><a class=project-link href=https://thynguyenxo.github.io/frontend-portfolio/testimonials-grid/index.html
+            target=_blank>testimonials grid</a></li>
+        <li><a class=project-link href=https://thynguyenxo.github.io/frontend-portfolio/simple-qr-code/index.html
+            target=_blank>simple qr code</a></li>
+      </ul>
+    </section>
+  </div>
+  <footer>
+    ©️ Thy Nguyen 2023
+  </footer>
 </body>
 
 </html>
