@@ -1,4 +1,5 @@
 html {
+  background: #778da9;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
   font-size: 15px;
@@ -9,8 +10,9 @@ html {
 body {
   margin: 0;
   color: #0d1f22;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
 }
 
 *,
@@ -19,113 +21,112 @@ body {
   box-sizing: inherit
 }
 
-#intro,
-#projects {
+main {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5em;
+  width: 350px;
+  overflow: hidden;
+}
+
+a {
+  color: black;
+}
+
+i {
+  margin: 0 0.4em
+}
+
+span {
+  display: block
+}
+
+.banner {
+  background: #889683;
   width: 100%;
-  height: 100vh
+  height: 100px;
+  /* position: relative */
 }
 
-#intro,
-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center
-}
-
-#intro {
-  background-color: #dde1dc;
-  flex-direction: column
-}
-
-footer {
-  background: #dde1dc;
-  font-size: .85em;
-  height: 10vh;
-  width: 100%
-}
-
-#avatar {
-  width: 200px;
-  height: 200px
-}
-
-.intro-text span {
-  display: block;
-  font-size: 1.5rem;
-  margin: 1.5rem auto
-}
-
-#name {
-  font-size: 3em;
-  font-weight: 600;
-  margin: -10px 0 0
-}
-
-.header {
-  font-size: 1.5rem;
-  margin: 30px auto 20px;
-  border-bottom: 5px solid #889683;
-  display: inline-block
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0
-}
-
-#projects {
+.profile {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 100px 0 0
 }
 
-.project-link {
-  line-height: 1.5em;
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-  color: #0d1f22
+.profile-img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
 }
 
-.project-link::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: #d9d9d9;
-  transform-origin: bottom right;
-  transition: transform .4s cubic-bezier(.86, 0, .07, 1)
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.project-link:hover::after {
-  transform: scaleX(1);
-  transform-origin: bottom left
+.social-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1em 0
 }
 
-@media (min-width:900px) {
-  .container {
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.23em
+}
+
+.role, .location {
+  font-size: 0.9rem;
+  line-height: 1.5rem;
+}
+
+.para {
+  margin: 2em 0
+}
+
+.para span {
+  margin: 1.5rem 0
+}
+
+@media (min-width:800px) {
+  main {
+    width: 35em;
+    /* height: 350px; */
+
+  }
+
+
+
+
+  .profile-info {
     display: flex;
-    justify-content: flex-start
+    flex-direction: column;
+    justify-content: flex-end;
+    /* margin: 0 0 0 em */
   }
 
-  #intro {
-    flex: 40%
+  .profile-info span {
+    margin: 0.2rem 0
   }
 
-  #projects {
-    flex: 60%
+  .social-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 2em
   }
 
-  footer {
-    float: left;
-    width: 40%
+  .line {
+    background: black;
+    width: 150px;
+    height: 1px;
+    margin: 0 1em 0 0
   }
+
+
 }
