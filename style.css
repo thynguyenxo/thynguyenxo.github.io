@@ -1,5 +1,5 @@
 html {
-  background: #778da9;
+  background: #dbd4f7;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
   font-size: 15px;
@@ -9,7 +9,7 @@ html {
 
 body {
   margin: 0;
-  color: #0d1f22;
+  color: #0f1c52;
   min-height: 100vh;
   display: grid;
   place-content: center;
@@ -24,13 +24,16 @@ body {
 main {
   background: #ffffff;
   border-radius: 20px;
-  padding: 2.5em;
-  width: 350px;
+  box-shadow: 1px 25px 0px -px rgba(203, 197, 241, 1);
+  -webkit-box-shadow: 1px 25px 0px -8px rgba(203, 197, 241, 1);
+  -moz-box-shadow: 1px 25px 0px -8px rgba(203, 197, 241, 1);
+  padding: 2em;
+  width: 23em;
   overflow: hidden;
 }
 
 a {
-  color: black;
+  color: #0f1c52;
 }
 
 i {
@@ -41,92 +44,168 @@ span {
   display: block
 }
 
-.banner {
-  background: #889683;
-  width: 100%;
-  height: 100px;
-  /* position: relative */
-}
-
-.profile {
+.content, .profile, .info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
+.content {
+  padding: 0 1.5em;
+  min-height: 31em;
+}
+
 .profile-img {
+  border: 5px solid #dbd4f7;
   border-radius: 50%;
   width: 150px;
   height: 150px;
 }
 
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .social-links {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 1em 0
+  margin: 1.5em 0 0
 }
 
 .name {
   font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.23em
+  font-weight: 700;
+  margin: 0.75em 0 0;
+  text-transform: uppercase;
+
 }
 
 .role, .location {
-  font-size: 0.9rem;
   line-height: 1.5rem;
 }
 
-.para {
-  margin: 2em 0
+.location {
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
-.para span {
-  margin: 1.5rem 0
+
+.skills {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 0.25em
 }
 
-@media (min-width:800px) {
+.skills .label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+  text-transform: uppercase;
+}
+
+.skill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em
+}
+
+.skill-container span {
+  border: 1px solid #ddd;
+  font-size: 0.85rem;
+  padding: 0.45em;
+}
+
+.text {
+  margin: 0
+}
+
+.text span {
+  display: block;
+  margin: 1rem 0
+}
+
+.resume-link {
+  position: relative;
+  text-decoration: none;
+}
+
+.resume-link span {
+  position: relative;
+}
+
+.resume-link::before {
+  content: "";
+  position: absolute;
+  left: -0.1px;
+  right: -0.1px;
+  bottom: 0;
+  height: 100%;
+  transform: scaleY(.3);
+  transition: transform .6s cubic-bezier(0.53, 0.21, 0, 1);
+  transform-origin: bottom;
+  background-color: hsl(244, 63%, 69%);
+  opacity: 0.6;
+}
+
+.resume-link:hover::before {
+  transform: scaleY(1);
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.25em 0 0;
+}
+
+.navbar a {
+  font-size: 0.9rem;
+  padding: 1em 3em;
+  text-align: center;
+  text-decoration: none;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar a:hover {
+  background: #cbc5f1
+}
+
+.navbar a.active {
+  background: #cbc5f1;
+}
+
+
+@media (min-width:750px) {
   main {
-    width: 35em;
-    /* height: 350px; */
-
-  }
-
-
-
-
-  .profile-info {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    /* margin: 0 0 0 em */
-  }
-
-  .profile-info span {
-    margin: 0.2rem 0
-  }
-
-  .social-links {
-    display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin: 0 0 2em
+    width: 45em;
   }
 
-  .line {
-    background: black;
-    width: 150px;
-    height: 1px;
-    margin: 0 1em 0 0
+  .content {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: 20em;
+    padding: 0 1.5em
+  }
+
+  .profile {
+    flex-direction: row;
+    gap: 2em;
+    align-items: stretch
+  }
+
+  .info {
+    align-items: flex-start
   }
 
 
+  .skills {
+    padding: 1em 0;
+  }
+
+  .skill-container span {
+    font-size: 0.9rem;
+  }
+
+  .navbar a {
+    padding: 1em 6.25em;
+  }
 }
