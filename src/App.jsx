@@ -32,7 +32,9 @@ function App() {
 
   return (
     <div className="app">
-      <DarkModeToggle isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      <section className="dark-mode-section">
+        <DarkModeToggle isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      </section>
       <Hero />
       <Projects />
       <Contact />

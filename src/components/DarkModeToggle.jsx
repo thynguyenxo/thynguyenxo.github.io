@@ -15,7 +15,7 @@ function DarkModeToggle({ isDark, toggleDarkMode }) {
         />
       ) : (
         <img 
-          src="/assets/moon-svgrepo-com.svg" 
+          src="/assets/moon-svgrepo-com (1).svg" 
           alt="Moon icon"
           className="dark-mode-icon"
         />

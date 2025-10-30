@@ -10,11 +10,13 @@ function Hero() {
             Product designer / vibe coder
           </p>
         </div>
-        <img
-          src="/assets/notion-face-portrait.png"
-          alt="Thy Nguyen"
-          className="hero-portrait"
-        />
+        <div className="hero-portrait-container">
+          <img
+            src="/assets/notion-face-portrait.png"
+            alt="Thy Nguyen"
+            className="hero-portrait"
+          />
+        </div>
       </div>
       <p className="hero-description">
         Designing intuitive and polished digital products through strategic UX, visual clarity, and systems thinking—for startups and founders.
