@@ -98,26 +98,17 @@ import teabagPulled from '../assets/teabag-pulled.svg?raw';
    */
   .navbar__identity:hover .navbar__logo,
   .navbar__identity:focus-visible .navbar__logo {
-    animation: logo-pull 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: logo-pull 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  /* Pulled straight and tugged down, overshooting past upright before the
-     string takes up and it settles at 0. */
+  /* Pulled straight and tugged down: one overshoot past upright, then it
+     comes to rest at 0 without oscillating around it. */
   @keyframes logo-pull {
     0% {
       transform: translateY(0) rotate(8deg);
     }
-    30% {
+    45% {
       transform: translateY(3px) rotate(-2.5deg);
-    }
-    55% {
-      transform: translateY(0.5px) rotate(2deg);
-    }
-    75% {
-      transform: translateY(1.8px) rotate(-1.2deg);
-    }
-    90% {
-      transform: translateY(1px) rotate(0.6deg);
     }
     100% {
       transform: translateY(1.4px) rotate(0deg);
