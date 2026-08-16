@@ -42,11 +42,12 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
         type="button"
         class="contact__copy"
         data-copy-email
+        title="Copy email address"
         aria-label={`Copy ${displayName}'s email address`}
       >
         <Icon name="copy" size="1rem" class="contact__copy-icon contact__copy-icon--idle" />
         <Icon name="check" size="1rem" class="contact__copy-icon contact__copy-icon--done" />
-        <span class="contact__copy-text" data-copy-label>Copy</span>
+        <span class="visually-hidden" data-copy-label>Copy</span>
       </button>
       {/* Keeps the recipient in the payload without exposing it in markup. */}
       <input type="hidden" id="contact-to" name="to" value={displayName} />
@@ -74,19 +75,20 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
       name="subject"
       type="text"
       required
-      placeholder="What's this about?"
     />
   </div>
 
+  {/* The placeholder carries the label here, so the row has no title. */}
   <div class="contact__row contact__row--message">
-    <label class="contact__label" for="contact-message">Message:</label>
+    <label class="visually-hidden" for="contact-message">Message</label>
     <textarea
       class="contact__input contact__textarea"
       id="contact-message"
       name="message"
-      rows="4"
+      rows="3"
       required
-      placeholder="Tell me about it…"></textarea>
+      placeholder="Message:"
+      data-autogrow></textarea>
   </div>
 
   {/* Bots fill hidden fields; humans never see this one. */}
@@ -153,28 +155,21 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     color: var(--color-text-on-footer);
   }
 
+  /* Ghost button: icon only, no border or label. */
   .contact__copy {
     display: inline-grid;
-    grid-auto-flow: column;
-    gap: var(--item-spacing-8);
-    align-items: center;
-    padding: var(--item-spacing-xxs) var(--sm);
-    border: var(--stroke-weight-border) solid var(--color-border-on-footer);
+    place-items: center;
+    padding: var(--sm);
+    border: 0;
     border-radius: 0.25rem;
     background: none;
     color: var(--color-text-on-footer-muted);
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-14);
-    line-height: var(--line-height-20);
     cursor: pointer;
-    transition:
-      color 0.2s ease,
-      border-color 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   .contact__copy:hover {
     color: var(--color-text-on-footer);
-    border-color: var(--color-text-on-footer);
   }
 
   /* Both glyphs share a cell so the button keeps its width when it flips. */
@@ -223,8 +218,10 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
   }
 
   .contact__textarea {
-    resize: vertical;
-    min-height: 4.5rem;
+    /* The field grows with its content, so the drag handle is redundant. */
+    resize: none;
+    overflow: hidden;
+    min-height: 5.5rem;
   }
 
   .contact__honeypot {
@@ -332,6 +329,20 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
         if (copyLabel) copyLabel.textContent = 'Copy';
       }, 2000);
     });
+
+    // The message field grows with its content rather than scrolling.
+    const autogrow = form.querySelector<HTMLTextAreaElement>('[data-autogrow]');
+
+    if (autogrow) {
+      const resize = () => {
+        autogrow.style.height = 'auto';
+        autogrow.style.height = `${autogrow.scrollHeight}px`;
+      };
+
+      autogrow.addEventListener('input', resize);
+      form.addEventListener('reset', () => window.requestAnimationFrame(resize));
+      resize();
+    }
 
     const setStatus = (message: string, state?: 'error') => {
       if (!status) return;

@@ -1,14 +1,40 @@
 ---
-// Display type from the Figma hero. The closing phrase starts in the primary
-// text color and fades to tertiary as the page scrolls, so the two-tone
-// treatment in the design becomes the resting state rather than the initial one.
+// Display type from the Figma hero.
+//
+// The headline paints in the primary color at rest. From "through" onward each
+// letter shifts to tertiary in turn as the page scrolls, so the design's
+// two-tone treatment resolves progressively rather than being the start state.
+
+const LEAD = 'I enjoy designing intuitive and polished digital products that help people — ';
+const FADED = 'through visual clarity and systems thinking';
+
+// Split into words so a word never breaks across lines, then into letters so
+// each can carry its own point in the sweep.
+const words = FADED.split(' ');
+const letterCount = FADED.replace(/ /g, '').length;
+
+let letterIndex = 0;
+const wordSpans = words.map((word) => {
+  const letters = [...word].map((char) => ({ char, index: letterIndex++ }));
+  return letters;
+});
 ---
 
 <section class="hero">
   <h1 class="hero__headline">
-    I enjoy designing intuitive and polished digital products that help people
-    — through <span class="hero__accent" data-hero-accent
-      >visual clarity and systems thinking</span
+    {LEAD}<span class="hero__fade" data-hero-fade style={`--letter-count:${letterCount}`}
+      >{
+        wordSpans.map((letters, wordIndex) => (
+          <Fragment>
+            <span class="hero__word">
+              {letters.map(({ char, index }) => (
+                <span class="hero__letter" style={`--letter-index:${index}`}>{char}</span>
+              ))}
+            </span>
+            {wordIndex < wordSpans.length - 1 ? ' ' : ''}
+          </Fragment>
+        ))
+      }</span
     >
   </h1>
 </section>
@@ -17,9 +43,9 @@
   /* Registered so the browser interpolates it as a number rather than
      flipping it at the halfway point. Declared in CSS so it applies at parse
      time, with no dependency on a script having run first. */
-  @property --hero-accent-progress {
+  @property --hero-fade-progress {
     syntax: '<number>';
-    inherits: false;
+    inherits: true;
     initial-value: 0;
   }
 
@@ -48,40 +74,62 @@
     color: var(--color-text-main);
   }
 
+  /* Keeps each word intact when the headline wraps. The spaces between words
+     are real text nodes outside these spans, so spacing and wrapping behave
+     exactly as they would in an unsplit headline. */
+  .hero__word {
+    white-space: nowrap;
+  }
+
+
   /*
-   * Starts at the headline color and lands on tertiary.
-   *
-   * The resting color is set explicitly first, so any browser that cannot
-   * parse the color-mix below still shows the primary color rather than
-   * dropping the declaration and inheriting something else.
+   * Each letter converts the shared scroll progress into its own 0→1 value.
+   * `--letter-start` staggers them across the sweep, and `--letter-span`
+   * controls how much of the scroll a single letter takes to change — wider
+   * than the gap between letters, so neighbours overlap and the sweep reads
+   * as continuous rather than as a row of switches.
    */
-  .hero__accent {
+  .hero__letter {
+    --letter-start: calc(var(--letter-index) / var(--letter-count));
+    --letter-span: 0.35;
+    --letter-progress: clamp(
+      0,
+      calc(
+        (var(--hero-fade-progress, 0) - var(--letter-start) * (1 - var(--letter-span))) /
+          var(--letter-span)
+      ),
+      1
+    );
+
+    /* Plain color first, so a browser that cannot parse the mix still shows
+       the resting primary color instead of dropping the declaration. */
     color: var(--color-text-main);
     color: color-mix(
       in oklab,
-      var(--color-text-tertiary) calc(var(--hero-accent-progress, 0) * 100%),
+      var(--color-text-tertiary) calc(var(--letter-progress) * 100%),
       var(--color-text-main)
     );
   }
 
   /*
-   * Scroll-driven animation where available: no JS, and it runs on the
-   * compositor. The fallback listener below stays inert when this applies.
+   * Scroll-driven animation where available: no JS, and it runs off the main
+   * thread. The fallback listener below stays inert when this applies.
    */
-  @supports (animation-timeline: view()) {
-    .hero__accent {
-      animation: hero-accent-fade linear both;
-      animation-timeline: view();
-      /* Complete the change over the first stretch of the scroll out. */
-      animation-range: exit-crossing 0% exit-crossing 60%;
+  @supports (animation-timeline: scroll()) {
+    .hero__fade {
+      animation: hero-fade-sweep linear both;
+      animation-timeline: scroll(root block);
+      /* The sweep completes over the first screen of scrolling, so it begins
+         the moment the visitor starts and finishes as the hero leaves. */
+      animation-range: 0 100svh;
     }
 
-    @keyframes hero-accent-fade {
+    @keyframes hero-fade-sweep {
       from {
-        --hero-accent-progress: 0;
+        --hero-fade-progress: 0;
       }
       to {
-        --hero-accent-progress: 1;
+        --hero-fade-progress: 1;
       }
     }
   }
@@ -89,8 +137,12 @@
   /* Respect a reduced-motion preference by settling on the design's resting
      two-tone state immediately. */
   @media (prefers-reduced-motion: reduce) {
-    .hero__accent {
+    .hero__fade {
       animation: none;
+      --hero-fade-progress: 1;
+    }
+
+    .hero__letter {
       color: var(--color-text-tertiary);
     }
   }
@@ -118,24 +170,23 @@
   // Fallback for browsers without scroll-driven animations. Skipped when the
   // CSS above is doing the work, and when the visitor prefers reduced motion.
   const supportsScrollTimeline =
-    typeof CSS !== 'undefined' && CSS.supports('animation-timeline: view()');
+    typeof CSS !== 'undefined' && CSS.supports('animation-timeline: scroll()');
   const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)'
   ).matches;
 
   if (!supportsScrollTimeline && !prefersReducedMotion) {
-    const accent = document.querySelector<HTMLElement>('[data-hero-accent]');
-    const hero = document.querySelector<HTMLElement>('.hero');
+    const fade = document.querySelector<HTMLElement>('[data-hero-fade]');
 
-    if (accent && hero) {
+    if (fade) {
       let ticking = false;
 
       const update = () => {
         ticking = false;
-        // Progress runs 0 → 1 across the first 60% of scrolling the hero away.
-        const range = hero.offsetHeight * 0.6;
+        // Matches the CSS range: the sweep completes over one screen.
+        const range = window.innerHeight;
         const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
-        accent.style.setProperty('--hero-accent-progress', String(progress));
+        fade.style.setProperty('--hero-fade-progress', String(progress));
       };
 
       const onScroll = () => {

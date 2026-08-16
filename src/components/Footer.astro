@@ -16,40 +16,39 @@ const year = new Date().getFullYear();
 
 <footer class="footer">
   <div class="footer__container">
-    <div class="footer__left">
-      <div class="footer__text">
-        <h2 class="footer__title">
-          <span class="footer__mark" aria-hidden="true">✺</span>
-          <span>let's connect</span>
-        </h2>
-        <p class="footer__subtitle">
-          Feel free to reach out for collaborations or just say hi :)
-        </p>
-      </div>
+    <div class="footer__text">
+      <h2 class="footer__title">
+        <span class="footer__mark" aria-hidden="true">✺</span>
+        <span>let's connect</span>
+      </h2>
+      <p class="footer__subtitle">
+        Feel free to reach out for collaborations or just say hi :)
+      </p>
+    </div>
 
+    <div class="footer__columns">
       <nav class="footer__socials" aria-label="Social links">
-        <a class="footer__social" href={`mailto:${email}`}>
-          <Icon name="envelope" size="1rem" />
-          <span>Email</span>
+        <a class="footer__social" href={`mailto:${email}`} title="Email">
+          <Icon name="envelope" size="1.25rem" label="Email" />
         </a>
         <a
           class="footer__social"
           href={linkedin}
           target="_blank"
           rel="noopener noreferrer"
+          title="LinkedIn"
         >
-          <Icon name="linkedin" size="1rem" />
-          <span>Linkedin</span>
+          <Icon name="linkedin" size="1.25rem" label="LinkedIn" />
         </a>
       </nav>
-    </div>
 
-    <div class="footer__right">
-      <ContactForm
-        email={email}
-        displayName={displayName}
-        accessKey={accessKey}
-      />
+      <div class="footer__form">
+        <ContactForm
+          email={email}
+          displayName={displayName}
+          accessKey={accessKey}
+        />
+      </div>
     </div>
   </div>
 
@@ -73,22 +72,28 @@ const year = new Date().getFullYear();
     color: var(--color-text-on-footer);
   }
 
+  /* Heading first, then the socials and form side by side beneath it. */
   .footer__container {
     display: flex;
     flex: 1;
-    gap: var(--xxl);
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: var(--xl);
+    justify-content: center;
     width: 100%;
     max-width: var(--content-max-width);
     margin-inline: auto;
   }
 
-  .footer__left {
+  .footer__columns {
     display: flex;
-    flex-direction: column;
-    gap: var(--xl);
-    justify-content: center;
+    gap: var(--xxl);
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .footer__form {
+    flex: 0 1 30rem;
   }
 
   .footer__text {
@@ -118,41 +123,34 @@ const year = new Date().getFullYear();
     line-height: var(--line-height-24);
   }
 
-  /* The socials now sit where the "Work with me" button used to. */
+  /* Icon-only links; the accessible name comes from the icon's label. */
   .footer__socials {
     display: flex;
+    gap: var(--sm);
     align-items: center;
-    margin-left: calc(var(--lg) * -1);
+    margin-left: calc(var(--sm) * -1);
   }
 
   .footer__social {
-    display: flex;
-    gap: var(--item-spacing-8);
-    align-items: center;
-    padding: var(--sm) var(--lg);
-    font-size: var(--font-size-16);
-    font-weight: var(--font-weight-400);
-    line-height: var(--line-height-24);
+    display: grid;
+    place-items: center;
+    padding: var(--sm);
+    border-radius: 0.25rem;
     color: var(--color-text-on-footer);
     text-decoration: none;
+    transition: opacity 0.2s ease;
   }
 
   .footer__social:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .footer__right {
-    display: flex;
-    flex: 0 1 30rem;
-    justify-content: flex-end;
+    opacity: 0.7;
   }
 
   .footer__copyright {
     width: 100%;
     max-width: var(--content-max-width);
     margin-inline: auto;
-    padding-top: var(--lg);
+    padding-top: var(--xl);
+    margin-top: var(--xl);
     border-top: var(--stroke-weight-border) dashed var(--color-border-footer);
   }
 
@@ -188,9 +186,14 @@ const year = new Date().getFullYear();
       justify-content: center;
     }
 
-    .footer__right {
+    .footer__columns {
+      flex-direction: column;
+      gap: var(--xl);
+    }
+
+    .footer__form {
       flex-basis: auto;
-      justify-content: flex-start;
+      width: 100%;
     }
   }
 
