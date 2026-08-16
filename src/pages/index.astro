@@ -40,12 +40,14 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
 </BaseLayout>
 
 <style>
+  /* No padding above the hero: it measures itself against the viewport, so
+     any leading space here would push it past the fold. */
   .main {
     display: flex;
     flex-direction: column;
     gap: var(--3xl);
     align-items: center;
-    padding-block: var(--xxl);
+    padding-block: 0 var(--xxl);
     overflow: clip;
     background: var(--color-background-primary);
   }

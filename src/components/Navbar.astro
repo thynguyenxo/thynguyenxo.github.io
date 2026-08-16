@@ -43,8 +43,8 @@ import logo from '../assets/logo.svg?raw';
   .navbar__logo {
     display: block;
     flex-shrink: 0;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: var(--navbar-logo-size);
+    height: var(--navbar-logo-size);
     color: var(--color-text-main);
   }
 
@@ -99,11 +99,6 @@ import logo from '../assets/logo.svg?raw';
   @media (max-width: 640px) {
     .navbar {
       padding-block: var(--md);
-    }
-
-    .navbar__logo {
-      width: 2.75rem;
-      height: 2.75rem;
     }
 
     .navbar__name {

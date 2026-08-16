@@ -86,6 +86,11 @@
   --page-max-width: 112.5rem; /* 1800px */
   --content-max-width: 112.5rem; /* 1800px */
 
+  /* Navbar height: the 3.5rem logo plus its --lg padding top and bottom. The
+     hero subtracts this from the viewport so the two fill the first screen. */
+  --navbar-logo-size: 3.5rem;
+  --navbar-height: calc(var(--navbar-logo-size) + (var(--lg) * 2));
+
   /* Shared left/right page gutter. Every full-width section uses this so the
      navbar, hero, cards and footer align on one edge. */
   --page-gutter: var(--xxl);
@@ -104,6 +109,9 @@
   :root {
     --page-gutter: var(--lg);
     --footer-gutter: var(--lg);
+    /* The navbar shrinks on small screens — keep the height in step. */
+    --navbar-logo-size: 2.75rem;
+    --navbar-height: calc(var(--navbar-logo-size) + (var(--md) * 2));
   }
 }
 
