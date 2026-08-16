@@ -87,11 +87,12 @@
   --stroke-weight-border: 1px;
   --stroke-weight-2: 2px;
 
-  /* Layout */
-  --page-max-width: 112.5rem;
-  /* 1800px */
-  --content-max-width: 112.5rem;
-  /* 1800px */
+  /* Layout
+   *
+   * The page is 1440px wide at most, which puts 1286px of content between the
+   * gutters. Wider screens gain side padding rather than a wider layout. */
+  --page-max-width: 90rem; /* 1440px */
+  --content-max-width: 90rem; /* 1440px */
 
   /* Navbar height: the logo plus its --lg padding top and bottom. The hero
      subtracts this from the viewport so the two fill the first screen. */
