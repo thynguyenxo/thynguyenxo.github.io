@@ -33,10 +33,12 @@ import logo from '../assets/logo.svg?raw';
     background: var(--color-background-primary);
   }
 
+  /* Centred rather than top-aligned: the logo is taller than the two lines
+     of text beside it, so flex-start left it hanging below the role line. */
   .navbar__identity {
     display: flex;
     gap: var(--md);
-    align-items: flex-start;
+    align-items: center;
     text-decoration: none;
   }
 
