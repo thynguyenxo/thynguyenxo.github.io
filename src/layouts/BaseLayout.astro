@@ -1,0 +1,85 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Design portfolio of Thy Nguyen.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <style is:global>
+      :root {
+        --bg: #fbfaf8;
+        --fg: #16150f;
+        --muted: #6b6559;
+        --rule: #e4e0d8;
+        --accent: #b4552d;
+
+        --measure: 34rem;
+        --font-sans:
+          ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial,
+          sans-serif;
+        --font-mono:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+          monospace;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14130f;
+          --fg: #f2efe8;
+          --muted: #9b948a;
+          --rule: #2c2a24;
+          --accent: #e08a5c;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration-color: var(--rule);
+        text-underline-offset: 0.25em;
+      }
+
+      a:hover {
+        text-decoration-color: var(--accent);
+      }
+    </style>
+  </body>
+</html>

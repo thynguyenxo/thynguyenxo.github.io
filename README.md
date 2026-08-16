@@ -1,41 +1,32 @@
-# Thy Nguyen - GitHub Pages Landing
+# thynguyenxo.github.io
 
-A minimal, techy landing page built with React and CSS.
+Design portfolio of Thy Nguyen, built with [Astro](https://astro.build) and
+deployed to GitHub Pages.
 
-## Setup
+## Development
 
-1. Install dependencies:
-```bash
+```sh
 npm install
+npm run dev      # local dev server at http://localhost:4321
+npm run build    # production build to ./dist
+npm run preview  # preview the production build
 ```
 
-2. Run development server:
-```bash
-npm run dev
+## Deployment
+
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
+and publishes `dist/` to GitHub Pages. No manual deploy step is needed.
+
+## Structure
+
+```
+src/
+  layouts/   shared page shells
+  pages/     routes — each .astro file becomes a page
+public/      static assets served verbatim from the site root
 ```
 
-3. Build for production:
-```bash
-npm run build
-```
+## History
 
-## Deployment to GitHub Pages
-
-### Automatic Deployment (Recommended)
-
-The project is set up with GitHub Actions for automatic deployment:
-
-1. Push your code to the `main` branch
-2. GitHub Actions will automatically build and deploy to GitHub Pages
-3. Make sure GitHub Pages is enabled in your repository settings:
-   - Go to Settings → Pages
-   - Set Source to "GitHub Actions"
-
-### Manual Deployment
-
-If you prefer manual deployment:
-
-1. Build the project: `npm run build`
-2. The `dist/` folder contains the production build
-3. Copy the contents of `dist/` to your repository root (or use gh-pages package)
-
+Version 1 of this site (a React + Vite landing page) is archived at
+[thynguyenxo-portfolio-v1-archive](https://github.com/thynguyenxo/thynguyenxo-portfolio-v1-archive).

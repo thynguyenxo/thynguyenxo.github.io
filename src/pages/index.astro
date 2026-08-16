@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Thy Nguyen"
+  description="Design portfolio of Thy Nguyen — currently being rebuilt."
+>
+  <main>
+    <p class="eyebrow">Thy Nguyen</p>
+    <h1>Portfolio in progress.</h1>
+    <p class="lede">
+      I'm rebuilding this site from the ground up. New selected work is on the
+      way.
+    </p>
+    <p class="contact">
+      In the meantime, reach me at
+      <a href="mailto:thynguyenxo@gmail.com">thynguyenxo@gmail.com</a>.
+    </p>
+  </main>
+
+  <style>
+    main {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: var(--measure);
+      margin-inline: auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 7vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+      text-wrap: balance;
+    }
+
+    .lede {
+      margin: 1.25rem 0 0;
+      font-size: 1.125rem;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    .contact {
+      margin: 2.5rem 0 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.9375rem;
+      color: var(--muted);
+    }
+  </style>
+</BaseLayout>
