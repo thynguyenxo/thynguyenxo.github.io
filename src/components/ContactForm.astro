@@ -101,10 +101,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
   <div class="contact__actions">
     <p class="contact__status" data-contact-status role="status" aria-live="polite"></p>
-    <button type="submit" class="contact__send">
-      <span>Send</span>
-      <Icon name="paper-plane" size="1rem" />
-    </button>
+    <button type="submit" class="contact__send">Send</button>
   </div>
 </form>
 
@@ -263,25 +260,28 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     color: #ffb4a8;
   }
 
+  /* Outlined rather than filled, so the form reads as one quiet block. */
   .contact__send {
     display: inline-flex;
-    gap: var(--item-spacing-8);
     align-items: center;
     justify-content: center;
     padding: var(--md) var(--lg);
-    border: 0;
+    border: var(--stroke-weight-border) solid var(--color-text-on-footer);
     border-radius: 62.4375rem;
-    background: var(--color-background-inverse);
-    color: var(--color-text-inverse);
+    background: none;
+    color: var(--color-text-on-footer);
     font-family: var(--font-family-primary);
     font-size: var(--font-size-16);
     line-height: var(--line-height-24);
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   .contact__send:hover {
-    opacity: 0.85;
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
   }
 
   .contact__send[disabled] {

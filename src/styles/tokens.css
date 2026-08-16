@@ -101,21 +101,17 @@
   /* Shared left/right page gutter. Every full-width section uses this so the
      navbar, hero, cards and footer align on one edge. */
   --page-gutter: var(--xxl);
-  /* The footer is inset further than the page body, per the design. */
-  --footer-gutter: var(--3xl);
 }
 
 @media (max-width: 1100px) {
   :root {
     --page-gutter: var(--xl);
-    --footer-gutter: var(--xl);
   }
 }
 
 @media (max-width: 640px) {
   :root {
     --page-gutter: var(--lg);
-    --footer-gutter: var(--lg);
     /* The navbar shrinks on small screens — keep the height in step. */
     --navbar-logo-size: 2.75rem;
     --navbar-height: calc(var(--navbar-logo-size) + (var(--md) * 2));
