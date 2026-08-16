@@ -48,6 +48,29 @@ import logo from '../assets/logo.svg?raw';
     width: var(--navbar-logo-size);
     height: var(--navbar-logo-size);
     color: var(--color-text-main);
+    /* Pivot at the bottom, so the tilt reads as the teabag swinging from its
+       base rather than the whole square rotating. */
+    transform-origin: 50% 85%;
+    /* Overshoots past the resting angle and settles back, which is what gives
+       the tilt its bounce. */
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .navbar__identity:hover .navbar__logo,
+  .navbar__identity:focus-visible .navbar__logo {
+    transform: rotate(-8deg);
+  }
+
+  /* A tilt is decorative, so it is dropped entirely when motion is reduced. */
+  @media (prefers-reduced-motion: reduce) {
+    .navbar__logo {
+      transition: none;
+    }
+
+    .navbar__identity:hover .navbar__logo,
+    .navbar__identity:focus-visible .navbar__logo {
+      transform: none;
+    }
   }
 
   .navbar__logo :global(svg) {
