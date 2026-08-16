@@ -36,6 +36,11 @@ const {
       content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    {/* SVG first for crisp tabs; the PNG covers browsers that ignore it. */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 
