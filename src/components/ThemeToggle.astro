@@ -5,7 +5,7 @@ import Icon from './Icon.astro';
 {/*
   Both icons ship in the markup and CSS reveals the relevant one, so the
   control is correct on first paint with no JS needed to pick an icon.
-  The visible glyph shows what clicking will switch *to*.
+  Light mode shows circle-half-stroke; dark mode shows the moon.
 */}
 <button
   type="button"
@@ -15,8 +15,12 @@ import Icon from './Icon.astro';
   title="Toggle dark mode"
 >
   <span class="visually-hidden">Toggle dark mode</span>
-  <Icon name="moon" size="1.125rem" class="theme-toggle__icon theme-toggle__icon--moon" />
-  <Icon name="sun" size="1.25rem" class="theme-toggle__icon theme-toggle__icon--sun" />
+  <Icon
+    name="circle-half-stroke"
+    size="1.125rem"
+    class="theme-toggle__icon theme-toggle__icon--light"
+  />
+  <Icon name="moon" size="1.125rem" class="theme-toggle__icon theme-toggle__icon--dark" />
 </button>
 
 <style>
@@ -44,41 +48,41 @@ import Icon from './Icon.astro';
       transform 0.25s ease;
   }
 
-  /* Light is the default: offer the moon. */
-  .theme-toggle :global(.theme-toggle__icon--sun) {
+  /* Light is the default, so the dark-mode glyph starts hidden. */
+  .theme-toggle :global(.theme-toggle__icon--dark) {
     opacity: 0;
     transform: rotate(-90deg) scale(0.6);
   }
 
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--moon) {
+    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--light) {
       opacity: 0;
       transform: rotate(90deg) scale(0.6);
     }
 
-    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--sun) {
+    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--dark) {
       opacity: 1;
       transform: none;
     }
   }
 
   /* An explicit choice overrides the OS preference in both directions. */
-  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--moon) {
+  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--light) {
     opacity: 0;
     transform: rotate(90deg) scale(0.6);
   }
 
-  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--sun) {
+  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--dark) {
     opacity: 1;
     transform: none;
   }
 
-  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--moon) {
+  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--light) {
     opacity: 1;
     transform: none;
   }
 
-  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--sun) {
+  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--dark) {
     opacity: 0;
     transform: rotate(-90deg) scale(0.6);
   }

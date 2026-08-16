@@ -7,14 +7,15 @@ interface Props {
   /** Shown in the To: field instead of the address itself. */
   displayName: string;
   /**
-   * Endpoint of a form service (Formspree, Web3Forms, …). When absent the
-   * form falls back to opening the visitor's mail client, so it still works
-   * before the account exists.
+   * Web3Forms access key. When absent the form falls back to opening the
+   * visitor's mail client, so it still works before one is configured.
    */
-  endpoint?: string;
+  accessKey?: string;
 }
 
-const { email, displayName, endpoint } = Astro.props;
+const { email, displayName, accessKey } = Astro.props;
+
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 ---
 
 <form
@@ -22,8 +23,17 @@ const { email, displayName, endpoint } = Astro.props;
   data-contact-form
   data-email={email}
   method="POST"
-  action={endpoint ?? ''}
+  action={accessKey ? WEB3FORMS_ENDPOINT : ''}
 >
+  {
+    accessKey && (
+      <>
+        {/* The visitor's own Subject field supplies `subject`. */}
+        <input type="hidden" name="access_key" value={accessKey} />
+        <input type="hidden" name="from_name" value="Portfolio contact form" />
+      </>
+    )
+  }
   <div class="contact__row">
     <label class="contact__label" for="contact-to">To:</label>
     <div class="contact__to">

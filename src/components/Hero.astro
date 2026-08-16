@@ -14,6 +14,15 @@
 </section>
 
 <style>
+  /* Registered so the browser interpolates it as a number rather than
+     flipping it at the halfway point. Declared in CSS so it applies at parse
+     time, with no dependency on a script having run first. */
+  @property --hero-accent-progress {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+  }
+
   /* The navbar and hero together fill the first screen: the hero takes the
      viewport height minus whatever the navbar occupies, so the headline sits
      centred in the space that remains. */
@@ -40,11 +49,14 @@
   }
 
   /*
-   * Starts at the headline color and lands on tertiary. `--hero-accent-progress`
-   * is driven by scroll — by the animation-timeline below where it is
-   * supported, and by a small scroll listener everywhere else.
+   * Starts at the headline color and lands on tertiary.
+   *
+   * The resting color is set explicitly first, so any browser that cannot
+   * parse the color-mix below still shows the primary color rather than
+   * dropping the declaration and inheriting something else.
    */
   .hero__accent {
+    color: var(--color-text-main);
     color: color-mix(
       in oklab,
       var(--color-text-tertiary) calc(var(--hero-accent-progress, 0) * 100%),
@@ -103,21 +115,6 @@
 </style>
 
 <script>
-  // `--hero-accent-progress` is a plain custom property, so it needs
-  // registering before it can be interpolated rather than flipping at 50%.
-  if (typeof CSS !== 'undefined' && 'registerProperty' in CSS) {
-    try {
-      CSS.registerProperty({
-        name: '--hero-accent-progress',
-        syntax: '<number>',
-        inherits: false,
-        initialValue: '0',
-      });
-    } catch {
-      // Already registered on a soft navigation — nothing to do.
-    }
-  }
-
   // Fallback for browsers without scroll-driven animations. Skipped when the
   // CSS above is doing the work, and when the visitor prefers reduced motion.
   const supportsScrollTimeline =

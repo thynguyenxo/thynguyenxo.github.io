@@ -11,11 +11,13 @@ export const site = {
   email: 'thynguyenxo@gmail.com',
   linkedin: 'https://www.linkedin.com/in/thynguyenxo/',
   /**
-   * Endpoint for the footer contact form — paste the URL from Formspree or
-   * Web3Forms here. While it is empty the form falls back to opening the
-   * visitor's mail client, so it still works.
+   * Web3Forms access key for the footer contact form. This is a public
+   * identifier, not a secret — it is meant to be visible in client-side code,
+   * and it only permits submissions that are delivered to the address
+   * registered with it. While it is empty the form falls back to opening the
+   * visitor's mail client.
    */
-  formEndpoint: '',
+  formAccessKey: '6fb366f2-e453-47a2-bd01-44c0b63ee431',
 } as const;
 
 export interface Project {

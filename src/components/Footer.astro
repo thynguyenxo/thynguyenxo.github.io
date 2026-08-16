@@ -6,11 +6,11 @@ interface Props {
   email: string;
   displayName: string;
   linkedin: string;
-  /** Form service endpoint; falls back to mailto when unset. */
-  formEndpoint?: string;
+  /** Web3Forms access key; falls back to mailto when unset. */
+  accessKey?: string;
 }
 
-const { email, displayName, linkedin, formEndpoint } = Astro.props;
+const { email, displayName, linkedin, accessKey } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
@@ -48,7 +48,7 @@ const year = new Date().getFullYear();
       <ContactForm
         email={email}
         displayName={displayName}
-        endpoint={formEndpoint}
+        accessKey={accessKey}
       />
     </div>
   </div>
@@ -172,16 +172,20 @@ const year = new Date().getFullYear();
       padding-block: var(--xxl) var(--xl);
     }
 
+    .footer__title {
+      font-size: clamp(2.25rem, 7vw, 4rem);
+      letter-spacing: -0.02em;
+    }
+  }
+
+  /* The two columns stay side by side until there is genuinely no room for
+     the form beside the heading. */
+  @media (max-width: 820px) {
     .footer__container {
       flex-direction: column;
       gap: var(--xl);
       align-items: stretch;
       justify-content: center;
-    }
-
-    .footer__title {
-      font-size: clamp(2.25rem, 7vw, 4rem);
-      letter-spacing: -0.02em;
     }
 
     .footer__right {
