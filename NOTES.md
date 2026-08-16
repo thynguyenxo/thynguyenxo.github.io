@@ -45,12 +45,21 @@ Tokens mirror the Figma variable names:
 Line heights are **unitless** (design value ÷ font size) so they scale
 correctly. Letter spacing is in **em** for the same reason.
 
-### Layout gutter
+### Layout width and gutter
+
+`--page-max-width` is **1800px**, and every full-width section uses it, so the
+navbar, hero, cards and footer share one measure.
 
 `--page-gutter` is the shared left/right page inset — **80px at desktop**,
-stepping down at 1100px and 640px. The navbar, hero, project cards and project
-pages all use it, so they align on one edge. Change it in one place, not per
-component.
+stepping down at 1100px and 640px. Change it in one place, not per component.
+
+### Surfaces per theme
+
+The footer is **not** a fixed dark slab. It is `#262626` in light mode and
+`#000000` in dark, matching the page background so the two read as one field.
+`--color-text-on-footer` / `--color-text-on-footer-muted` are fixed white and
+grey because the footer surface is dark in both themes — check both if you
+change them.
 
 ## Theming
 
@@ -81,8 +90,14 @@ Known issue, unresolved by design decision:
 
 Passing but tight — don't darken these without rechecking:
 
-- Hero grey at 64px: 3.32:1 light / 3.06:1 dark (large text needs 3.0).
-- Footer copyright `#8d8d8d` on `#262626`: 4.56:1.
+- Hero grey `#8d8d8d` at 64px on white: **3.32:1** (large text needs 3.0).
+- Footer copyright `#8d8d8d` on the light-mode footer `#262626`: **4.56:1**.
+
+Dark mode has plenty of headroom since the background went to pure black —
+hero grey `#707070` is 4.24:1 and the caption grey is 6.33:1 there. Note that
+`--color-border-bold` is `#6d6d6d` in dark rather than `#404040`: on black the
+darker value fell to 2.03:1, under the 3:1 that WCAG 1.4.11 expects of a
+meaningful boundary.
 
 Also required: visible `:focus-visible` rings, a real `<button>` for the theme
 toggle, `prefers-reduced-motion` honored, and one link per card (the title link
