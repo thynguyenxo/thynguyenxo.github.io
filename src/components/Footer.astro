@@ -26,36 +26,32 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <div class="footer__columns">
-      <div class="footer__socials-column">
-        <nav class="footer__socials" aria-label="Social links">
-          <a class="footer__social" href={`mailto:${email}`} title="Email">
-            <Icon name="envelope" size="1.25rem" label="Email" />
-          </a>
-          <a
-            class="footer__social"
-            href={linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="LinkedIn"
-          >
-            <Icon name="linkedin" size="1.25rem" label="LinkedIn" />
-          </a>
-        </nav>
-      </div>
-
-      <div class="footer__form">
-        <ContactForm
-          email={email}
-          displayName={displayName}
-          accessKey={accessKey}
-        />
-      </div>
+    <div class="footer__form">
+      <ContactForm
+        email={email}
+        displayName={displayName}
+        accessKey={accessKey}
+      />
     </div>
   </div>
 
   <div class="footer__copyright">
     <p>© {year} all rights reserved</p>
+
+    <nav class="footer__socials" aria-label="Social links">
+      <a class="footer__social" href={`mailto:${email}`} title="Email">
+        <Icon name="envelope" size="1.25rem" label="Email" />
+      </a>
+      <a
+        class="footer__social"
+        href={linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="LinkedIn"
+      >
+        <Icon name="linkedin" size="1.25rem" label="LinkedIn" />
+      </a>
+    </nav>
   </div>
 </footer>
 
@@ -86,27 +82,11 @@ const year = new Date().getFullYear();
     margin-inline: auto;
   }
 
-  .footer__columns {
-    display: flex;
-    gap: var(--xxl);
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  /* The 30/70 split is of the space left after the gap, so the two columns
-     together never exceed the container. */
-  .footer__socials-column {
-    flex: 0 0 calc(30% - (var(--xxl) / 2));
-  }
-
-  /* The form sits at the right edge of its column, widening the gap
-     between it and the socials. */
-  /* The form sits at the right edge of its column, widening the gap
-     between it and the socials. */
+  /* The form sits at the right edge of the footer. */
   .footer__form {
     display: flex;
-    flex: 0 0 calc(70% - (var(--xxl) / 2));
     justify-content: flex-end;
+    width: 100%;
   }
 
   .footer__text {
@@ -141,13 +121,16 @@ const year = new Date().getFullYear();
     display: flex;
     gap: var(--sm);
     align-items: center;
-    margin-left: calc(var(--sm) * -1);
+    /* Offsets the last link's padding so the glyph, not its hit area, lines
+       up with the gutter. */
+    margin-right: calc(var(--sm) * -1);
   }
 
   .footer__social {
     display: grid;
     place-items: center;
     padding: var(--sm);
+    /* Keeps a comfortable tap target while the glyph stays on the grid. */
     border-radius: 0.25rem;
     color: var(--color-text-on-footer);
     text-decoration: none;
@@ -167,6 +150,10 @@ const year = new Date().getFullYear();
     --dash-length: 0.125rem;
     --dash-gap: 0.375rem;
 
+    display: flex;
+    gap: var(--md);
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     max-width: var(--content-max-width);
     margin-inline: auto;
@@ -205,25 +192,11 @@ const year = new Date().getFullYear();
     }
   }
 
-  /* The two columns stay side by side until there is genuinely no room for
-     the form beside the heading. */
+  /* Below the design canvas the form spans the footer rather than sitting
+     at the right edge. */
   @media (max-width: 820px) {
-    .footer__container {
-      flex-direction: column;
-      gap: var(--xl);
-      align-items: stretch;
-      justify-content: center;
-    }
-
-    .footer__columns {
-      flex-direction: column;
-      gap: var(--xl);
-    }
-
     .footer__form {
-      flex-basis: auto;
       justify-content: flex-start;
-      width: 100%;
     }
   }
 
