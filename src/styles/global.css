@@ -36,6 +36,9 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Anchor jumps and programmatic scrolls glide rather than snap. The
+     reduced-motion block below turns this off. */
+  scroll-behavior: smooth;
 }
 
 body {

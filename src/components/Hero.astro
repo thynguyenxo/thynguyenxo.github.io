@@ -135,6 +135,19 @@ const wordSpans = words.map((word) => {
     }
   }
 
+  /*
+   * Once the sweep has completed it stays completed: scrolling back up
+   * leaves the phrase in tertiary rather than re-running in reverse.
+   */
+  .hero__fade[data-hero-swept] {
+    animation: none;
+    --hero-fade-progress: 1;
+  }
+
+  .hero__fade[data-hero-swept] .hero__letter {
+    color: var(--color-text-tertiary);
+  }
+
   /* Respect a reduced-motion preference by settling on the design's resting
      two-tone state immediately. */
   @media (prefers-reduced-motion: reduce) {
@@ -168,37 +181,54 @@ const wordSpans = words.map((word) => {
 </style>
 
 <script>
-  // Fallback for browsers without scroll-driven animations. Skipped when the
-  // CSS above is doing the work, and when the visitor prefers reduced motion.
-  const supportsScrollTimeline =
-    typeof CSS !== 'undefined' && CSS.supports('animation-timeline: scroll()');
+  const fade = document.querySelector<HTMLElement>('[data-hero-fade]');
+
   const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)'
   ).matches;
 
-  if (!supportsScrollTimeline && !prefersReducedMotion) {
-    const fade = document.querySelector<HTMLElement>('[data-hero-fade]');
+  if (fade && !prefersReducedMotion) {
+    // Matches the CSS animation-range, so both paths latch at the same point.
+    const sweepRange = () => window.innerHeight * 0.15;
 
-    if (fade) {
-      let ticking = false;
+    // The scroll timeline maps position rather than history, so it would
+    // reverse on the way back up. Pinning the finished state on the element
+    // keeps the phrase in tertiary once the sweep has run.
+    const latch = () => {
+      fade.dataset.heroSwept = '';
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
 
-      const update = () => {
-        ticking = false;
-        // Matches the CSS range above.
-        const range = window.innerHeight * 0.15;
-        const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
+    const supportsScrollTimeline =
+      typeof CSS !== 'undefined' && CSS.supports('animation-timeline: scroll()');
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const range = sweepRange();
+      const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
+
+      // Browsers without scroll-driven animations need the value written out;
+      // where the CSS drives it, this only watches for completion.
+      if (!supportsScrollTimeline) {
         fade.style.setProperty('--hero-fade-progress', String(progress));
-      };
+      }
 
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(update);
-      };
+      if (progress >= 1) latch();
+    };
 
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      update();
-    }
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    // Covers a reload part-way down the page.
+    update();
   }
 </script>
