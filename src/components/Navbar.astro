@@ -1,0 +1,113 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import logo from '../assets/logo.svg?raw';
+---
+
+<header class="navbar">
+  <a class="navbar__identity" href="/" aria-label="Thy Nguyen, Product Designer — home">
+    <span class="navbar__logo" aria-hidden="true" set:html={logo} />
+    <span class="navbar__intro">
+      <span class="navbar__name-row">
+        <span class="navbar__name">Thy Nguyen</span>
+        <span class="navbar__pronunciation">/tea-win/</span>
+      </span>
+      <span class="navbar__role">Product designer</span>
+    </span>
+  </a>
+
+  <div class="navbar__links">
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--md);
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding: var(--lg) var(--xl);
+    background: var(--color-background-primary);
+  }
+
+  .navbar__identity {
+    display: flex;
+    gap: var(--md);
+    align-items: flex-start;
+    text-decoration: none;
+  }
+
+  .navbar__logo {
+    display: block;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--color-text-main);
+  }
+
+  .navbar__logo :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .navbar__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--item-spacing-xxs);
+    justify-content: center;
+  }
+
+  .navbar__name-row {
+    display: flex;
+    gap: var(--item-spacing-8);
+    align-items: center;
+  }
+
+  .navbar__name {
+    font-size: var(--font-size-24);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-33-6);
+    color: var(--color-text-main);
+  }
+
+  .navbar__pronunciation {
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-24);
+    color: var(--color-text-secondary);
+  }
+
+  .navbar__role {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .navbar__links {
+    display: flex;
+    gap: var(--lg);
+    align-items: center;
+  }
+
+  @media (max-width: 640px) {
+    .navbar {
+      padding: var(--md) var(--lg);
+    }
+
+    .navbar__logo {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .navbar__name {
+      font-size: var(--font-size-18);
+    }
+  }
+</style>

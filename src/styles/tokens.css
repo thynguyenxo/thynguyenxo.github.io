@@ -1,0 +1,113 @@
+/*
+ * Design tokens — Portfolio v.4 (Figma: xT2es8olIUtCNago606WmE)
+ *
+ * Light values come from the published Figma variables (node 1147:4018).
+ * Dark values (node 1147:733) live in a Figma variable mode that the API
+ * resolves to its light default, so they were read from the rendered design
+ * and confirmed by the designer.
+ *
+ * Theme resolution: light is the base; dark applies when the visitor's OS
+ * asks for it OR when they choose it explicitly. An explicit choice is
+ * stamped on <html data-theme>, and always wins over the OS preference.
+ */
+
+:root {
+  /* Color — surfaces */
+  --color-background-primary: #ffffff;
+  --color-background-inverse: #ffffff;
+  --color-background-footer: #262626;
+
+  /* Color — text */
+  --color-text-main: #262626;
+  --color-text-secondary: #707070;
+  --color-text-tertiary: #8d8d8d;
+  --color-text-caption: #8d8d8d;
+  --color-text-inverse: #262626;
+
+  /* Color — text on the footer surface (dark in both themes) */
+  --color-text-on-footer: #ffffff;
+  --color-text-on-footer-muted: #8d8d8d;
+
+  /* Color — borders */
+  --color-border-bold: #e7e7e7;
+
+  /* Typography — families */
+  --font-family-primary: 'DM Sans', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-family-secondary: 'DM Mono', ui-monospace, SFMono-Regular, Menlo,
+    Consolas, 'Liberation Mono', monospace;
+
+  /* Typography — sizes */
+  --font-size-14: 0.875rem;
+  --font-size-16: 1rem;
+  --font-size-18: 1.125rem;
+  --font-size-24: 1.5rem;
+  --font-size-28: 1.75rem;
+  --font-size-64: 4rem;
+
+  /* Typography — line heights (unitless: value / font-size) */
+  --line-height-20: 1.4286;
+  --line-height-24: 1.5;
+  --line-height-28: 1.5556;
+  --line-height-33-6: 1.4;
+  --line-height-39-2: 1.4;
+  --line-height-76-8: 1.2;
+
+  /* Typography — weights */
+  --font-weight-400: 400;
+  --font-weight-regular: 500;
+  --font-weight-medium: 500;
+
+  /* Typography — letter spacing */
+  --letter-spacing-0-28: 0.0175em; /* 0.28px / 16px */
+  --letter-spacing-1-12: -0.04em; /* -1.12px / 28px */
+  --letter-spacing-2-56: -0.04em; /* -2.56px / 64px */
+
+  /* Spacing */
+  --reset: 0;
+  --item-spacing-xxs: 0.25rem;
+  --sm: 0.5rem;
+  --item-spacing-8: 0.5rem;
+  --md: 1rem;
+  --lg: 1.5rem;
+  --xl: 2.5rem;
+  --xxl: 5rem;
+  --3xl: 10rem;
+
+  /* Borders */
+  --stroke-weight-border: 1px;
+  --stroke-weight-2: 2px;
+
+  /* Layout */
+  --page-max-width: 1200px;
+  --content-max-width: 1800px;
+}
+
+/* Dark palette, shared by the OS-preference and explicit-choice selectors. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background-primary: #262626;
+    --color-background-inverse: #ffffff;
+
+    --color-text-main: #ffffff;
+    --color-text-secondary: #e7e7e7;
+    --color-text-tertiary: #707070;
+    --color-text-caption: #8d8d8d;
+    --color-text-inverse: #262626;
+
+    --color-border-bold: #404040;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-background-primary: #262626;
+  --color-background-inverse: #ffffff;
+
+  --color-text-main: #ffffff;
+  --color-text-secondary: #e7e7e7;
+  --color-text-tertiary: #707070;
+  --color-text-caption: #8d8d8d;
+  --color-text-inverse: #262626;
+
+  --color-border-bold: #404040;
+}

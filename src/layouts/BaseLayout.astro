@@ -1,4 +1,7 @@
 ---
+import '../styles/tokens.css';
+import '../styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -6,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = 'Design portfolio of Thy Nguyen.',
+  description = 'Thy Nguyen is a product designer working on intuitive, polished digital products.',
 } = Astro.props;
 ---
 
@@ -23,63 +26,70 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
 
+    {/* Preloaded so the display type paints without a swap on first render. */}
+    <link
+      rel="preload"
+      href="/fonts/dm-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <title>{title}</title>
+
+    {/* Runs before first paint so a stored theme choice never flashes. */}
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          if (stored === 'dark' || stored === 'light') {
+            document.documentElement.dataset.theme = stored;
+          }
+        } catch {
+          /* Storage can be unavailable (private mode); fall back to the OS. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
-    <style is:global>
-      :root {
-        --bg: #fbfaf8;
-        --fg: #16150f;
-        --muted: #6b6559;
-        --rule: #e4e0d8;
-        --accent: #b4552d;
 
-        --measure: 34rem;
-        --font-sans:
-          ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial,
-          sans-serif;
-        --font-mono:
-          ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
-          monospace;
-      }
+    <script>
+      const root = document.documentElement;
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #14130f;
-          --fg: #f2efe8;
-          --muted: #9b948a;
-          --rule: #2c2a24;
-          --accent: #e08a5c;
-        }
-      }
+      const isDark = () =>
+        root.dataset.theme
+          ? root.dataset.theme === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
+      const syncButtons = () => {
+        const dark = isDark();
+        document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+          button.setAttribute('aria-pressed', String(dark));
+        });
+      };
 
-      body {
-        margin: 0;
-        padding: 0;
-        background: var(--bg);
-        color: var(--fg);
-        font-family: var(--font-sans);
-        font-size: 1rem;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-      }
+      document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const next = isDark() ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try {
+            localStorage.setItem('theme', next);
+          } catch {
+            /* Ignore storage failures — the toggle still works this session. */
+          }
+          syncButtons();
+        });
+      });
 
-      a {
-        color: inherit;
-        text-decoration-color: var(--rule);
-        text-underline-offset: 0.25em;
-      }
+      // Track the OS preference until the visitor makes an explicit choice.
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', () => {
+          if (!root.dataset.theme) syncButtons();
+        });
 
-      a:hover {
-        text-decoration-color: var(--accent);
-      }
-    </style>
+      syncButtons();
+    </script>
   </body>
 </html>

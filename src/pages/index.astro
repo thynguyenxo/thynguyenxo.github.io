@@ -1,66 +1,64 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Footer from '../components/Footer.astro';
+import tenminImage from '../assets/figma/tenmin.png';
+
+const projects = [
+  {
+    client: 'Tenmin',
+    title: 'Reimagined the onboarding experience to build trust with an AI tutor',
+    description:
+      'I designed the onboarding experience for an AI-powered language learning mobile app that helps build emotional trust with an AI tutor and a review screen that makes daily practice feel effortless and rewarding.',
+    image: tenminImage,
+    imageAlt:
+      'Three Tenmin app screens showing the speaking-practice onboarding flow',
+  },
+];
 ---
 
-<BaseLayout
-  title="Thy Nguyen"
-  description="Design portfolio of Thy Nguyen — currently being rebuilt."
->
-  <main>
-    <p class="eyebrow">Thy Nguyen</p>
-    <h1>Portfolio in progress.</h1>
-    <p class="lede">
-      I'm rebuilding this site from the ground up. New selected work is on the
-      way.
-    </p>
-    <p class="contact">
-      In the meantime, reach me at
-      <a href="mailto:thynguyenxo@gmail.com">thynguyenxo@gmail.com</a>.
-    </p>
+<BaseLayout title="Thy Nguyen">
+  <Navbar />
+
+  <main class="main">
+    <Hero />
+
+    <section class="projects" aria-label="Selected work">
+      {projects.map((project) => <ProjectCard {...project} />)}
+    </section>
   </main>
 
-  <style>
-    main {
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      max-width: var(--measure);
-      margin-inline: auto;
-      padding: 3rem 1.5rem;
-    }
-
-    .eyebrow {
-      margin: 0 0 2.5rem;
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 7vw, 3rem);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      font-weight: 600;
-      text-wrap: balance;
-    }
-
-    .lede {
-      margin: 1.25rem 0 0;
-      font-size: 1.125rem;
-      color: var(--muted);
-      text-wrap: pretty;
-    }
-
-    .contact {
-      margin: 2.5rem 0 0;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.9375rem;
-      color: var(--muted);
-    }
-  </style>
+  <Footer email="thynguyenxo@gmail.com" linkedin="https://www.linkedin.com/" />
 </BaseLayout>
+
+<style>
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--3xl);
+    align-items: center;
+    padding-block: var(--xxl);
+    overflow: clip;
+    background: var(--color-background-primary);
+  }
+
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xxl);
+    width: 100%;
+    padding-block: var(--xxl);
+  }
+
+  @media (max-width: 1100px) {
+    .main {
+      gap: var(--xxl);
+    }
+
+    .projects {
+      padding-block: var(--xl);
+    }
+  }
+</style>

@@ -1,0 +1,209 @@
+---
+interface Props {
+  email: string;
+  linkedin: string;
+}
+
+const { email, linkedin } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__container">
+    <div class="footer__text">
+      <h2 class="footer__title">
+        <span class="footer__mark" aria-hidden="true">✺</span>
+        <span>let's connect</span>
+      </h2>
+      <p class="footer__subtitle">
+        Feel free to reach out for collaborations or just say hi :)
+      </p>
+    </div>
+
+    <div class="footer__cta">
+      <a class="footer__button" href={`mailto:${email}`}>
+        <span>Work with me</span>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M3 6.5h18v11H3zM3 7l9 6 9-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </a>
+
+      <nav class="footer__socials" aria-label="Social links">
+        <a class="footer__social" href={`mailto:${email}`}>Email</a>
+        <a
+          class="footer__social"
+          href={linkedin}
+          target="_blank"
+          rel="noopener noreferrer">Linkedin</a
+        >
+      </nav>
+    </div>
+  </div>
+
+  <div class="footer__copyright">
+    <p>© {year} all rights reserved</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--xxl);
+    min-height: 500px;
+    padding: var(--xxl) 160px var(--xl);
+    background: var(--color-background-footer);
+    /* The footer surface is dark in both themes, so its text colors are fixed
+       rather than theme-dependent. */
+    color: #ffffff;
+  }
+
+  .footer__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+  }
+
+  .footer__text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer__title {
+    display: flex;
+    gap: var(--md);
+    align-items: baseline;
+    margin: 0;
+    font-size: var(--font-size-64);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-76-8);
+    letter-spacing: var(--letter-spacing-2-56);
+  }
+
+  .footer__mark {
+    font-weight: var(--font-weight-400);
+  }
+
+  .footer__subtitle {
+    margin: 0;
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-24);
+  }
+
+  .footer__cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--lg);
+    width: 100%;
+  }
+
+  .footer__button {
+    display: inline-flex;
+    gap: var(--item-spacing-8);
+    align-items: center;
+    justify-content: center;
+    padding: var(--md) var(--lg);
+    border-radius: 999px;
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer__button:hover {
+    opacity: 0.85;
+  }
+
+  .footer__button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .footer__socials {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .footer__social {
+    padding: var(--sm) var(--lg);
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-24);
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .footer__social:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .footer__copyright {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-top: var(--lg);
+    border-top: 1px dashed #6d6d6d;
+  }
+
+  .footer__copyright p {
+    margin: 0;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    /* #8d8d8d on #262626 is 4.56:1 — clears AA for this 14px text. */
+    color: #8d8d8d;
+  }
+
+  @media (max-width: 1100px) {
+    .footer {
+      padding: var(--xxl) var(--xl) var(--xl);
+    }
+
+    .footer__title {
+      font-size: clamp(2.25rem, 7vw, 4rem);
+      letter-spacing: -0.02em;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding: var(--xl) var(--lg) var(--lg);
+    }
+
+    .footer__cta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--md);
+    }
+
+    .footer__socials {
+      flex-direction: row;
+      margin-left: calc(var(--lg) * -1);
+    }
+  }
+</style>
