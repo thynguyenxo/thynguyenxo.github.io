@@ -93,12 +93,20 @@ const year = new Date().getFullYear();
     width: 100%;
   }
 
+  /* The 30/70 split is of the space left after the gap, so the two columns
+     together never exceed the container. */
   .footer__socials-column {
-    flex: 0 0 30%;
+    flex: 0 0 calc(30% - (var(--xxl) / 2));
   }
 
+  /* The form sits at the right edge of its column, widening the gap
+     between it and the socials. */
+  /* The form sits at the right edge of its column, widening the gap
+     between it and the socials. */
   .footer__form {
-    flex: 0 0 70%;
+    display: flex;
+    flex: 0 0 calc(70% - (var(--xxl) / 2));
+    justify-content: flex-end;
   }
 
   .footer__text {
@@ -214,6 +222,7 @@ const year = new Date().getFullYear();
 
     .footer__form {
       flex-basis: auto;
+      justify-content: flex-start;
       width: 100%;
     }
   }

@@ -119,9 +119,10 @@ const wordSpans = words.map((word) => {
     .hero__fade {
       animation: hero-fade-sweep linear both;
       animation-timeline: scroll(root block);
-      /* Completes within the first 22svh, so the wash lands almost as fast
-         as the visitor scrolls. */
-      animation-range: 0 22svh;
+      /* Completes within the first 15svh, so the wash tracks the scroll
+         almost immediately. Much below this the letters flip near enough
+         together that the left-to-right wave stops reading. */
+      animation-range: 0 15svh;
     }
 
     @keyframes hero-fade-sweep {
@@ -184,7 +185,7 @@ const wordSpans = words.map((word) => {
       const update = () => {
         ticking = false;
         // Matches the CSS range above.
-        const range = window.innerHeight * 0.22;
+        const range = window.innerHeight * 0.15;
         const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
         fade.style.setProperty('--hero-fade-progress', String(progress));
       };
