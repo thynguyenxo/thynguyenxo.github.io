@@ -93,9 +93,9 @@
   --content-max-width: 112.5rem;
   /* 1800px */
 
-  /* Navbar height: the 3.5rem logo plus its --lg padding top and bottom. The
-     hero subtracts this from the viewport so the two fill the first screen. */
-  --navbar-logo-size: 3.5rem;
+  /* Navbar height: the logo plus its --lg padding top and bottom. The hero
+     subtracts this from the viewport so the two fill the first screen. */
+  --navbar-logo-size: 3rem;
   --navbar-height: calc(var(--navbar-logo-size) + (var(--lg) * 2));
 
   /* Shared left/right page gutter. Every full-width section uses this so the
