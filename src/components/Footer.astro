@@ -27,20 +27,22 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer__columns">
-      <nav class="footer__socials" aria-label="Social links">
-        <a class="footer__social" href={`mailto:${email}`} title="Email">
-          <Icon name="envelope" size="1.25rem" label="Email" />
-        </a>
-        <a
-          class="footer__social"
-          href={linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="LinkedIn"
-        >
-          <Icon name="linkedin" size="1.25rem" label="LinkedIn" />
-        </a>
-      </nav>
+      <div class="footer__socials-column">
+        <nav class="footer__socials" aria-label="Social links">
+          <a class="footer__social" href={`mailto:${email}`} title="Email">
+            <Icon name="envelope" size="1.25rem" label="Email" />
+          </a>
+          <a
+            class="footer__social"
+            href={linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="LinkedIn"
+          >
+            <Icon name="linkedin" size="1.25rem" label="LinkedIn" />
+          </a>
+        </nav>
+      </div>
 
       <div class="footer__form">
         <ContactForm
@@ -88,12 +90,15 @@ const year = new Date().getFullYear();
     display: flex;
     gap: var(--xxl);
     align-items: flex-start;
-    justify-content: space-between;
     width: 100%;
   }
 
+  .footer__socials-column {
+    flex: 0 0 30%;
+  }
+
   .footer__form {
-    flex: 0 1 30rem;
+    flex: 0 0 70%;
   }
 
   .footer__text {
@@ -145,13 +150,29 @@ const year = new Date().getFullYear();
     opacity: 0.7;
   }
 
+  /*
+   * `border-style: dashed` gives no control over dash length or gap, so the
+   * rule is a repeating gradient instead: --dash-length and --dash-gap are
+   * both adjustable.
+   */
   .footer__copyright {
+    --dash-length: 0.125rem;
+    --dash-gap: 0.375rem;
+
     width: 100%;
     max-width: var(--content-max-width);
     margin-inline: auto;
-    padding-top: var(--xl);
-    margin-top: var(--xl);
-    border-top: var(--stroke-weight-border) dashed var(--color-border-footer);
+    padding-top: var(--lg);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border-footer) 0,
+      var(--color-border-footer) var(--dash-length),
+      transparent var(--dash-length),
+      transparent calc(var(--dash-length) + var(--dash-gap))
+    );
+    background-repeat: no-repeat;
+    background-size: 100% var(--stroke-weight-border);
+    background-position: top left;
   }
 
   .footer__copyright p {

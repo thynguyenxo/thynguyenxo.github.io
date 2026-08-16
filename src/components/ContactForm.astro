@@ -87,7 +87,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
       name="message"
       rows="3"
       required
-      placeholder="Message:"
+      placeholder="MESSAGE:"
       data-autogrow></textarea>
   </div>
 
@@ -114,7 +114,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     flex-direction: column;
     gap: var(--md);
     width: 100%;
-    max-width: 30rem;
+    max-width: 40rem;
   }
 
   .contact__row {
@@ -206,6 +206,16 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
   .contact__input::placeholder {
     color: var(--color-text-on-footer-muted);
     opacity: 1;
+  }
+
+  /* The message field has no visible label, so its placeholder is styled to
+     match the labels on the rows above it. */
+  .contact__textarea::placeholder {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
   }
 
   .contact__input:focus {

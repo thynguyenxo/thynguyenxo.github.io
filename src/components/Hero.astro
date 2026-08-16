@@ -91,7 +91,7 @@ const wordSpans = words.map((word) => {
    */
   .hero__letter {
     --letter-start: calc(var(--letter-index) / var(--letter-count));
-    --letter-span: 0.35;
+    --letter-span: 0.18;
     --letter-progress: clamp(
       0,
       calc(
@@ -119,9 +119,9 @@ const wordSpans = words.map((word) => {
     .hero__fade {
       animation: hero-fade-sweep linear both;
       animation-timeline: scroll(root block);
-      /* The sweep completes over the first screen of scrolling, so it begins
-         the moment the visitor starts and finishes as the hero leaves. */
-      animation-range: 0 100svh;
+      /* Completes within the first 45svh of scrolling, so the wash keeps
+         pace with the scroll rather than trailing it. */
+      animation-range: 0 45svh;
     }
 
     @keyframes hero-fade-sweep {
@@ -183,8 +183,8 @@ const wordSpans = words.map((word) => {
 
       const update = () => {
         ticking = false;
-        // Matches the CSS range: the sweep completes over one screen.
-        const range = window.innerHeight;
+        // Matches the CSS range above.
+        const range = window.innerHeight * 0.45;
         const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
         fade.style.setProperty('--hero-fade-progress', String(progress));
       };

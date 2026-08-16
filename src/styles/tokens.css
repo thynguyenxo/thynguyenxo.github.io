@@ -30,8 +30,11 @@
   /* Color — text on the footer surface (dark in both themes) */
   --color-text-on-footer: #ffffff;
   --color-text-on-footer-muted: #8d8d8d;
-  /* 4.06:1 on both footer surfaces — clears 1.4.11 for form field rules. */
-  --color-border-on-footer: #6d6d6d;
+  /* Softer rule for the contact fields. #707070 is the design system's
+     text/secondary; it reads lighter than #6d6d6d against the footer while
+     clearing the 3:1 that WCAG 1.4.11 asks of an input boundary — 3.06:1 on
+     the light-mode footer and 4.24:1 on the dark one. */
+  --color-border-on-footer: #707070;
 
   /* Color — borders */
   --color-border-bold: #e7e7e7;
