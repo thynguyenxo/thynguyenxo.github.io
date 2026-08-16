@@ -5,6 +5,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+  # The copyright year is baked in at build time, so the site rebuilds on the
+  # 1st of each month to pick up a new one. Monthly rather than yearly for two
+  # reasons: GitHub disables cron on repositories with no activity for 60 days,
+  # which a once-a-year schedule would trip, and a missed or delayed run in
+  # January self-corrects in February instead of waiting a year.
+  schedule:
+    - cron: '15 0 1 * *'
 
 permissions:
   contents: read
