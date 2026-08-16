@@ -1,32 +1,31 @@
 ---
 import Icon from './Icon.astro';
+import ContactForm from './ContactForm.astro';
 
 interface Props {
   email: string;
+  displayName: string;
   linkedin: string;
+  /** Form service endpoint; falls back to mailto when unset. */
+  formEndpoint?: string;
 }
 
-const { email, linkedin } = Astro.props;
+const { email, displayName, linkedin, formEndpoint } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
   <div class="footer__container">
-    <div class="footer__text">
-      <h2 class="footer__title">
-        <span class="footer__mark" aria-hidden="true">✺</span>
-        <span>let's connect</span>
-      </h2>
-      <p class="footer__subtitle">
-        Feel free to reach out for collaborations or just say hi :)
-      </p>
-    </div>
-
-    <div class="footer__cta">
-      <a class="footer__button" href={`mailto:${email}`}>
-        <span>Work with me</span>
-        <Icon name="envelope" size="1.25rem" />
-      </a>
+    <div class="footer__left">
+      <div class="footer__text">
+        <h2 class="footer__title">
+          <span class="footer__mark" aria-hidden="true">✺</span>
+          <span>let's connect</span>
+        </h2>
+        <p class="footer__subtitle">
+          Feel free to reach out for collaborations or just say hi :)
+        </p>
+      </div>
 
       <nav class="footer__socials" aria-label="Social links">
         <a class="footer__social" href={`mailto:${email}`}>
@@ -44,6 +43,14 @@ const year = new Date().getFullYear();
         </a>
       </nav>
     </div>
+
+    <div class="footer__right">
+      <ContactForm
+        email={email}
+        displayName={displayName}
+        endpoint={formEndpoint}
+      />
+    </div>
   </div>
 
   <div class="footer__copyright">
@@ -57,7 +64,8 @@ const year = new Date().getFullYear();
     flex-direction: column;
     justify-content: space-between;
     gap: var(--xxl);
-    min-height: 31.25rem; /* 500px */
+    /* The form and copyright together own the last screen. */
+    min-height: 100svh;
     padding: var(--xxl) var(--footer-gutter) var(--xl);
     background: var(--color-background-footer);
     /* The footer surface is dark in both themes, so its text colors are fixed
@@ -67,11 +75,20 @@ const year = new Date().getFullYear();
 
   .footer__container {
     display: flex;
-    flex-direction: column;
-    gap: var(--lg);
+    flex: 1;
+    gap: var(--xxl);
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     max-width: var(--content-max-width);
     margin-inline: auto;
+  }
+
+  .footer__left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    justify-content: center;
   }
 
   .footer__text {
@@ -101,43 +118,11 @@ const year = new Date().getFullYear();
     line-height: var(--line-height-24);
   }
 
-  .footer__cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--lg);
-    width: 100%;
-  }
-
-  .footer__button {
-    display: inline-flex;
-    gap: var(--item-spacing-8);
-    align-items: center;
-    justify-content: center;
-    padding: var(--md) var(--lg);
-    border-radius: 62.4375rem;
-    background: var(--color-background-inverse);
-    color: var(--color-text-inverse);
-    font-size: var(--font-size-16);
-    line-height: var(--line-height-24);
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .footer__button:hover {
-    opacity: 0.85;
-  }
-
-  .footer__button svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
+  /* The socials now sit where the "Work with me" button used to. */
   .footer__socials {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+    align-items: center;
+    margin-left: calc(var(--lg) * -1);
   }
 
   .footer__social {
@@ -155,6 +140,12 @@ const year = new Date().getFullYear();
   .footer__social:hover {
     text-decoration: underline;
     text-underline-offset: 0.25em;
+  }
+
+  .footer__right {
+    display: flex;
+    flex: 0 1 30rem;
+    justify-content: flex-end;
   }
 
   .footer__copyright {
@@ -181,26 +172,27 @@ const year = new Date().getFullYear();
       padding-block: var(--xxl) var(--xl);
     }
 
+    .footer__container {
+      flex-direction: column;
+      gap: var(--xl);
+      align-items: stretch;
+      justify-content: center;
+    }
+
     .footer__title {
       font-size: clamp(2.25rem, 7vw, 4rem);
       letter-spacing: -0.02em;
+    }
+
+    .footer__right {
+      flex-basis: auto;
+      justify-content: flex-start;
     }
   }
 
   @media (max-width: 640px) {
     .footer {
       padding-block: var(--xl) var(--lg);
-    }
-
-    .footer__cta {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--md);
-    }
-
-    .footer__socials {
-      flex-direction: row;
-      margin-left: calc(var(--lg) * -1);
     }
   }
 </style>

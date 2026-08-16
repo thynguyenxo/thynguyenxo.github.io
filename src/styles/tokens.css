@@ -30,6 +30,8 @@
   /* Color — text on the footer surface (dark in both themes) */
   --color-text-on-footer: #ffffff;
   --color-text-on-footer-muted: #8d8d8d;
+  /* 4.06:1 on both footer surfaces — clears 1.4.11 for form field rules. */
+  --color-border-on-footer: #6d6d6d;
 
   /* Color — borders */
   --color-border-bold: #e7e7e7;
@@ -42,7 +44,7 @@
     Consolas, 'Liberation Mono', monospace;
 
   /* Typography — sizes */
-  --font-size-14: 0.875rem;
+  --font-size-14: 0.75rem;
   --font-size-16: 1rem;
   --font-size-18: 1.125rem;
   --font-size-24: 1.5rem;
@@ -83,8 +85,10 @@
   --stroke-weight-2: 2px;
 
   /* Layout */
-  --page-max-width: 112.5rem; /* 1800px */
-  --content-max-width: 112.5rem; /* 1800px */
+  --page-max-width: 112.5rem;
+  /* 1800px */
+  --content-max-width: 112.5rem;
+  /* 1800px */
 
   /* Navbar height: the 3.5rem logo plus its --lg padding top and bottom. The
      hero subtracts this from the viewport so the two fill the first screen. */

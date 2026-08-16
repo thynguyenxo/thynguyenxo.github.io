@@ -1,12 +1,15 @@
 ---
-// Display type from the Figma hero. The closing line is rendered in
-// text/tertiary, matching the design's two-tone treatment.
+// Display type from the Figma hero. The closing phrase starts in the primary
+// text color and fades to tertiary as the page scrolls, so the two-tone
+// treatment in the design becomes the resting state rather than the initial one.
 ---
 
 <section class="hero">
   <h1 class="hero__headline">
     I enjoy designing intuitive and polished digital products that help people
-    — through <span class="hero__accent">visual clarity and systems thinking</span>
+    — through <span class="hero__accent" data-hero-accent
+      >visual clarity and systems thinking</span
+    >
   </h1>
 </section>
 
@@ -36,16 +39,55 @@
     color: var(--color-text-main);
   }
 
+  /*
+   * Starts at the headline color and lands on tertiary. `--hero-accent-progress`
+   * is driven by scroll — by the animation-timeline below where it is
+   * supported, and by a small scroll listener everywhere else.
+   */
   .hero__accent {
-    color: var(--color-text-tertiary);
+    color: color-mix(
+      in oklab,
+      var(--color-text-tertiary) calc(var(--hero-accent-progress, 0) * 100%),
+      var(--color-text-main)
+    );
   }
 
-  /* The display size is fluid below the 1200px canvas so the headline keeps
+  /*
+   * Scroll-driven animation where available: no JS, and it runs on the
+   * compositor. The fallback listener below stays inert when this applies.
+   */
+  @supports (animation-timeline: view()) {
+    .hero__accent {
+      animation: hero-accent-fade linear both;
+      animation-timeline: view();
+      /* Complete the change over the first stretch of the scroll out. */
+      animation-range: exit-crossing 0% exit-crossing 60%;
+    }
+
+    @keyframes hero-accent-fade {
+      from {
+        --hero-accent-progress: 0;
+      }
+      to {
+        --hero-accent-progress: 1;
+      }
+    }
+  }
+
+  /* Respect a reduced-motion preference by settling on the design's resting
+     two-tone state immediately. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__accent {
+      animation: none;
+      color: var(--color-text-tertiary);
+    }
+  }
+
+  /* The display size is fluid below the design canvas so the headline keeps
      its proportions instead of overflowing. */
   @media (max-width: 1100px) {
     .hero__headline {
       font-size: clamp(2.25rem, 5.8vw, 4rem);
-      max-width: 22ch;
     }
   }
 
@@ -59,3 +101,55 @@
     }
   }
 </style>
+
+<script>
+  // `--hero-accent-progress` is a plain custom property, so it needs
+  // registering before it can be interpolated rather than flipping at 50%.
+  if (typeof CSS !== 'undefined' && 'registerProperty' in CSS) {
+    try {
+      CSS.registerProperty({
+        name: '--hero-accent-progress',
+        syntax: '<number>',
+        inherits: false,
+        initialValue: '0',
+      });
+    } catch {
+      // Already registered on a soft navigation — nothing to do.
+    }
+  }
+
+  // Fallback for browsers without scroll-driven animations. Skipped when the
+  // CSS above is doing the work, and when the visitor prefers reduced motion.
+  const supportsScrollTimeline =
+    typeof CSS !== 'undefined' && CSS.supports('animation-timeline: view()');
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  if (!supportsScrollTimeline && !prefersReducedMotion) {
+    const accent = document.querySelector<HTMLElement>('[data-hero-accent]');
+    const hero = document.querySelector<HTMLElement>('.hero');
+
+    if (accent && hero) {
+      let ticking = false;
+
+      const update = () => {
+        ticking = false;
+        // Progress runs 0 → 1 across the first 60% of scrolling the hero away.
+        const range = hero.offsetHeight * 0.6;
+        const progress = range > 0 ? Math.min(window.scrollY / range, 1) : 1;
+        accent.style.setProperty('--hero-accent-progress', String(progress));
+      };
+
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+  }
+</script>

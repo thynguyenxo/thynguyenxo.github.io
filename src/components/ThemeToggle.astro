@@ -2,6 +2,11 @@
 import Icon from './Icon.astro';
 ---
 
+{/*
+  Both icons ship in the markup and CSS reveals the relevant one, so the
+  control is correct on first paint with no JS needed to pick an icon.
+  The visible glyph shows what clicking will switch *to*.
+*/}
 <button
   type="button"
   class="theme-toggle"
@@ -10,7 +15,8 @@ import Icon from './Icon.astro';
   title="Toggle dark mode"
 >
   <span class="visually-hidden">Toggle dark mode</span>
-  <Icon name="circle-half-stroke" size="1rem" class="theme-toggle__icon" />
+  <Icon name="moon" size="1.125rem" class="theme-toggle__icon theme-toggle__icon--moon" />
+  <Icon name="sun" size="1.25rem" class="theme-toggle__icon theme-toggle__icon--sun" />
 </button>
 
 <style>
@@ -29,12 +35,51 @@ import Icon from './Icon.astro';
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Rotate the filled half to mirror the active theme. */
+  /* Stack both glyphs in the same grid cell so swapping one for the other
+     never shifts the button's size. */
   .theme-toggle :global(.theme-toggle__icon) {
-    transition: transform 0.35s ease;
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
   }
 
-  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon) {
-    transform: rotate(180deg);
+  /* Light is the default: offer the moon. */
+  .theme-toggle :global(.theme-toggle__icon--sun) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--moon) {
+      opacity: 0;
+      transform: rotate(90deg) scale(0.6);
+    }
+
+    :global(:root:not([data-theme='light'])) .theme-toggle :global(.theme-toggle__icon--sun) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* An explicit choice overrides the OS preference in both directions. */
+  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--moon) {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+
+  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon--sun) {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--moon) {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(:root[data-theme='light']) .theme-toggle :global(.theme-toggle__icon--sun) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
   }
 </style>

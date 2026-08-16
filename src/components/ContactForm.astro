@@ -1,0 +1,373 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Real address — used for the copy button and the mailto fallback. */
+  email: string;
+  /** Shown in the To: field instead of the address itself. */
+  displayName: string;
+  /**
+   * Endpoint of a form service (Formspree, Web3Forms, …). When absent the
+   * form falls back to opening the visitor's mail client, so it still works
+   * before the account exists.
+   */
+  endpoint?: string;
+}
+
+const { email, displayName, endpoint } = Astro.props;
+---
+
+<form
+  class="contact"
+  data-contact-form
+  data-email={email}
+  method="POST"
+  action={endpoint ?? ''}
+>
+  <div class="contact__row">
+    <label class="contact__label" for="contact-to">To:</label>
+    <div class="contact__to">
+      <span class="contact__recipient">{displayName}</span>
+      <button
+        type="button"
+        class="contact__copy"
+        data-copy-email
+        aria-label={`Copy ${displayName}'s email address`}
+      >
+        <Icon name="copy" size="1rem" class="contact__copy-icon contact__copy-icon--idle" />
+        <Icon name="check" size="1rem" class="contact__copy-icon contact__copy-icon--done" />
+        <span class="contact__copy-text" data-copy-label>Copy</span>
+      </button>
+      {/* Keeps the recipient in the payload without exposing it in markup. */}
+      <input type="hidden" id="contact-to" name="to" value={displayName} />
+    </div>
+  </div>
+
+  <div class="contact__row">
+    <label class="contact__label" for="contact-from">From:</label>
+    <input
+      class="contact__input"
+      id="contact-from"
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      placeholder="your@email.com"
+    />
+  </div>
+
+  <div class="contact__row">
+    <label class="contact__label" for="contact-subject">Subject:</label>
+    <input
+      class="contact__input"
+      id="contact-subject"
+      name="subject"
+      type="text"
+      required
+      placeholder="What's this about?"
+    />
+  </div>
+
+  <div class="contact__row contact__row--message">
+    <label class="contact__label" for="contact-message">Message:</label>
+    <textarea
+      class="contact__input contact__textarea"
+      id="contact-message"
+      name="message"
+      rows="4"
+      required
+      placeholder="Tell me about it…"></textarea>
+  </div>
+
+  {/* Bots fill hidden fields; humans never see this one. */}
+  <p class="contact__honeypot" aria-hidden="true">
+    <label>
+      Leave this field empty
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+    </label>
+  </p>
+
+  <div class="contact__actions">
+    <p class="contact__status" data-contact-status role="status" aria-live="polite"></p>
+    <button type="submit" class="contact__send">
+      <span>Send</span>
+      <Icon name="paper-plane" size="1rem" />
+    </button>
+  </div>
+</form>
+
+<style>
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--md);
+    width: 100%;
+    max-width: 30rem;
+  }
+
+  .contact__row {
+    display: flex;
+    gap: var(--md);
+    align-items: baseline;
+    padding-bottom: var(--sm);
+    border-bottom: var(--stroke-weight-border) solid
+      var(--color-border-on-footer);
+  }
+
+  .contact__row--message {
+    align-items: flex-start;
+  }
+
+  .contact__label {
+    flex-shrink: 0;
+    width: 5rem;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-on-footer-muted);
+  }
+
+  .contact__to {
+    display: flex;
+    flex: 1;
+    gap: var(--md);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .contact__recipient {
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
+    color: var(--color-text-on-footer);
+  }
+
+  .contact__copy {
+    display: inline-grid;
+    grid-auto-flow: column;
+    gap: var(--item-spacing-8);
+    align-items: center;
+    padding: var(--item-spacing-xxs) var(--sm);
+    border: var(--stroke-weight-border) solid var(--color-border-on-footer);
+    border-radius: 0.25rem;
+    background: none;
+    color: var(--color-text-on-footer-muted);
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .contact__copy:hover {
+    color: var(--color-text-on-footer);
+    border-color: var(--color-text-on-footer);
+  }
+
+  /* Both glyphs share a cell so the button keeps its width when it flips. */
+  .contact__copy :global(.contact__copy-icon) {
+    grid-area: 1 / 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .contact__copy :global(.contact__copy-icon--done) {
+    opacity: 0;
+  }
+
+  .contact__copy[data-copied='true'] :global(.contact__copy-icon--idle) {
+    opacity: 0;
+  }
+
+  .contact__copy[data-copied='true'] :global(.contact__copy-icon--done) {
+    opacity: 1;
+  }
+
+  .contact__input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-on-footer);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
+  }
+
+  .contact__input::placeholder {
+    color: var(--color-text-on-footer-muted);
+    opacity: 1;
+  }
+
+  .contact__input:focus {
+    outline: none;
+  }
+
+  /* The row carries the focus indicator, since the input itself is borderless. */
+  .contact__row:focus-within {
+    border-bottom-color: var(--color-text-on-footer);
+  }
+
+  .contact__textarea {
+    resize: vertical;
+    min-height: 4.5rem;
+  }
+
+  .contact__honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .contact__actions {
+    display: flex;
+    gap: var(--md);
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--sm);
+  }
+
+  .contact__status {
+    margin: 0;
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    color: var(--color-text-on-footer-muted);
+  }
+
+  .contact__status[data-state='error'] {
+    color: #ffb4a8;
+  }
+
+  .contact__send {
+    display: inline-flex;
+    gap: var(--item-spacing-8);
+    align-items: center;
+    justify-content: center;
+    padding: var(--md) var(--lg);
+    border: 0;
+    border-radius: 62.4375rem;
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .contact__send:hover {
+    opacity: 0.85;
+  }
+
+  .contact__send[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  @media (max-width: 640px) {
+    .contact {
+      max-width: none;
+    }
+
+    .contact__label {
+      width: 4.5rem;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const email = form.dataset.email ?? '';
+    const status = form.querySelector<HTMLElement>('[data-contact-status]');
+    const copyButton = form.querySelector<HTMLButtonElement>('[data-copy-email]');
+    const copyLabel = form.querySelector<HTMLElement>('[data-copy-label]');
+
+    // Copy the real address, which is never rendered into the page text.
+    copyButton?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(email);
+      } catch {
+        // Clipboard can be blocked; fall back to a temporary selection.
+        const scratch = document.createElement('textarea');
+        scratch.value = email;
+        scratch.setAttribute('readonly', '');
+        scratch.style.position = 'fixed';
+        scratch.style.opacity = '0';
+        document.body.append(scratch);
+        scratch.select();
+        try {
+          document.execCommand('copy');
+        } catch {
+          return;
+        } finally {
+          scratch.remove();
+        }
+      }
+
+      copyButton.dataset.copied = 'true';
+      if (copyLabel) copyLabel.textContent = 'Copied';
+
+      window.setTimeout(() => {
+        delete copyButton.dataset.copied;
+        if (copyLabel) copyLabel.textContent = 'Copy';
+      }, 2000);
+    });
+
+    const setStatus = (message: string, state?: 'error') => {
+      if (!status) return;
+      status.textContent = message;
+      if (state) status.dataset.state = state;
+      else delete status.dataset.state;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      const action = form.getAttribute('action');
+
+      // Without a configured endpoint, hand off to the visitor's mail client
+      // so the form still does something useful.
+      if (!action) {
+        event.preventDefault();
+        const data = new FormData(form);
+        const subject = encodeURIComponent(String(data.get('subject') ?? ''));
+        const body = encodeURIComponent(
+          `${String(data.get('message') ?? '')}\n\nFrom: ${String(data.get('email') ?? '')}`
+        );
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        setStatus('Opening your email app…');
+        return;
+      }
+
+      event.preventDefault();
+      const submit = form.querySelector<HTMLButtonElement>('.contact__send');
+      submit?.setAttribute('disabled', '');
+      setStatus('Sending…');
+
+      try {
+        const response = await fetch(action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+
+        if (!response.ok) throw new Error(String(response.status));
+
+        form.reset();
+        setStatus('Thanks — I’ll be in touch.');
+      } catch {
+        setStatus('That didn’t send. Please email me directly.', 'error');
+      } finally {
+        submit?.removeAttribute('disabled');
+      }
+    });
+  }
+</script>

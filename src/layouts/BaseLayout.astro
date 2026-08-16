@@ -23,9 +23,14 @@ const {
     {/*
       GitHub Pages cannot send custom response headers, so the policy is
       delivered in a meta tag. Everything the site needs is same-origin: no
-      third-party scripts, styles, fonts, frames or form posts. 'unsafe-inline'
-      covers Astro's inlined styles and the pre-paint theme script; there is no
+      third-party scripts, styles, fonts or frames. 'unsafe-inline' covers
+      Astro's inlined styles and the pre-paint theme script; there is no
       user-supplied content on the page for it to be leveraged against.
+
+      NOTE: wiring the contact form to a form service (Formspree, Web3Forms)
+      means adding that origin to BOTH `connect-src` (the fetch) and
+      `form-action` (the no-JS fallback POST). Without it the browser blocks
+      the submission.
     */}
     <meta
       http-equiv="Content-Security-Policy"

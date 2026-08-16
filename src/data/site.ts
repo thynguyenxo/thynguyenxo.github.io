@@ -10,6 +10,12 @@ export const site = {
   role: 'Product designer',
   email: 'thynguyenxo@gmail.com',
   linkedin: 'https://www.linkedin.com/in/thynguyenxo/',
+  /**
+   * Endpoint for the footer contact form — paste the URL from Formspree or
+   * Web3Forms here. While it is empty the form falls back to opening the
+   * visitor's mail client, so it still works.
+   */
+  formEndpoint: '',
 } as const;
 
 export interface Project {

@@ -61,7 +61,12 @@ const cover = covers[`../assets/${project.cover}`].default;
     </nav>
   </main>
 
-  <Footer email={site.email} linkedin={site.linkedin} />
+  <Footer
+    email={site.email}
+    displayName={site.name}
+    linkedin={site.linkedin}
+    formEndpoint={site.formEndpoint || undefined}
+  />
 </BaseLayout>
 
 <style>
