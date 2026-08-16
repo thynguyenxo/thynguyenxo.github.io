@@ -1,7 +1,5 @@
 ---
-// The navbar's brightness control. Figma shows a single filled circle; it is
-// rendered here as a half-filled disc so the icon itself signals which way the
-// switch goes, and it is a real <button> so it is keyboard reachable.
+import Icon from './Icon.astro';
 ---
 
 <button
@@ -12,17 +10,7 @@
   title="Toggle dark mode"
 >
   <span class="visually-hidden">Toggle dark mode</span>
-  <svg
-    class="theme-toggle__icon"
-    viewBox="0 0 16 16"
-    width="16"
-    height="16"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
-    <path d="M8 0.75 A7.25 7.25 0 0 1 8 15.25 Z" fill="currentColor"></path>
-  </svg>
+  <Icon name="circle-half-stroke" size="1rem" class="theme-toggle__icon" />
 </button>
 
 <style>
@@ -41,14 +29,12 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .theme-toggle__icon {
-    width: 1rem;
-    height: 1rem;
+  /* Rotate the filled half to mirror the active theme. */
+  .theme-toggle :global(.theme-toggle__icon) {
     transition: transform 0.35s ease;
   }
 
-  /* Rotate the filled half to mirror the active theme. */
-  :global(:root[data-theme='dark']) .theme-toggle__icon {
+  :global(:root[data-theme='dark']) .theme-toggle :global(.theme-toggle__icon) {
     transform: rotate(180deg);
   }
 </style>

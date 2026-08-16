@@ -9,6 +9,9 @@
  * Theme resolution: light is the base; dark applies when the visitor's OS
  * asks for it OR when they choose it explicitly. An explicit choice is
  * stamped on <html data-theme>, and always wins over the OS preference.
+ *
+ * Sizes are rem so the layout scales with the visitor's browser font size.
+ * Values that must not scale (hairline borders) stay in px.
  */
 
 :root {
@@ -30,6 +33,7 @@
 
   /* Color — borders */
   --color-border-bold: #e7e7e7;
+  --color-border-footer: #6d6d6d;
 
   /* Typography — families */
   --font-family-primary: 'DM Sans', ui-sans-serif, system-ui, -apple-system,
@@ -45,7 +49,7 @@
   --font-size-28: 1.75rem;
   --font-size-64: 4rem;
 
-  /* Typography — line heights (unitless: value / font-size) */
+  /* Typography — line heights (unitless: design value / font size) */
   --line-height-20: 1.4286;
   --line-height-24: 1.5;
   --line-height-28: 1.5556;
@@ -58,10 +62,10 @@
   --font-weight-regular: 500;
   --font-weight-medium: 500;
 
-  /* Typography — letter spacing */
-  --letter-spacing-0-28: 0.0175em; /* 0.28px / 16px */
-  --letter-spacing-1-12: -0.04em; /* -1.12px / 28px */
-  --letter-spacing-2-56: -0.04em; /* -2.56px / 64px */
+  /* Typography — letter spacing (em, so it tracks the font size) */
+  --letter-spacing-0-28: 0.0175em;
+  --letter-spacing-1-12: -0.04em;
+  --letter-spacing-2-56: -0.04em;
 
   /* Spacing */
   --reset: 0;
@@ -74,16 +78,37 @@
   --xxl: 5rem;
   --3xl: 10rem;
 
-  /* Borders */
+  /* Borders — px so hairlines stay crisp at any zoom */
   --stroke-weight-border: 1px;
   --stroke-weight-2: 2px;
 
   /* Layout */
-  --page-max-width: 1200px;
-  --content-max-width: 1800px;
+  --page-max-width: 75rem;
+  --content-max-width: 112.5rem;
+
+  /* Shared left/right page gutter. Every full-width section uses this so the
+     navbar, hero, cards and footer align on one edge. */
+  --page-gutter: var(--xxl);
+  /* The footer is inset further than the page body, per the design. */
+  --footer-gutter: var(--3xl);
 }
 
-/* Dark palette, shared by the OS-preference and explicit-choice selectors. */
+@media (max-width: 1100px) {
+  :root {
+    --page-gutter: var(--xl);
+    --footer-gutter: var(--xl);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-gutter: var(--lg);
+    --footer-gutter: var(--lg);
+  }
+}
+
+/* Dark palette — applied when the OS asks for it and the visitor has not
+   explicitly chosen light. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --color-background-primary: #262626;
@@ -99,6 +124,7 @@
   }
 }
 
+/* An explicit dark choice wins over the OS preference. */
 :root[data-theme='dark'] {
   --color-background-primary: #262626;
   --color-background-inverse: #ffffff;

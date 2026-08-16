@@ -1,0 +1,70 @@
+---
+/**
+ * Renders a Font Awesome Free icon inline.
+ *
+ * The SVG is read from the package at build time and inlined, so nothing from
+ * Font Awesome reaches the browser — no icon font, no runtime JS, no extra
+ * request. Add a new icon by adding one entry to `ICONS`.
+ *
+ * Icons are CC BY 4.0 (Font Awesome Free 7). See ATTRIBUTION in NOTES.md.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+
+const ICONS = {
+  envelope: 'regular/envelope.svg',
+  'arrow-up-right-from-square': 'solid/arrow-up-right-from-square.svg',
+  'circle-half-stroke': 'solid/circle-half-stroke.svg',
+  'arrow-left': 'solid/arrow-left.svg',
+  linkedin: 'brands/linkedin-in.svg',
+} as const;
+
+export type IconName = keyof typeof ICONS;
+
+interface Props {
+  name: IconName;
+  /** Edge length; any CSS length. Defaults to 1.5rem (24px). */
+  size?: string;
+  /** Accessible label. Omit for decorative icons (the default). */
+  label?: string;
+  class?: string;
+}
+
+const { name, size = '1.5rem', label, class: className } = Astro.props;
+
+const svgPath = path.join(
+  process.cwd(),
+  'node_modules/@fortawesome/fontawesome-free/svgs',
+  ICONS[name]
+);
+
+const raw = fs.readFileSync(svgPath, 'utf8');
+const viewBox = raw.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 512 512';
+// Keep only the drawing instructions; the wrapper below supplies sizing and
+// accessibility so they stay under this component's control.
+const body = raw
+  .replace(/^[\s\S]*?<svg[^>]*>/, '')
+  .replace(/<\/svg>\s*$/, '')
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .trim();
+---
+
+<svg
+  class:list={['icon', className]}
+  viewBox={viewBox}
+  width={size}
+  height={size}
+  fill="currentColor"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+  set:html={body}
+/>
+
+<style>
+  .icon {
+    display: block;
+    flex-shrink: 0;
+  }
+</style>
