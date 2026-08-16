@@ -48,17 +48,43 @@ import logo from '../assets/logo.svg?raw';
     width: var(--navbar-logo-size);
     height: var(--navbar-logo-size);
     color: var(--color-text-main);
-    /* Pivot at the bottom, so the tilt reads as the teabag swinging from its
-       base rather than the whole square rotating. */
-    transform-origin: 50% 85%;
-    /* Overshoots past the resting angle and settles back, which is what gives
-       the tilt its bounce. */
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Pivot near the top, so the tilt reads as the teabag swinging from its
+       string rather than the whole square rotating. */
+    transform-origin: 50% 15%;
+    /* Used on the way out: an unwound spring returning to rest. */
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
   }
 
+  /*
+   * On the way in, a keyframed spring rather than a transition: a single
+   * cubic-bezier can only overshoot once, so it lands with a nudge. Swinging
+   * past the mark and wobbling back in decreasing steps is what makes it feel
+   * physical.
+   */
   .navbar__identity:hover .navbar__logo,
   .navbar__identity:focus-visible .navbar__logo {
-    transform: rotate(-8deg);
+    animation: logo-swing 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes logo-swing {
+    0% {
+      transform: rotate(0deg);
+    }
+    30% {
+      transform: rotate(11deg);
+    }
+    55% {
+      transform: rotate(5.5deg);
+    }
+    75% {
+      transform: rotate(9deg);
+    }
+    90% {
+      transform: rotate(7.4deg);
+    }
+    100% {
+      transform: rotate(8deg);
+    }
   }
 
   /* A tilt is decorative, so it is dropped entirely when motion is reduced. */
@@ -69,6 +95,7 @@ import logo from '../assets/logo.svg?raw';
 
     .navbar__identity:hover .navbar__logo,
     .navbar__identity:focus-visible .navbar__logo {
+      animation: none;
       transform: none;
     }
   }
