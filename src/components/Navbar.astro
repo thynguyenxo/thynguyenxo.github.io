@@ -71,25 +71,33 @@ import teabagPulled from '../assets/teabag-pulled.svg?raw';
 
   /*
    * The two states stack, so swapping one for the other never shifts layout.
-   * The fade is delayed until the tilt has straightened, so the resting bag
-   * hands over to the pulled one at the same 0deg angle rather than
-   * dissolving while still leaning.
+   *
+   * Both are inlined in the markup, so nothing loads mid-interaction. The
+   * fade overlaps the rotation instead of waiting for it: the swing spends
+   * most of its time near level, so the shapes already coincide while the
+   * crossfade runs, and there is no hold before the swap.
    */
   .navbar__logo-state {
     position: absolute;
     inset: 0;
     display: block;
-    transition: opacity 0.18s ease;
+    transition: opacity 0.3s ease;
   }
 
-  /* The pulled art fades in as the tilt reaches level. The resting art holds
-     underneath until then, so the mark is never blank mid-swap. */
-  .navbar__logo-state--pulled {
-    transition-delay: 0.3s;
+  /*
+   * On the way in the pulled art leads slightly, so the mark never thins
+   * mid-swap. The stagger is scoped to the hovered state: applied to the
+   * base rule it also reverses on the way out, which made the logo dip to
+   * half opacity as both fades crossed.
+   */
+  .navbar__identity:hover .navbar__logo-state--rest,
+  .navbar__identity:focus-visible .navbar__logo-state--rest {
+    transition-delay: 0.06s;
   }
 
-  .navbar__logo-state--rest {
-    transition-delay: 0.36s;
+  .navbar__identity:hover .navbar__logo-state--pulled,
+  .navbar__identity:focus-visible .navbar__logo-state--pulled {
+    transition-duration: 0.26s;
   }
 
   .navbar__logo-state--pulled {
@@ -113,19 +121,20 @@ import teabagPulled from '../assets/teabag-pulled.svg?raw';
    */
   .navbar__identity:hover .navbar__logo,
   .navbar__identity:focus-visible .navbar__logo {
-    animation: logo-pull 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: logo-pull 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   /*
-   * Straightens from the resting tilt to upright, overshooting once, and is
-   * level by the time the crossfade runs so the two variants line up.
+   * Straightens from the resting tilt to upright with a single small
+   * overshoot. It reaches roughly level early and stays there, so the
+   * crossfade can run alongside without the variants appearing misaligned.
    */
   @keyframes logo-pull {
     0% {
       transform: translateY(0) rotate(8deg);
     }
-    50% {
-      transform: translateY(3px) rotate(-2.5deg);
+    35% {
+      transform: translateY(3px) rotate(-1.6deg);
     }
     100% {
       transform: translateY(1.4px) rotate(0deg);
