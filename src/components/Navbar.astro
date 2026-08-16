@@ -69,12 +69,27 @@ import teabagPulled from '../assets/teabag-pulled.svg?raw';
     transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
   }
 
-  /* The two states stack, so swapping one for the other never shifts layout. */
+  /*
+   * The two states stack, so swapping one for the other never shifts layout.
+   * The fade is delayed until the tilt has straightened, so the resting bag
+   * hands over to the pulled one at the same 0deg angle rather than
+   * dissolving while still leaning.
+   */
   .navbar__logo-state {
     position: absolute;
     inset: 0;
     display: block;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.18s ease;
+  }
+
+  /* The pulled art fades in as the tilt reaches level. The resting art holds
+     underneath until then, so the mark is never blank mid-swap. */
+  .navbar__logo-state--pulled {
+    transition-delay: 0.3s;
+  }
+
+  .navbar__logo-state--rest {
+    transition-delay: 0.36s;
   }
 
   .navbar__logo-state--pulled {
@@ -101,13 +116,15 @@ import teabagPulled from '../assets/teabag-pulled.svg?raw';
     animation: logo-pull 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  /* Pulled straight and tugged down: one overshoot past upright, then it
-     comes to rest at 0 without oscillating around it. */
+  /*
+   * Straightens from the resting tilt to upright, overshooting once, and is
+   * level by the time the crossfade runs so the two variants line up.
+   */
   @keyframes logo-pull {
     0% {
       transform: translateY(0) rotate(8deg);
     }
-    45% {
+    50% {
       transform: translateY(3px) rotate(-2.5deg);
     }
     100% {
