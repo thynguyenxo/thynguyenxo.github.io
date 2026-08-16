@@ -64,13 +64,18 @@ const year = new Date().getFullYear();
     /* The form and copyright together own the last screen. */
     min-height: 100svh;
     padding: var(--xxl) var(--page-gutter) var(--xl);
+    /* The background still spans the viewport, but the content inside is
+       capped and centred like every other section, so wide screens gain
+       side padding rather than a wider footer. */
     background: var(--color-background-footer);
     /* The footer surface is dark in both themes, so its text colors are fixed
        rather than theme-dependent. */
     color: var(--color-text-on-footer);
   }
 
-  /* Heading first, then the socials and form side by side beneath it. */
+  /* Heading first, then the socials and form side by side beneath it.
+     The cap subtracts the gutters so the footer's content lines up with the
+     navbar, hero and cards rather than running 160px wider. */
   .footer__container {
     display: flex;
     flex: 1;
@@ -78,7 +83,7 @@ const year = new Date().getFullYear();
     gap: var(--xl);
     justify-content: center;
     width: 100%;
-    max-width: var(--content-max-width);
+    max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
     margin-inline: auto;
   }
 
@@ -155,7 +160,7 @@ const year = new Date().getFullYear();
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: var(--content-max-width);
+    max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
     margin-inline: auto;
     padding-top: var(--lg);
     background-image: repeating-linear-gradient(
