@@ -66,6 +66,9 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
 
 <style>
   .card {
+    /* Anchors the title link's ::after overlay, which makes the whole card
+       clickable while keeping a single link in the accessibility tree. */
+    position: relative;
     display: flex;
     gap: var(--xl);
     align-items: flex-end;
@@ -125,13 +128,36 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
   }
 
   .card__link {
+    color: inherit;
     text-decoration: none;
   }
 
+  /* Spans the whole card so the image and copy are both clickable. */
   .card__link::after {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 1;
+  }
+
+  /* The focus ring belongs on the whole card, not the inline text box, since
+     the overlay is what visitors actually click. */
+  .card__link:focus-visible {
+    outline: none;
+  }
+
+  .card:has(.card__link:focus-visible) {
+    outline: 2px solid var(--color-text-main);
+    outline-offset: 8px;
+    border-radius: 4px;
+  }
+
+  .card:has(.card__link:hover) .card__arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .card__arrow {
+    transition: transform 0.2s ease;
   }
 
   .card__body {
@@ -144,7 +170,6 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
   }
 
   .card__image {
-    position: relative;
     flex: 1 1 auto;
     width: 880px;
     max-width: 100%;

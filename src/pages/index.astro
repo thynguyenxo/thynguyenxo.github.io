@@ -4,33 +4,39 @@ import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
-import tenminImage from '../assets/figma/tenmin.png';
+import { site, projects } from '../data/site';
 
-const projects = [
-  {
-    client: 'Tenmin',
-    title: 'Reimagined the onboarding experience to build trust with an AI tutor',
-    description:
-      'I designed the onboarding experience for an AI-powered language learning mobile app that helps build emotional trust with an AI tutor and a review screen that makes daily practice feel effortless and rewarding.',
-    image: tenminImage,
-    imageAlt:
-      'Three Tenmin app screens showing the speaking-practice onboarding flow',
-  },
-];
+// Eagerly resolved so each project's cover can be looked up by its `cover`
+// path at build time.
+const covers = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/**/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true }
+);
 ---
 
-<BaseLayout title="Thy Nguyen">
+<BaseLayout title={site.name}>
   <Navbar />
 
   <main class="main">
     <Hero />
 
     <section class="projects" aria-label="Selected work">
-      {projects.map((project) => <ProjectCard {...project} />)}
+      {
+        projects.map((project) => (
+          <ProjectCard
+            client={project.client}
+            title={project.title}
+            description={project.description}
+            image={covers[`../assets/${project.cover}`].default}
+            imageAlt={project.coverAlt}
+            href={`/${project.slug}`}
+          />
+        ))
+      }
     </section>
   </main>
 
-  <Footer email="thynguyenxo@gmail.com" linkedin="https://www.linkedin.com/" />
+  <Footer email={site.email} linkedin={site.linkedin} />
 </BaseLayout>
 
 <style>

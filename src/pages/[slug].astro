@@ -1,0 +1,164 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { site, projects } from '../data/site';
+
+// One page per entry in `projects`, so a new project needs no new route file.
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+
+const covers = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/**/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true }
+);
+const cover = covers[`../assets/${project.cover}`].default;
+---
+
+<BaseLayout
+  title={`${project.client} — ${site.name}`}
+  description={project.description}
+>
+  <Navbar />
+
+  <main class="project">
+    <header class="project__header">
+      <p class="project__client">{project.client}</p>
+      <h1 class="project__title">{project.title}</h1>
+      <p class="project__summary">{project.description}</p>
+    </header>
+
+    <div class="project__cover">
+      <Image
+        src={cover}
+        alt={project.coverAlt}
+        widths={[880, 1760]}
+        sizes="(max-width: 1100px) 100vw, 1040px"
+        format="webp"
+        quality={82}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div class="project__body">
+      <p class="project__placeholder">
+        The full case study is on its way. In the meantime, feel free to <a
+          href={`mailto:${site.email}`}>reach out</a
+        > if you'd like to walk through this work together.
+      </p>
+    </div>
+
+    <nav class="project__nav" aria-label="Project navigation">
+      <a class="project__back" href="/">← Back to all work</a>
+    </nav>
+  </main>
+
+  <Footer email={site.email} linkedin={site.linkedin} />
+</BaseLayout>
+
+<style>
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xxl);
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding: var(--xxl) var(--xxl) var(--3xl);
+    background: var(--color-background-primary);
+  }
+
+  .project__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+  }
+
+  .project__client {
+    margin: 0;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
+  }
+
+  .project__title {
+    max-width: 18ch;
+    margin: 0;
+    font-size: var(--font-size-64);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-76-8);
+    letter-spacing: var(--letter-spacing-2-56);
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  .project__summary {
+    max-width: 60ch;
+    margin: 0;
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .project__cover {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .project__cover :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .project__body {
+    max-width: 60ch;
+  }
+
+  .project__placeholder {
+    margin: 0;
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+  }
+
+  .project__nav {
+    padding-top: var(--lg);
+    border-top: 1px dashed var(--color-border-bold);
+  }
+
+  .project__back {
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
+    color: var(--color-text-main);
+    text-decoration: none;
+  }
+
+  .project__back:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  @media (max-width: 1100px) {
+    .project {
+      gap: var(--xl);
+      padding: var(--xl) var(--lg) var(--xxl);
+    }
+
+    .project__title {
+      font-size: clamp(2rem, 5.5vw, 4rem);
+      letter-spacing: -0.02em;
+    }
+  }
+</style>
