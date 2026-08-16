@@ -1,11 +1,22 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import logo from '../assets/logo.svg?raw';
+import teabag from '../assets/teabag.svg?raw';
+import teabagPulled from '../assets/teabag-pulled.svg?raw';
 ---
 
 <header class="navbar">
   <a class="navbar__identity" href="/" aria-label="Thy Nguyen, Product Designer — home">
-    <span class="navbar__logo" aria-hidden="true" set:html={logo} />
+    {/*
+      Both states ship in the markup and CSS crossfades between them, so the
+      swap is instant on hover with nothing to load mid-interaction.
+    */}
+    <span class="navbar__logo" aria-hidden="true">
+      <span class="navbar__logo-state navbar__logo-state--rest" set:html={teabag} />
+      <span
+        class="navbar__logo-state navbar__logo-state--pulled"
+        set:html={teabagPulled}
+      />
+    </span>
     <span class="navbar__intro">
       <span class="navbar__name-row">
         <span class="navbar__name">Thy Nguyen</span>
@@ -43,51 +54,74 @@ import logo from '../assets/logo.svg?raw';
   }
 
   .navbar__logo {
+    position: relative;
     display: block;
     flex-shrink: 0;
     width: var(--navbar-logo-size);
     height: var(--navbar-logo-size);
     color: var(--color-text-main);
-    /* Pivot near the top, so the tilt reads as the teabag swinging from its
-       string rather than the whole square rotating. */
-    transform-origin: 50% 15%;
+    /* Pivot at the top, so the motion reads as the bag hanging from its
+       string rather than the whole square moving. */
+    transform-origin: 50% 12%;
     /* Used on the way out: an unwound spring returning to rest. */
     transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
   }
 
+  /* The two states stack, so swapping one for the other never shifts layout. */
+  .navbar__logo-state {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transition: opacity 0.25s ease;
+  }
+
+  .navbar__logo-state--pulled {
+    opacity: 0;
+  }
+
+  .navbar__identity:hover .navbar__logo-state--rest,
+  .navbar__identity:focus-visible .navbar__logo-state--rest {
+    opacity: 0;
+  }
+
+  .navbar__identity:hover .navbar__logo-state--pulled,
+  .navbar__identity:focus-visible .navbar__logo-state--pulled {
+    opacity: 1;
+  }
+
   /*
-   * On the way in, a keyframed spring rather than a transition: a single
-   * cubic-bezier can only overshoot once, so it lands with a nudge. Swinging
-   * past the mark and wobbling back in decreasing steps is what makes it feel
-   * physical.
+   * A keyframed spring rather than a transition: a single cubic-bezier can
+   * only overshoot once, which lands with a nudge. Dipping past the mark and
+   * settling back in decreasing steps is what sells the pull.
    */
   .navbar__identity:hover .navbar__logo,
   .navbar__identity:focus-visible .navbar__logo {
-    animation: logo-swing 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: logo-pull 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  @keyframes logo-swing {
+  /* Tugged down and tilted, then bouncing back as the string takes up. */
+  @keyframes logo-pull {
     0% {
-      transform: rotate(0deg);
+      transform: translateY(0) rotate(0deg);
     }
     30% {
-      transform: rotate(-11deg);
+      transform: translateY(3px) rotate(-10deg);
     }
     55% {
-      transform: rotate(-5.5deg);
+      transform: translateY(0.5px) rotate(-4.5deg);
     }
     75% {
-      transform: rotate(-9deg);
+      transform: translateY(1.8px) rotate(-8.5deg);
     }
     90% {
-      transform: rotate(-7.4deg);
+      transform: translateY(1px) rotate(-6.6deg);
     }
     100% {
-      transform: rotate(-8deg);
+      transform: translateY(1.4px) rotate(-7.5deg);
     }
   }
 
-  /* A tilt is decorative, so it is dropped entirely when motion is reduced. */
+  /* Motion is decorative; the state swap alone still communicates the hover. */
   @media (prefers-reduced-motion: reduce) {
     .navbar__logo {
       transition: none;
@@ -97,6 +131,10 @@ import logo from '../assets/logo.svg?raw';
     .navbar__identity:focus-visible .navbar__logo {
       animation: none;
       transform: none;
+    }
+
+    .navbar__logo-state {
+      transition: none;
     }
   }
 

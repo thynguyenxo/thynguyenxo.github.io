@@ -31,6 +31,11 @@ export interface Project {
   description: string;
   /** Path to the cover image, relative to src/assets/. */
   cover: string;
+  /**
+   * Optional dark-mode cover, relative to src/assets/. When set, the card
+   * swaps to it with the theme; when absent, `cover` is used for both.
+   */
+  coverDark?: string;
   /** Describes the cover for screen readers. */
   coverAlt: string;
 }
@@ -43,7 +48,8 @@ export const projects: Project[] = [
       'Reimagined the onboarding experience to build trust with an AI tutor',
     description:
       'I designed the onboarding experience for an AI-powered language learning mobile app that helps build emotional trust with an AI tutor and a review screen that makes daily practice feel effortless and rewarding.',
-    cover: 'tenmin.png',
+    cover: 'tenmin-light.webp',
+    coverDark: 'tenmin-dark.webp',
     coverAlt:
       'Three Tenmin app screens showing the speaking-practice onboarding flow',
   },

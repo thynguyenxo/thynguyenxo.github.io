@@ -7,11 +7,14 @@ interface Props {
   title: string;
   description: string;
   image: ImageMetadata;
+  /** Optional dark-mode artwork; falls back to `image` when absent. */
+  imageDark?: ImageMetadata;
   imageAlt: string;
   href?: string;
 }
 
-const { client, title, description, image, imageAlt, href } = Astro.props;
+const { client, title, description, image, imageDark, imageAlt, href } =
+  Astro.props;
 ---
 
 <article class="card">
@@ -40,8 +43,13 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
     <p class="card__body">{description}</p>
   </div>
 
+  {/*
+    Both artworks are rendered and CSS reveals the one matching the theme,
+    so the toggle swaps them instantly with no flash and no JS.
+  */}
   <div class="card__image">
     <Image
+      class="card__art card__art--light"
       src={image}
       alt={imageAlt}
       widths={[880, 1760]}
@@ -51,6 +59,22 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
       loading="lazy"
       decoding="async"
     />
+    {
+      imageDark && (
+        <Image
+          class="card__art card__art--dark"
+          src={imageDark}
+          alt=""
+          aria-hidden="true"
+          widths={[880, 1760]}
+          sizes="(max-width: 900px) 100vw, 880px"
+          format="webp"
+          quality={82}
+          loading="lazy"
+          decoding="async"
+        />
+      )
+    }
   </div>
 </article>
 
@@ -166,6 +190,45 @@ const { client, title, description, image, imageAlt, href } = Astro.props;
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+
+  /* The two artworks share one grid cell so the box keeps its size. */
+  .card__image:has(.card__art--dark) {
+    display: grid;
+  }
+
+  .card__image:has(.card__art--dark) :global(.card__art) {
+    grid-area: 1 / 1;
+  }
+
+  :global(.card__art--dark) {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) :global(.card__art--light) {
+      display: none;
+    }
+
+    :global(:root:not([data-theme='light'])) :global(.card__art--dark) {
+      display: block;
+    }
+  }
+
+  :global(:root[data-theme='dark']) :global(.card__art--light) {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) :global(.card__art--dark) {
+    display: block;
+  }
+
+  :global(:root[data-theme='light']) :global(.card__art--light) {
+    display: block;
+  }
+
+  :global(:root[data-theme='light']) :global(.card__art--dark) {
+    display: none;
   }
 
   /* Below the design canvas the two columns stack: image first, then the
