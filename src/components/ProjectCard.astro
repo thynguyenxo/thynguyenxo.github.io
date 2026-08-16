@@ -89,7 +89,9 @@ const { client, title, description, image, imageDark, imageAlt, href } =
     width: 100%;
     max-width: var(--page-max-width);
     margin-inline: auto;
-    padding-left: var(--page-gutter);
+    /* Both edges use the page gutter, so the card lines up with the navbar
+       and footer instead of the image bleeding to the viewport edge. */
+    padding-inline: var(--page-gutter);
   }
 
   .card__description {
@@ -183,6 +185,7 @@ const { client, title, description, image, imageDark, imageAlt, href } =
     max-width: 100%;
     height: 37.5rem;
     overflow: hidden;
+    border-radius: 1rem;
   }
 
   .card__image :global(img) {
@@ -195,6 +198,13 @@ const { client, title, description, image, imageDark, imageAlt, href } =
   /* The two artworks share one grid cell so the box keeps its size. */
   .card__image:has(.card__art--dark) {
     display: grid;
+    /* Safari can let a grid child paint over a rounded parent, so the clip is
+       stated on the images too. */
+    isolation: isolate;
+  }
+
+  .card__image :global(.card__art) {
+    border-radius: inherit;
   }
 
   .card__image:has(.card__art--dark) :global(.card__art) {
@@ -238,7 +248,6 @@ const { client, title, description, image, imageDark, imageAlt, href } =
       flex-direction: column-reverse;
       align-items: stretch;
       gap: var(--lg);
-      padding-inline: var(--page-gutter);
     }
 
     .card__description {
