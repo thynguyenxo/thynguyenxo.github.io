@@ -21,9 +21,6 @@ const year = new Date().getFullYear();
         <span class="footer__mark" aria-hidden="true">✺</span>
         <span>let's connect</span>
       </h2>
-      <p class="footer__subtitle">
-        Feel free to reach out for collaborations or just say hi :)
-      </p>
     </div>
 
     <div class="footer__form">
@@ -87,11 +84,20 @@ const year = new Date().getFullYear();
     margin-inline: auto;
   }
 
-  /* The form sits at the right edge of the footer. */
+  /* The form sits at the right edge of the footer, on a raised card. */
   .footer__form {
     display: flex;
     justify-content: flex-end;
     width: 100%;
+  }
+
+  .footer__form > :global(.contact) {
+    /* The card's padding sits outside the 48rem field measure, so the fields
+       keep their width rather than shrinking to absorb it. */
+    max-width: calc(48rem + (var(--xl) * 2));
+    padding: var(--xl);
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
   }
 
   .footer__text {
@@ -112,13 +118,6 @@ const year = new Date().getFullYear();
 
   .footer__mark {
     font-weight: var(--font-weight-400);
-  }
-
-  .footer__subtitle {
-    margin: 0;
-    font-size: var(--font-size-16);
-    font-weight: var(--font-weight-400);
-    line-height: var(--line-height-24);
   }
 
   /* Icon-only links; the accessible name comes from the icon's label. */
@@ -146,15 +145,7 @@ const year = new Date().getFullYear();
     opacity: 0.7;
   }
 
-  /*
-   * `border-style: dashed` gives no control over dash length or gap, so the
-   * rule is a repeating gradient instead: --dash-length and --dash-gap are
-   * both adjustable.
-   */
   .footer__copyright {
-    --dash-length: 0.125rem;
-    --dash-gap: 0.375rem;
-
     display: flex;
     gap: var(--md);
     align-items: center;
@@ -162,26 +153,13 @@ const year = new Date().getFullYear();
     width: 100%;
     max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
     margin-inline: auto;
-    padding-top: var(--lg);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-border-primary) 0,
-      var(--color-border-primary) var(--dash-length),
-      transparent var(--dash-length),
-      transparent calc(var(--dash-length) + var(--dash-gap))
-    );
-    background-repeat: no-repeat;
-    background-size: 100% var(--stroke-weight-border);
-    background-position: top left;
   }
 
   .footer__copyright p {
     margin: 0;
-    font-family: var(--font-family-secondary);
     font-size: var(--font-size-12);
     line-height: var(--line-height-20);
     letter-spacing: var(--letter-spacing-0-28);
-    text-transform: uppercase;
     color: var(--color-text-on-footer-muted);
   }
 
