@@ -17,6 +17,8 @@ interface Props {
   ratio?: string;
   /** Full-bleed inside the container rather than inset. */
   wide?: boolean;
+  /** Marks the slot as awaiting a video rather than a still. */
+  video?: boolean;
 }
 
 const {
@@ -26,6 +28,7 @@ const {
   caption,
   ratio = '1280 / 787',
   wide = false,
+  video = false,
 } = Astro.props;
 ---
 
@@ -45,7 +48,11 @@ const {
           decoding="async"
         />
       ) : (
-        <div class="media__placeholder" aria-hidden="true" />
+        <div class="media__placeholder" aria-hidden="true">
+          <span class="media__placeholder-note">
+            {video ? 'Video' : 'Image'}
+          </span>
+        </div>
       )
     }
   </div>
@@ -84,9 +91,20 @@ const {
     object-fit: cover;
   }
 
+  /* Holds the frame's shape until the artwork arrives. */
   .media__placeholder {
+    display: grid;
+    place-items: center;
     width: 100%;
     height: 100%;
+  }
+
+  .media__placeholder-note {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
   }
 
   .media__caption {

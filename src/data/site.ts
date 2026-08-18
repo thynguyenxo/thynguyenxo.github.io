@@ -71,6 +71,19 @@ export interface CaseStudy {
   sections: StudySection[];
 }
 
+export interface StudyMedia {
+  /** File in src/assets/<slug>/. Omit for a placeholder. */
+  src?: string;
+  /** Describes the image. Required once a real asset is supplied. */
+  alt?: string;
+  /** Intrinsic size, as `width / height`. Sets the box before it loads. */
+  ratio: string;
+  /** Optional caption beneath the frame. */
+  caption?: string;
+  /** Video rather than still. */
+  video?: boolean;
+}
+
 export interface StudySection {
   /**
    * Section name, shown as the small caption above the lead. Optional: a
@@ -83,6 +96,8 @@ export interface StudySection {
   body?: string[];
   /** Disclosure list, for sections that enumerate outcomes or features. */
   accordion?: { title: string; body: string }[];
+  /** Media shown above the section, illustrating what it describes. */
+  media?: StudyMedia[];
 }
 
 export const projects: Project[] = [
@@ -128,6 +143,10 @@ export const projects: Project[] = [
       sections: [
         {
           label: 'Discovery',
+          media: [
+            { ratio: '1200 / 960' },
+            { ratio: '1200 / 700' },
+          ],
           lead: 'User interviews revealed a key issue: many people didn\u2019t realize who or what the AI tutor was until later in the experience',
           body: [
             'Without that early clarity, it was harder for them to feel a personal connection and trust the experience.',
@@ -136,6 +155,7 @@ export const projects: Project[] = [
         },
         {
           label: 'Process',
+          media: [{ ratio: '1200 / 787', video: true }],
           lead: 'I worked closely with one of Tenmin\u2019s founders to align design ideas with technical capabilities, ensuring every concept we proposed could realistically be implemented',
           body: [
             'I also collaborated with the product manager and lead designer to explore different illustration styles, refine the tone of voice in microcopy, and map the onboarding journey to progressively reveal Tenmin\u2019s core value proposition.',
@@ -161,6 +181,11 @@ export const projects: Project[] = [
         },
         {
           label: 'Outcomes',
+          media: [
+            { ratio: '1200 / 675', video: true },
+            { ratio: '1200 / 900' },
+            { ratio: '1200 / 960' },
+          ],
           lead: 'Usability testing with three language learners showed positive feedback. Participants particularly liked the onboarding\u2019s tone, visuals, and clarity',
           body: [
             'While the designs were not implemented during our engagement, the projected outcomes based on testing include:',
@@ -182,6 +207,12 @@ export const projects: Project[] = [
         },
         {
           label: 'Retrospective',
+          media: [
+            { ratio: '1200 / 900' },
+            { ratio: '1200 / 960' },
+            { ratio: '1200 / 960' },
+            { ratio: '1200 / 960' },
+          ],
           lead: 'Early feedback suggested that the onboarding fostered stronger emotional engagement and helped users quickly understand the AI tutor\u2019s role',
           body: [
             '\u273a When we presented the design at the Technical University of Munich, it was met with enthusiastic responses from founders and prospective users.',

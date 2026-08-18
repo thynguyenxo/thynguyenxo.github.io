@@ -7,6 +7,7 @@ import SectionLabel from '../components/case-study/SectionLabel.astro';
 import PillTag from '../components/case-study/PillTag.astro';
 import Section from '../components/case-study/Section.astro';
 import Accordion from '../components/case-study/Accordion.astro';
+import MediaGroup from '../components/case-study/MediaGroup.astro';
 import MediaBlock from '../components/case-study/MediaBlock.astro';
 import Dialog from '../components/case-study/Dialog.astro';
 import { site, projects } from '../data/site';
@@ -27,6 +28,17 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 const cover = covers[`../assets/${project.cover}`].default;
+
+// Case study artwork lives in src/assets/<slug>/. Keyed by the filename the
+// data refers to, so a missing file falls through to the placeholder.
+const studyAssets = Object.fromEntries(
+  Object.entries(covers)
+    .filter(([path]) => path.startsWith(`../assets/${project.slug}/`))
+    .map(([path, mod]) => [
+      path.replace(`../assets/${project.slug}/`, ''),
+      mod.default,
+    ])
+);
 ---
 
 <BaseLayout
@@ -101,13 +113,18 @@ const cover = covers[`../assets/${project.cover}`].default;
 
           {
             study.sections.map((section) => (
-              <Section
-                label={section.label}
-                lead={section.lead}
-                body={section.body}
-              >
-                {section.accordion && <Accordion items={section.accordion} />}
-              </Section>
+              <>
+                {section.media && (
+                  <MediaGroup items={section.media} assets={studyAssets} />
+                )}
+                <Section
+                  label={section.label}
+                  lead={section.lead}
+                  body={section.body}
+                >
+                  {section.accordion && <Accordion items={section.accordion} />}
+                </Section>
+              </>
             ))
           }
         </div>
