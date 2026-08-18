@@ -222,33 +222,50 @@ const { client, title, description, image, imageDark, imageAlt, href } =
     grid-area: 1 / 1;
   }
 
-  :global(.card__art--dark) {
+  /*
+   * The theme swap only applies where a dark artwork exists. Scoped to
+   * :has(), so a project with a single cover keeps showing it in both
+   * themes rather than being hidden in dark mode.
+   */
+  .card__image:has(.card__art--dark) :global(.card__art--dark) {
     display: none;
   }
 
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) :global(.card__art--light) {
+    :global(:root:not([data-theme='light']))
+      .card__image:has(.card__art--dark)
+      :global(.card__art--light) {
       display: none;
     }
 
-    :global(:root:not([data-theme='light'])) :global(.card__art--dark) {
+    :global(:root:not([data-theme='light']))
+      .card__image:has(.card__art--dark)
+      :global(.card__art--dark) {
       display: block;
     }
   }
 
-  :global(:root[data-theme='dark']) :global(.card__art--light) {
+  :global(:root[data-theme='dark'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--light) {
     display: none;
   }
 
-  :global(:root[data-theme='dark']) :global(.card__art--dark) {
+  :global(:root[data-theme='dark'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--dark) {
     display: block;
   }
 
-  :global(:root[data-theme='light']) :global(.card__art--light) {
+  :global(:root[data-theme='light'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--light) {
     display: block;
   }
 
-  :global(:root[data-theme='light']) :global(.card__art--dark) {
+  :global(:root[data-theme='light'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--dark) {
     display: none;
   }
 

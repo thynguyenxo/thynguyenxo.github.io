@@ -48,8 +48,7 @@ export const projects: Project[] = [
       'Reimagined the onboarding experience to build trust with an AI tutor',
     description:
       'I designed the onboarding experience for an AI-powered language learning mobile app that helps build emotional trust with an AI tutor and a review screen that makes daily practice feel effortless and rewarding.',
-    cover: 'tenmin-light.webp',
-    coverDark: 'tenmin-dark.webp',
+    cover: 'tenmin.webp',
     coverAlt:
       'Three Tenmin app screens showing the speaking-practice onboarding flow',
   },
