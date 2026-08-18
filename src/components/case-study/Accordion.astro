@@ -46,7 +46,7 @@ const { items, openIndex = 0 } = Astro.props;
   .accordion {
     display: flex;
     flex-direction: column;
-    gap: var(--md);
+    gap: var(--lg);
     width: 100%;
     padding: var(--xl);
     border-radius: var(--radius-default);
@@ -133,8 +133,7 @@ const { items, openIndex = 0 } = Astro.props;
   .accordion__title {
     font-size: var(--font-size-16);
     font-weight: var(--font-weight-500);
-    line-height: var(--line-height-44-on-24);
-    color: var(--color-text-main);
+    color: var(--color-text-primary);
     text-wrap: pretty;
   }
 
@@ -176,7 +175,7 @@ const { items, openIndex = 0 } = Astro.props;
 
   .accordion__panel {
     /* Separates the body from the title above it. */
-    padding-top: var(--sm);
+    padding-top: var(--lg);
     padding-bottom: var(--lg);
   }
 

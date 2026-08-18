@@ -8,6 +8,7 @@ import PillTag from '../components/case-study/PillTag.astro';
 import Section from '../components/case-study/Section.astro';
 import Accordion from '../components/case-study/Accordion.astro';
 import MediaGroup from '../components/case-study/MediaGroup.astro';
+import BackToTop from '../components/case-study/BackToTop.astro';
 import MediaBlock from '../components/case-study/MediaBlock.astro';
 import Dialog from '../components/case-study/Dialog.astro';
 import { site, projects } from '../data/site';
@@ -142,6 +143,7 @@ const studyAssets = Object.fromEntries(
 
       <nav class="study__nav" aria-label="Project navigation">
         <a class="study__back" href="/">← Back to all work</a>
+        <BackToTop />
       </nav>
     </div>
   </main>
@@ -275,6 +277,10 @@ const studyAssets = Object.fromEntries(
 
 
   .study__nav {
+    display: flex;
+    gap: var(--lg);
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     padding-bottom: var(--xxl);
   }

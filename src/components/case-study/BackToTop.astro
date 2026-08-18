@@ -1,0 +1,69 @@
+---
+import Icon from '../Icon.astro';
+
+/**
+ * Returns the reader to the top of a long case study.
+ *
+ * An anchor to the page itself, so it works before scripts run. A listener
+ * scrolls the document rather than jumping to an element, which would stop
+ * below the navbar; the site's `scroll-behavior: smooth` handles the motion
+ * and reduced-motion settings already override it.
+ */
+---
+
+<a class="back-to-top" href="#" data-back-to-top>
+  <Icon name="arrow-up" size="1rem" />
+  <span>Back to top</span>
+</a>
+
+<style>
+  .back-to-top {
+    display: inline-flex;
+    gap: var(--sm);
+    align-items: center;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .back-to-top:hover {
+    color: var(--color-text-main);
+  }
+
+  .back-to-top :global(svg) {
+    transition: transform 0.2s ease;
+  }
+
+  .back-to-top:hover :global(svg) {
+    transform: translateY(-0.125rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top :global(svg) {
+      transition: none;
+    }
+
+    .back-to-top:hover :global(svg) {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLAnchorElement>('[data-back-to-top]')
+    .forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.scrollTo({ top: 0 });
+        // Move focus with the view, so keyboard users continue from the top
+        // rather than from where the link was.
+        document.querySelector('.navbar__identity')?.focus();
+      });
+    });
+</script>
