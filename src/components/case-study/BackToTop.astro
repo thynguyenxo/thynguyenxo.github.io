@@ -2,37 +2,63 @@
 import Icon from '../Icon.astro';
 
 /**
- * Returns the reader to the top of a long case study.
+ * Floating control that returns the reader to the top of a long case study.
  *
- * An anchor to the page itself, so it works before scripts run. A listener
- * scrolls the document rather than jumping to an element, which would stop
- * below the navbar; the site's `scroll-behavior: smooth` handles the motion
- * and reduced-motion settings already override it.
+ * Hidden until the page is 20% scrolled, then fixed to the bottom centre of
+ * the viewport. It is a link rather than a button so it still works before
+ * scripts run, and a listener scrolls the document — an anchor would stop
+ * below the navbar.
  */
 ---
 
-<a class="back-to-top" href="#" data-back-to-top>
+<a class="back-to-top" href="#" data-back-to-top hidden>
   <Icon name="arrow-up" size="1rem" />
   <span>Back to top</span>
 </a>
 
 <style>
   .back-to-top {
+    position: fixed;
+    bottom: var(--xl);
+    left: 50%;
+    z-index: 10;
     display: inline-flex;
-    gap: var(--sm);
+    gap: var(--item-spacing-8);
     align-items: center;
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-12);
-    line-height: var(--line-height-20);
-    letter-spacing: var(--letter-spacing-0-28);
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
+    justify-content: center;
+    padding: var(--md) var(--lg);
+    border-radius: 62.4375rem;
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-24);
     text-decoration: none;
-    transition: color 0.2s ease;
+    /* The button is centred on its own width, and lifts into place as it
+       fades in. */
+    transform: translate(-50%, 0.5rem);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease,
+      visibility 0.25s allow-discrete;
+  }
+
+  /* `hidden` keeps it out of the tab order before any scrolling happens;
+     without JS the attribute is never removed and the control stays out of
+     the way, the page still being scrollable by other means. */
+  .back-to-top[hidden] {
+    display: none;
+  }
+
+  .back-to-top[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
   }
 
   .back-to-top:hover {
-    color: var(--color-text-main);
+    opacity: 0.85;
   }
 
   .back-to-top :global(svg) {
@@ -44,6 +70,7 @@ import Icon from '../Icon.astro';
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .back-to-top,
     .back-to-top :global(svg) {
       transition: none;
     }
@@ -52,18 +79,50 @@ import Icon from '../Icon.astro';
       transform: none;
     }
   }
+
+  @media (max-width: 640px) {
+    .back-to-top {
+      bottom: var(--lg);
+    }
+  }
 </style>
 
 <script>
-  document
-    .querySelectorAll<HTMLAnchorElement>('[data-back-to-top]')
-    .forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.scrollTo({ top: 0 });
-        // Move focus with the view, so keyboard users continue from the top
-        // rather than from where the link was.
-        document.querySelector('.navbar__identity')?.focus();
-      });
+  const link = document.querySelector<HTMLAnchorElement>('[data-back-to-top]');
+
+  if (link) {
+    // Revealed once the reader is a fifth of the way down.
+    const THRESHOLD = 0.2;
+    link.hidden = false;
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const scrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const past = scrollable > 0 && window.scrollY / scrollable >= THRESHOLD;
+
+      if (past) link.dataset.visible = '';
+      else delete link.dataset.visible;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0 });
+      // Move focus with the view, so keyboard users continue from the top.
+      document.querySelector<HTMLElement>('.navbar__identity')?.focus();
     });
+
+    update();
+  }
 </script>

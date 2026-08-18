@@ -143,10 +143,11 @@ const studyAssets = Object.fromEntries(
 
       <nav class="study__nav" aria-label="Project navigation">
         <a class="study__back" href="/">← Back to all work</a>
-        <BackToTop />
       </nav>
     </div>
   </main>
+
+  <BackToTop />
 
   <Footer
     email={site.email}
@@ -277,10 +278,6 @@ const studyAssets = Object.fromEntries(
 
 
   .study__nav {
-    display: flex;
-    gap: var(--lg);
-    align-items: center;
-    justify-content: space-between;
     width: 100%;
     padding-bottom: var(--xxl);
   }
