@@ -34,21 +34,21 @@ const cover = covers[`../assets/${project.cover}`].default;
   <Navbar />
 
   <main class="study">
-    {/* Full-bleed hero image above the write-up. */}
-    <div class="study__thumbnail">
-      <Image
-        src={cover}
-        alt={project.coverAlt}
-        widths={[880, 1440, 2880]}
-        sizes="100vw"
-        format="webp"
-        quality={82}
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
+    <div class="study__container">
+      <div class="study__thumbnail">
+        <Image
+          src={cover}
+          alt={project.coverAlt}
+          widths={[880, 1440, 2880]}
+          sizes="(max-width: 1440px) 100vw, 1280px"
+          format="webp"
+          quality={82}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
 
-    {
+      {
       study ? (
         <div class="study__body">
           <section class="intro" aria-label="Project overview">
@@ -110,9 +110,10 @@ const cover = covers[`../assets/${project.cover}`].default;
       )
     }
 
-    <nav class="study__nav" aria-label="Project navigation">
-      <a class="study__back" href="/">← Back to all work</a>
-    </nav>
+      <nav class="study__nav" aria-label="Project navigation">
+        <a class="study__back" href="/">← Back to all work</a>
+      </nav>
+    </div>
   </main>
 
   <Footer
@@ -128,12 +129,22 @@ const cover = covers[`../assets/${project.cover}`].default;
     background: var(--color-background-primary);
   }
 
+  /* One container holds everything below the navbar, so the thumbnail shares
+     the same 80px inset as the write-up beneath it. */
+  .study__container {
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding-inline: var(--xxl);
+  }
+
   /* The navbar and hero together fill the first screen: the thumbnail takes
      the viewport height minus whatever the navbar occupies. */
   .study__thumbnail {
     width: 100%;
     height: calc(100svh - var(--navbar-height, 0px));
     overflow: hidden;
+    border-radius: var(--radius-default);
   }
 
   .study__thumbnail :global(img) {
@@ -142,15 +153,14 @@ const cover = covers[`../assets/${project.cover}`].default;
     object-fit: cover;
   }
 
-  /* Everything below the hero sits in one container with an even 80px inset. */
+  /* The container above already applies the page inset, so this only spaces
+     the sections vertically. */
   .study__body {
     display: flex;
     flex-direction: column;
-    gap: var(--xxl);
+    gap: var(--3xl);
     width: 100%;
-    max-width: var(--page-max-width);
-    margin-inline: auto;
-    padding: var(--xxl);
+    padding-block: var(--xxl);
   }
 
   /* Intro: the write-up on the left, a metadata rail on the right. */
@@ -251,9 +261,7 @@ const cover = covers[`../assets/${project.cover}`].default;
 
   .study__nav {
     width: 100%;
-    max-width: var(--page-max-width);
-    margin-inline: auto;
-    padding: 0 var(--xxl) var(--xxl);
+    padding-bottom: var(--xxl);
   }
 
   .study__back {
@@ -269,9 +277,13 @@ const cover = covers[`../assets/${project.cover}`].default;
   }
 
   @media (max-width: 1100px) {
+    .study__container {
+      padding-inline: var(--xl);
+    }
+
     .study__body {
       gap: var(--xxl);
-      padding: var(--xl);
+      padding-block: var(--xl);
     }
 
     .intro {
