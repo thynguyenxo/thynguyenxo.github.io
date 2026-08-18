@@ -1,0 +1,37 @@
+---
+/**
+ * Stands in for artwork that has not been supplied yet.
+ *
+ * Fills whatever frame it is given, so the parent controls size, aspect ratio
+ * and corner radius. Used by both the project cards and the case study media
+ * blocks so an empty slot looks the same everywhere.
+ */
+interface Props {
+  /** What is expected here. Shown in the centre of the frame. */
+  label?: string;
+}
+
+const { label = 'Image' } = Astro.props;
+---
+
+<div class="placeholder" aria-hidden="true">
+  <span class="placeholder__note">{label}</span>
+</div>
+
+<style>
+  .placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
+  }
+
+  .placeholder__note {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
+  }
+</style>

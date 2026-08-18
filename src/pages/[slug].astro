@@ -9,6 +9,7 @@ import Section from '../components/case-study/Section.astro';
 import Accordion from '../components/case-study/Accordion.astro';
 import MediaGroup from '../components/case-study/MediaGroup.astro';
 import BackToTop from '../components/case-study/BackToTop.astro';
+import MediaPlaceholder from '../components/MediaPlaceholder.astro';
 import MediaBlock from '../components/case-study/MediaBlock.astro';
 import Dialog from '../components/case-study/Dialog.astro';
 import { site, projects } from '../data/site';
@@ -53,7 +54,7 @@ const studyAssets = Object.fromEntries(
   <main class="study">
     <div class="study__container">
       <div class="study__thumbnail">
-        {!cover && <div class="study__placeholder" aria-hidden="true" />}
+        {!cover && <MediaPlaceholder />}
         {cover && (
         <Image
           src={cover}
@@ -184,12 +185,6 @@ const studyAssets = Object.fromEntries(
     height: calc(100svh - var(--navbar-height, 0px));
     overflow: hidden;
     border-radius: var(--radius-default);
-  }
-
-  .study__placeholder {
-    width: 100%;
-    height: 100%;
-    background: var(--color-background-secondary);
   }
 
   .study__thumbnail :global(img) {
