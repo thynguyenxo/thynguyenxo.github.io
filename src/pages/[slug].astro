@@ -28,7 +28,9 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/**/*.{png,jpg,jpeg,webp,avif}',
   { eager: true }
 );
-const cover = covers[`../assets/${project.cover}`].default;
+const cover = project.cover
+  ? covers[`../assets/${project.cover}`].default
+  : undefined;
 
 // Case study artwork lives in src/assets/<slug>/. Keyed by the filename the
 // data refers to, so a missing file falls through to the placeholder.
@@ -51,6 +53,8 @@ const studyAssets = Object.fromEntries(
   <main class="study">
     <div class="study__container">
       <div class="study__thumbnail">
+        {!cover && <div class="study__placeholder" aria-hidden="true" />}
+        {cover && (
         <Image
           src={cover}
           alt={project.coverAlt}
@@ -61,6 +65,7 @@ const studyAssets = Object.fromEntries(
           loading="eager"
           fetchpriority="high"
         />
+        )}
       </div>
 
       {
@@ -179,6 +184,12 @@ const studyAssets = Object.fromEntries(
     height: calc(100svh - var(--navbar-height, 0px));
     overflow: hidden;
     border-radius: var(--radius-default);
+  }
+
+  .study__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
   }
 
   .study__thumbnail :global(img) {

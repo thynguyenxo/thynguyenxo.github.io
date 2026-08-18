@@ -7,7 +7,8 @@ interface Props {
   tagline?: string;
   title: string;
   description: string;
-  image: ImageMetadata;
+  /** Cover artwork. Omit to show a placeholder frame. */
+  image?: ImageMetadata;
   /** Optional dark-mode artwork; falls back to `image` when absent. */
   imageDark?: ImageMetadata;
   imageAlt: string;
@@ -46,6 +47,14 @@ const { client, tagline, title, description, image, imageDark, imageAlt, href } 
     so the toggle swaps them instantly with no flash and no JS.
   */}
   <div class="card__image">
+    {
+      !image && (
+        <div class="card__placeholder" aria-hidden="true">
+          <span class="card__placeholder-note">Image</span>
+        </div>
+      )
+    }
+    {image && (
     <Image
       class="card__art card__art--light"
       src={image}
@@ -57,8 +66,9 @@ const { client, tagline, title, description, image, imageDark, imageAlt, href } 
       loading="lazy"
       decoding="async"
     />
+    )}
     {
-      imageDark && (
+      image && imageDark && (
         <Image
           class="card__art card__art--dark"
           src={imageDark}
@@ -201,6 +211,23 @@ const { client, tagline, title, description, image, imageDark, imageAlt, href } 
     aspect-ratio: 740 / 450;
     overflow: hidden;
     border-radius: var(--radius-default);
+  }
+
+  /* Holds the frame until artwork arrives. */
+  .card__placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
+  }
+
+  .card__placeholder-note {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
   }
 
   .card__image :global(img) {

@@ -28,7 +28,11 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
             tagline={project.tagline}
             title={project.title}
             description={project.description}
-            image={covers[`../assets/${project.cover}`].default}
+            image={
+              project.cover
+                ? covers[`../assets/${project.cover}`].default
+                : undefined
+            }
             imageDark={
               project.coverDark
                 ? covers[`../assets/${project.coverDark}`].default

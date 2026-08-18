@@ -31,8 +31,8 @@ export interface Project {
   title: string;
   /** Card summary. */
   description: string;
-  /** Path to the cover image, relative to src/assets/. */
-  cover: string;
+  /** Path to the cover image, relative to src/assets/. Omit for a placeholder. */
+  cover?: string;
   /**
    * Optional dark-mode cover, relative to src/assets/. When set, the card
    * swaps to it with the theme; when absent, `cover` is used for both.
@@ -103,6 +103,33 @@ export interface StudySection {
 }
 
 export const projects: Project[] = [
+  {
+    slug: 'iris',
+    client: 'Iris',
+    tagline: 'AI tutor for a learning management system',
+    title: 'Redesigning the user experience to drive adoption',
+    description:
+      'I lead the UX redesign for Iris, an AI tutor, focusing on discoverability, onboarding, and prompt scaffolding. The project aims to enhance perceived usability and drive higher adoption rate among students and instructors.',
+    coverAlt: 'Iris case study cover',
+  },
+  {
+    slug: 'wemolo-one',
+    client: 'Wemolo',
+    tagline: 'Parking management',
+    title: 'Project title to come',
+    description:
+      'Placeholder description. Replace with the project summary once the case study copy is written.',
+    coverAlt: 'Wemolo case study cover',
+  },
+  {
+    slug: 'wemolo-two',
+    client: 'Wemolo',
+    tagline: 'Parking management',
+    title: 'Project title to come',
+    description:
+      'Placeholder description. Replace with the project summary once the case study copy is written.',
+    coverAlt: 'Wemolo case study cover',
+  },
   {
     slug: 'tenmin',
     client: 'Tenmin',
@@ -222,5 +249,14 @@ export const projects: Project[] = [
         },
       ],
     },
+  },
+  {
+    slug: 'muunai',
+    client: 'muunai',
+    tagline: 'AI-powered medical documentation',
+    title: 'Making medical documentation intuitive for doctors',
+    description:
+      'Redesigning a med-tech web application to streamline medical documentation workflows, reduce cognitive load for doctors, and improve onboarding for new users.',
+    coverAlt: 'muunai case study cover',
   },
 ];
