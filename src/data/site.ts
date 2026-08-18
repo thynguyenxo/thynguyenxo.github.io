@@ -118,8 +118,7 @@ export const projects: Project[] = [
       standfirst:
         'designed an engaging onboarding experience and a review screen to help users build trust',
       intro: [
-        'As one of three designers, I led the prototyping and design for the onboarding flow, collaborating closely with Tenmin\u2019s founders, product manager, and fellow designers.',
-        'I also contributed to the redesign of the review home screen to ensure consistency in tone and visuals across the product.',
+        'As one of three designers, I led the prototyping and design for the onboarding flow, collaborating closely with Tenmin\u2019s founders, product manager, and fellow designers. I also contributed to the redesign of the review home screen to ensure consistency in tone and visuals across the product.',
       ],
       facts: [
         { label: 'Role', values: ['UX/UI Designer'] },
