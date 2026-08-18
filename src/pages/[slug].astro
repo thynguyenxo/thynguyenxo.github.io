@@ -89,7 +89,11 @@ const cover = covers[`../assets/${project.cover}`].default;
             />
           </section>
 
-          <Section label={study.problem.label} body={study.problem.body}>
+          <Section
+            label={study.problem.label}
+            lead={study.problem.lead}
+            body={study.problem.body}
+          >
             <Dialog label={study.problem.dialog.label}>
               {study.problem.dialog.question}
             </Dialog>

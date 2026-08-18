@@ -56,10 +56,11 @@ export interface CaseStudy {
     tag: string;
     caption: string;
   };
-  problem: {
-    label: string;
-    /** Paragraphs before the framing question. */
-    body: string[];
+  /**
+   * The opening section. A StudySection like any other, plus the framing
+   * question that closes it.
+   */
+  problem: StudySection & {
     dialog: { label: string; question: string };
   };
   /**
@@ -71,8 +72,11 @@ export interface CaseStudy {
 }
 
 export interface StudySection {
-  /** Section name, shown as the heading label. */
-  label: string;
+  /**
+   * Section name, shown as the small caption above the lead. Optional: a
+   * section can open on its lead alone.
+   */
+  label?: string;
   /** Larger opening line beneath the label. */
   lead?: string;
   /** Body paragraphs. */
@@ -110,7 +114,7 @@ export const projects: Project[] = [
         caption: 'The redesigned onboarding flow',
       },
       problem: {
-        label: 'Problem',
+        lead: 'Problem',
         body: [
           'Many AI-powered language learning apps feel either overly robotic or disorganized, which can leave learners unmotivated. Onboarding experiences are often bloated, transactional, or forgettable, failing to inspire confidence or encourage return visits.',
           'Tenmin wanted to strike a balance between professional polish and youthful energy, while adding a human touch that makes their AI tutor approachable. The onboarding needed to create a sticky first impression, build trust in the AI, and set the tone for ongoing engagement.',

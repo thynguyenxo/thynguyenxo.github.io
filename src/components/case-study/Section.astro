@@ -11,8 +11,8 @@ import SectionLabel from './SectionLabel.astro';
  * than structure.
  */
 interface Props {
-  /** Section name, e.g. "Discovery". Rendered as the heading label. */
-  label: string;
+  /** Section name, e.g. "Discovery". Omit to open on the lead alone. */
+  label?: string;
   /** Larger opening line beneath the label. */
   lead?: string;
   /** Body paragraphs following the lead. */
@@ -24,16 +24,23 @@ interface Props {
 }
 
 const { label, lead, body = [], bordered = false, wide = false } = Astro.props;
+
+// A section is labelled by whichever of the two it has.
+const accessibleName = label ?? lead;
 ---
 
-<section class:list={['section', wide && 'section--wide']} aria-label={label}>
+<section
+  class:list={['section', wide && 'section--wide']}
+  aria-label={accessibleName}
+>
   <header class="section__head">
     {
-      bordered ? (
-        <PillTag bordered>{label}</PillTag>
-      ) : (
-        <SectionLabel>{label}</SectionLabel>
-      )
+      label &&
+        (bordered ? (
+          <PillTag bordered>{label}</PillTag>
+        ) : (
+          <SectionLabel>{label}</SectionLabel>
+        ))
     }
     {
       lead && (
