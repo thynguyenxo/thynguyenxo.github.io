@@ -47,8 +47,10 @@ export interface Project {
 export interface CaseStudy {
   /** One-line summary under the project name. */
   standfirst: string;
-  /** Opening paragraphs, shown as two columns. */
+  /** Opening paragraphs. */
   intro: string[];
+  /** Set the opening paragraphs side by side instead of stacked. */
+  introColumns?: boolean;
   /** The metadata rail: role, year, skills. */
   facts: { label: string; values: string[] }[];
   preview: {
