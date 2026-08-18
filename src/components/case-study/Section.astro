@@ -1,0 +1,91 @@
+---
+import PillTag from './PillTag.astro';
+
+/**
+ * The standard case study section: a heading label, an optional lead
+ * sentence, body paragraphs, and whatever else is slotted after them.
+ *
+ * Sections are named differently in each case study — Discovery, Process,
+ * Solution, Outcomes — but share this layout, so the name is content rather
+ * than structure.
+ */
+interface Props {
+  /** Section name, e.g. "Discovery". Rendered as the heading label. */
+  label: string;
+  /** Larger opening line beneath the label. */
+  lead?: string;
+  /** Body paragraphs following the lead. */
+  body?: string[];
+  /** Draw the label as an outlined pill, as the Preview section does. */
+  bordered?: boolean;
+  /** Span the full container rather than the narrower reading measure. */
+  wide?: boolean;
+}
+
+const { label, lead, body = [], bordered = false, wide = false } = Astro.props;
+---
+
+<section class:list={['section', wide && 'section--wide']} aria-label={label}>
+  <header class="section__head">
+    <PillTag bordered={bordered}>{label}</PillTag>
+    {lead && <p class="section__lead">{lead}</p>}
+  </header>
+
+  {
+    body.length > 0 && (
+      <div class="section__body">
+        {body.map((paragraph) => (
+          <p class="section__paragraph">{paragraph}</p>
+        ))}
+      </div>
+    )
+  }
+
+  <slot />
+</section>
+
+<style>
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    width: 100%;
+    /* Body copy holds a comfortable measure; media can opt out with `wide`. */
+    max-width: 55rem;
+    margin-inline: auto;
+  }
+
+  .section--wide {
+    max-width: none;
+  }
+
+  .section__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+  }
+
+  .section__lead {
+    margin: 0;
+    font-size: var(--font-size-28);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-44-on-28);
+    letter-spacing: var(--letter-spacing-0-8);
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  .section__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+  }
+
+  .section__paragraph {
+    margin: 0;
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+</style>

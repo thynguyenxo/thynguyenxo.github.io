@@ -25,6 +25,8 @@ export interface Project {
   slug: string;
   /** Client or product name, shown above the title. */
   client: string;
+  /** Short descriptor after the client name in the card eyebrow. */
+  tagline?: string;
   /** Card headline. */
   title: string;
   /** Card summary. */
@@ -66,6 +68,7 @@ export const projects: Project[] = [
   {
     slug: 'tenmin',
     client: 'Tenmin',
+    tagline: 'AI-powered language learning app',
     title:
       'Reimagined the onboarding experience to build trust with an AI tutor',
     description:

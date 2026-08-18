@@ -25,6 +25,7 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
         projects.map((project) => (
           <ProjectCard
             client={project.client}
+            tagline={project.tagline}
             title={project.title}
             description={project.description}
             image={covers[`../assets/${project.cover}`].default}

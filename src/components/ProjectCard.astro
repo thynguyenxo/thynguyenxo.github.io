@@ -3,6 +3,8 @@ import { Image } from 'astro:assets';
 
 interface Props {
   client: string;
+  /** Descriptor shown after the client name in the eyebrow. */
+  tagline?: string;
   title: string;
   description: string;
   image: ImageMetadata;
@@ -12,16 +14,18 @@ interface Props {
   href?: string;
 }
 
-const { client, title, description, image, imageDark, imageAlt, href } =
+const { client, tagline, title, description, image, imageDark, imageAlt, href } =
   Astro.props;
 ---
 
 <article class="card">
   <div class="card__description">
     <div class="card__container">
-      <div class="card__client">
+      <p class="card__eyebrow">
         <span class="card__client-name">{client}</span>
-      </div>
+        {tagline && <span class="card__sep"> / </span>}
+        {tagline && <span>{tagline}</span>}
+      </p>
       <h2 class="card__title">
         {
           href ? (
@@ -92,32 +96,32 @@ const { client, title, description, image, imageDark, imageAlt, href } =
     display: flex;
     flex-direction: column;
     gap: var(--xl);
-    justify-content: center;
-    flex: 0 1 31.25rem;
-    max-width: 37.5rem;
+    justify-content: flex-start;
+    flex: 0 0 31.25rem;
+    max-width: 31.25rem;
   }
 
   .card__container {
     display: flex;
     flex-direction: column;
-    gap: var(--lg);
+    gap: var(--sm);
     justify-content: center;
   }
 
-  .card__client {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .card__client-name {
+  .card__eyebrow {
+    margin: 0;
     font-family: var(--font-family-secondary);
     font-size: var(--font-size-12);
     font-weight: var(--font-weight-400);
     line-height: var(--line-height-20);
     letter-spacing: var(--letter-spacing-0-28);
     text-transform: uppercase;
-    color: var(--color-text-caption);
+    color: var(--color-text-secondary);
+  }
+
+  /* The client name carries the emphasis; the descriptor sits back. */
+  .card__client-name {
+    color: var(--color-text-main);
   }
 
   .card__title {
@@ -192,11 +196,11 @@ const { client, title, description, image, imageDark, imageAlt, href } =
 
   .card__image {
     flex: 1 1 auto;
-    width: 55rem;
-    max-width: 100%;
-    height: 30rem;
+    min-width: 0;
+    /* 740 x 450 in the design. */
+    aspect-ratio: 740 / 450;
     overflow: hidden;
-    border-radius: 1rem;
+    border-radius: var(--radius-default);
   }
 
   .card__image :global(img) {
@@ -286,7 +290,7 @@ const { client, title, description, image, imageDark, imageAlt, href } =
     .card__image {
       width: 100%;
       height: auto;
-      aspect-ratio: 880 / 600;
+      aspect-ratio: 740 / 450;
     }
   }
 </style>
