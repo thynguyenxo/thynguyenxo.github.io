@@ -1,4 +1,5 @@
 ---
+import Icon from '../Icon.astro';
 import SectionLabel from './SectionLabel.astro';
 
 /**
@@ -19,7 +20,7 @@ const { label } = Astro.props;
     </div>
 
     <div class="dialog__body">
-      <span class="dialog__mark" aria-hidden="true">“</span>
+      <Icon name="quote-left" size="3rem" class="dialog__mark" />
       <p class="dialog__statement"><slot /></p>
     </div>
   </div>
@@ -40,7 +41,8 @@ const { label } = Astro.props;
 
   .dialog__head {
     padding-bottom: var(--lg);
-    border-bottom: var(--stroke-weight-border) solid var(--color-border-primary);
+    border-bottom: var(--stroke-weight-border) solid
+      var(--color-border-secondary);
   }
 
   .dialog__body {
@@ -50,17 +52,15 @@ const { label } = Astro.props;
     padding-top: var(--xl);
   }
 
-  .dialog__mark {
-    font-size: 4rem;
-    line-height: 0.5;
+  .dialog :global(.dialog__mark) {
     color: var(--color-text-caption);
   }
 
   .dialog__statement {
     max-width: 40ch;
     margin: 0;
-    font-size: var(--font-size-28);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-24);
+    font-weight: var(--font-weight-regular);
     line-height: var(--line-height-44-on-28);
     letter-spacing: var(--letter-spacing-0-8);
     color: var(--color-text-main);

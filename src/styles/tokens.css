@@ -44,6 +44,7 @@
 
   /* Color — borders */
   --color-border-primary: var(--grey-700);
+  --color-border-secondary: var(--grey-200);
 
   /* Color — status. Outside the grey ramp on purpose: a failed submission
      needs to read as an error, not as muted text. */
@@ -150,6 +151,8 @@
     --color-text-tertiary: var(--grey-500);
     --color-text-caption: var(--grey-400);
     --color-text-inverse: var(--grey-950);
+
+    --color-border-secondary: var(--grey-600);
   }
 }
 
@@ -164,4 +167,6 @@
   --color-text-tertiary: var(--grey-500);
   --color-text-caption: var(--grey-400);
   --color-text-inverse: var(--grey-950);
+
+  --color-border-secondary: var(--grey-600);
 }
