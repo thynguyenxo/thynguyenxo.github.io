@@ -113,7 +113,7 @@ export const projects: Project[] = [
     coverAlt: 'Iris case study cover',
   },
   {
-    slug: 'wemolo-one',
+    slug: 'wemolo-driver',
     client: 'Wemolo',
     tagline: 'Parking management',
     title: 'Project title to come',
@@ -122,7 +122,7 @@ export const projects: Project[] = [
     coverAlt: 'Wemolo case study cover',
   },
   {
-    slug: 'wemolo-two',
+    slug: 'wemolo-ds',
     client: 'Wemolo',
     tagline: 'Parking management',
     title: 'Project title to come',
