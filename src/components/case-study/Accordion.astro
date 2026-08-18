@@ -30,8 +30,8 @@ const { items, openIndex = 0 } = Astro.props;
         <summary class="accordion__summary">
           <span class="accordion__title">{item.title}</span>
           <span class="accordion__icon" aria-hidden="true">
-            <Icon name="plus" size="1.5rem" class="accordion__plus" />
-            <Icon name="minus" size="1.5rem" class="accordion__minus" />
+            <Icon name="plus" size="1rem" class="accordion__plus" />
+            <Icon name="minus" size="1rem" class="accordion__minus" />
           </span>
         </summary>
         <div class="accordion__panel">
@@ -46,12 +46,20 @@ const { items, openIndex = 0 } = Astro.props;
   .accordion {
     display: flex;
     flex-direction: column;
+    gap: var(--md);
     width: 100%;
+    padding: var(--xl);
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
   }
 
   .accordion__item {
     border-bottom: var(--stroke-weight-border) solid
       var(--color-border-secondary);
+  }
+
+  .accordion__item:last-child {
+    border-bottom: 0;
   }
 
   /*
@@ -100,9 +108,8 @@ const { items, openIndex = 0 } = Astro.props;
   .accordion__summary {
     display: flex;
     gap: var(--lg);
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding-block: var(--md);
     cursor: pointer;
     transition: opacity 0.2s ease;
     list-style: none;
@@ -136,6 +143,8 @@ const { items, openIndex = 0 } = Astro.props;
   .accordion__icon {
     display: inline-grid;
     flex-shrink: 0;
+    /* Centres the 16px mark against the title's 44px line. */
+    margin-top: 0.875rem;
     color: var(--color-text-main);
   }
 
@@ -159,6 +168,10 @@ const { items, openIndex = 0 } = Astro.props;
   [open] .accordion__icon :global(.accordion__minus) {
     opacity: 1;
     transform: none;
+  }
+
+  .accordion__item:not([open]) .accordion__summary {
+    padding-bottom: var(--lg);
   }
 
   .accordion__panel {
