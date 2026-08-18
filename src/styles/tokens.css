@@ -124,12 +124,14 @@
   /* 1440px */
 
   /*
-   * Navbar height: the name and role stack is 4rem tall — taller than the
-   * 3rem logo beside it — so the row is sized by the text, not the mark.
-   * Heroes subtract this from the viewport to fill the first screen.
+   * Navbar height. Heroes subtract this from the viewport to fill the first
+   * screen. The value here is the pre-paint estimate — the row is sized by
+   * the name and role stack beside the logo, which shifts with type settings,
+   * so a script measures the real height and overwrites this once the navbar
+   * is in the document.
    */
   --navbar-logo-size: 3rem;
-  --navbar-content-height: 4rem;
+  --navbar-content-height: 3.5rem;
   --navbar-height: calc(var(--navbar-content-height) + (var(--lg) * 2));
 
   /* Shared left/right page gutter. Every full-width section uses this so the

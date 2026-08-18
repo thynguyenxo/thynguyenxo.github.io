@@ -170,9 +170,10 @@ const studyAssets = Object.fromEntries(
 
   /* The navbar and hero together fill the first screen: the thumbnail takes
      the viewport height minus whatever the navbar occupies. */
+  /* The navbar and thumbnail together fill the first screen. */
   .study__thumbnail {
     width: 100%;
-    height: calc(80svh);
+    height: calc(100svh - var(--navbar-height, 0px));
     overflow: hidden;
     border-radius: var(--radius-default);
   }
@@ -188,9 +189,9 @@ const studyAssets = Object.fromEntries(
   .study__body {
     display: flex;
     flex-direction: column;
-    gap: var(--3xl);
+    gap: var(--xxl);
     width: 100%;
-    padding-block: var(--xxl);
+    padding-block: var(--xl);
   }
 
   /* Intro: the write-up on the left, a metadata rail on the right. */
