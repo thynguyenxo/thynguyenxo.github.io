@@ -62,6 +62,23 @@ export interface CaseStudy {
     body: string[];
     dialog: { label: string; question: string };
   };
+  /**
+   * The sections that follow. Case studies name these differently —
+   * Discovery, Process, Solution, Outcomes — so the name is content and the
+   * layout is shared.
+   */
+  sections: StudySection[];
+}
+
+export interface StudySection {
+  /** Section name, shown as the heading label. */
+  label: string;
+  /** Larger opening line beneath the label. */
+  lead?: string;
+  /** Body paragraphs. */
+  body?: string[];
+  /** Disclosure list, for sections that enumerate outcomes or features. */
+  accordion?: { title: string; body: string }[];
 }
 
 export const projects: Project[] = [
@@ -104,6 +121,70 @@ export const projects: Project[] = [
             'How might we create a warm and trust-building onboarding experience while keeping a brand identity that balances professionalism and youthful energy?',
         },
       },
+      sections: [
+        {
+          label: 'Discovery',
+          lead: 'User interviews revealed a key issue: many people didn\u2019t realize who or what the AI tutor was until later in the experience',
+          body: [
+            'Without that early clarity, it was harder for them to feel a personal connection and trust the experience.',
+            'Additionally, our competitor analysis showed that most onboarding flows either rushed through introductions or overloaded users with feature lists, leaving little room to build rapport.',
+          ],
+        },
+        {
+          label: 'Process',
+          lead: 'I worked closely with one of Tenmin\u2019s founders to align design ideas with technical capabilities, ensuring every concept we proposed could realistically be implemented',
+          body: [
+            'I also collaborated with the product manager and lead designer to explore different illustration styles, refine the tone of voice in microcopy, and map the onboarding journey to progressively reveal Tenmin\u2019s core value proposition.',
+          ],
+        },
+        {
+          label: 'Solution',
+          lead: 'The goal was to design features that not only communicated Tenmin\u2019s value but also made the AI tutor feel approachable, supportive, and memorable from day one',
+          accordion: [
+            {
+              title: 'An onboarding flow that builds trust',
+              body: 'A 4-screen sequence that clearly communicates Tenmin\u2019s value, integrates social proof early, and uses bright illustrations with friendly microcopy to humanize the AI tutor.',
+            },
+            {
+              title: 'Personalized welcome with name recording',
+              body: 'Learners record their name during onboarding so the AI tutor can greet them by it, making the first session feel personal rather than transactional.',
+            },
+            {
+              title: 'The Review screen that motivates daily practice',
+              body: 'A redesigned home for daily review that makes progress legible at a glance and keeps the next action obvious.',
+            },
+          ],
+        },
+        {
+          label: 'Outcomes',
+          lead: 'Usability testing with three language learners showed positive feedback. Participants particularly liked the onboarding\u2019s tone, visuals, and clarity',
+          body: [
+            'While the designs were not implemented during our engagement, the projected outcomes based on testing include:',
+          ],
+          accordion: [
+            {
+              title: 'Memorable first impression',
+              body: 'A warm, trust-building onboarding experience encourages users to return after their first session.',
+            },
+            {
+              title: 'Daily engagement',
+              body: 'A review screen that makes progress visible gives learners a reason to come back each day.',
+            },
+            {
+              title: 'Humanized AI',
+              body: 'Introducing the tutor early, by name and with personality, makes the AI feel like a companion rather than a tool.',
+            },
+          ],
+        },
+        {
+          label: 'Retrospective',
+          lead: 'Early feedback suggested that the onboarding fostered stronger emotional engagement and helped users quickly understand the AI tutor\u2019s role',
+          body: [
+            '\u273a When we presented the design at the Technical University of Munich, it was met with enthusiastic responses from founders and prospective users.',
+            '\u273a Looking ahead, there\u2019s an opportunity to measure long-term retention, test alternative onboarding flows, and refine the illustration style to resonate with a broader global audience.',
+          ],
+        },
+      ],
     },
   },
 ];

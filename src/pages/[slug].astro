@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import SectionLabel from '../components/case-study/SectionLabel.astro';
 import PillTag from '../components/case-study/PillTag.astro';
 import Section from '../components/case-study/Section.astro';
+import Accordion from '../components/case-study/Accordion.astro';
 import MediaBlock from '../components/case-study/MediaBlock.astro';
 import Dialog from '../components/case-study/Dialog.astro';
 import { site, projects } from '../data/site';
@@ -93,6 +94,18 @@ const cover = covers[`../assets/${project.cover}`].default;
               {study.problem.dialog.question}
             </Dialog>
           </Section>
+
+          {
+            study.sections.map((section) => (
+              <Section
+                label={section.label}
+                lead={section.lead}
+                body={section.body}
+              >
+                {section.accordion && <Accordion items={section.accordion} />}
+              </Section>
+            ))
+          }
         </div>
       ) : (
         <div class="study__body">

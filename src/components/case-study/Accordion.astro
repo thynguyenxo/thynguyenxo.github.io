@@ -1,0 +1,139 @@
+---
+import Icon from '../Icon.astro';
+
+/**
+ * A disclosure list. Built on <details>, so it opens and closes without
+ * scripting, is keyboard operable, and its content stays findable by
+ * in-page search even while collapsed.
+ *
+ * A small script keeps one item open at a time; without it the list still
+ * works, items just open independently.
+ */
+export interface AccordionItem {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  items: AccordionItem[];
+  /** Index of the item open on load. -1 leaves them all closed. */
+  openIndex?: number;
+}
+
+const { items, openIndex = 0 } = Astro.props;
+---
+
+<div class="accordion" data-accordion>
+  {
+    items.map((item, index) => (
+      <details class="accordion__item" open={index === openIndex}>
+        <summary class="accordion__summary">
+          <span class="accordion__title">{item.title}</span>
+          <span class="accordion__icon" aria-hidden="true">
+            <Icon name="plus" size="1.5rem" class="accordion__plus" />
+            <Icon name="minus" size="1.5rem" class="accordion__minus" />
+          </span>
+        </summary>
+        <div class="accordion__panel">
+          <p class="accordion__body">{item.body}</p>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .accordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .accordion__item {
+    border-bottom: var(--stroke-weight-border) solid
+      var(--color-border-secondary);
+  }
+
+  .accordion__summary {
+    display: flex;
+    gap: var(--lg);
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--md);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  /* Safari draws its own marker unless this is cleared. */
+  .accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__summary:focus-visible {
+    outline: var(--stroke-weight-2) solid var(--color-text-main);
+    outline-offset: 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .accordion__title {
+    font-size: var(--font-size-20);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-28);
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  /* Both glyphs share a cell so the row never shifts as they swap. */
+  .accordion__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    color: var(--color-text-main);
+  }
+
+  .accordion__icon :global(svg) {
+    grid-area: 1 / 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .accordion__icon :global(.accordion__minus) {
+    opacity: 0;
+  }
+
+  [open] .accordion__icon :global(.accordion__plus) {
+    opacity: 0;
+  }
+
+  [open] .accordion__icon :global(.accordion__minus) {
+    opacity: 1;
+  }
+
+  .accordion__panel {
+    padding-bottom: var(--lg);
+  }
+
+  .accordion__body {
+    max-width: 60ch;
+    margin: 0;
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+</style>
+
+<script>
+  // One item open at a time. The list works without this; it only closes the
+  // sibling that was previously open.
+  document.querySelectorAll<HTMLElement>('[data-accordion]').forEach((list) => {
+    const items = [...list.querySelectorAll('details')];
+
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (!item.open) return;
+        items.forEach((other) => {
+          if (other !== item) other.open = false;
+        });
+      });
+    });
+  });
+</script>
