@@ -87,7 +87,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
       name="message"
       rows="3"
       required
-      placeholder="MESSAGE:"
+      placeholder="MESSAGE"
       data-autogrow></textarea>
   </div>
 
@@ -120,7 +120,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     align-items: baseline;
     padding-bottom: var(--sm);
     border-bottom: var(--stroke-weight-border) solid
-      var(--color-border-on-footer);
+      var(--color-border-primary);
   }
 
   .contact__row--message {
@@ -229,6 +229,9 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     resize: none;
     overflow: hidden;
     min-height: 5.5rem;
+    /* Keeps the last line clear of the row's bottom stroke as the field
+       expands. */
+    padding-bottom: var(--md);
   }
 
   .contact__honeypot {

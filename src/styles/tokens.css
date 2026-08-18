@@ -1,14 +1,9 @@
 /*
  * Design tokens — Portfolio v.4 (Figma: xT2es8olIUtCNago606WmE)
  *
- * Light values come from the published Figma variables (node 1147:4018).
- * Dark values (node 1147:733) live in a Figma variable mode that the API
- * resolves to its light default, so they were read from the rendered design
- * and confirmed by the designer.
- *
- * Theme resolution: light is the base; dark applies when the visitor's OS
- * asks for it OR when they choose it explicitly. An explicit choice is
- * stamped on <html data-theme>, and always wins over the OS preference.
+ * Light mode: node 1147:4018. Dark mode: node 1159:8485.
+ * Both nodes publish their own values, so these are read straight from the
+ * Figma variables rather than sampled from a render.
  *
  * Sizes are rem so the layout scales with the visitor's browser font size.
  * Values that must not scale (hairline borders) stay in px.
@@ -17,28 +12,23 @@
 :root {
   /* Color — surfaces */
   --color-background-primary: #ffffff;
+  --color-background-secondary: #1a1a1a;
   --color-background-inverse: #ffffff;
-  --color-background-footer: #262626;
+  --color-background-footer: #000000;
 
   /* Color — text */
-  --color-text-main: #262626;
-  --color-text-secondary: #707070;
-  --color-text-tertiary: #8d8d8d;
-  --color-text-caption: #8d8d8d;
-  --color-text-inverse: #262626;
+  --color-text-main: #0a0a0a;
+  --color-text-secondary: #767676;
+  --color-text-tertiary: #a5a5a5;
+  --color-text-caption: #a5a5a5;
+  --color-text-inverse: #0a0a0a;
 
-  /* Color — text on the footer surface (dark in both themes) */
+  /* Color — text on the footer surface (black in both themes) */
   --color-text-on-footer: #ffffff;
-  --color-text-on-footer-muted: #8d8d8d;
-  /* Softer rule for the contact fields. #707070 is the design system's
-     text/secondary; it reads lighter than #6d6d6d against the footer while
-     clearing the 3:1 that WCAG 1.4.11 asks of an input boundary — 3.06:1 on
-     the light-mode footer and 4.24:1 on the dark one. */
-  --color-border-on-footer: #707070;
+  --color-text-on-footer-muted: #a5a5a5;
 
   /* Color — borders */
-  --color-border-bold: #e7e7e7;
-  --color-border-footer: #6d6d6d;
+  --color-border-primary: #434343;
 
   /* Typography — families */
   --font-family-primary: 'DM Sans', ui-sans-serif, system-ui, -apple-system,
@@ -55,22 +45,23 @@
   --font-size-64: 4rem;
 
   /* Typography — line heights (unitless: design value / font size) */
-  --line-height-20: 1.4286;
-  --line-height-24: 1.5;
-  --line-height-28: 1.5556;
-  --line-height-33-6: 1.4;
-  --line-height-39-2: 1.4;
-  --line-height-76-8: 1.2;
+  --line-height-20: 1.6667; /* 20 / 12 */
+  --line-height-24: 1.5; /* 24 / 16 */
+  --line-height-28: 1.5556; /* 28 / 18 */
+  --line-height-44-on-24: 1.8333; /* 44 / 24 */
+  --line-height-44-on-28: 1.5714; /* 44 / 28 */
+  --line-height-76-8: 1.2; /* 76.8 / 64 */
 
   /* Typography — weights */
   --font-weight-400: 400;
-  --font-weight-regular: 500;
+  --font-weight-500: 500;
+  --font-weight-regular: 400;
   --font-weight-medium: 500;
 
   /* Typography — letter spacing (em, so it tracks the font size) */
-  --letter-spacing-0-28: 0.0175em;
-  --letter-spacing-1-12: -0.04em;
-  --letter-spacing-2-56: -0.04em;
+  --letter-spacing-0-28: 0.0233em; /* 0.28 / 12 */
+  --letter-spacing-0-8: -0.0286em; /* -0.8 / 28 */
+  --letter-spacing-2-56: -0.04em; /* -2.56 / 64 */
 
   /* Spacing */
   --reset: 0;
@@ -83,13 +74,16 @@
   --xxl: 5rem;
   --3xl: 10rem;
 
+  /* Radii */
+  --radius-default: 1.5rem; /* 24px */
+
   /* Borders — px so hairlines stay crisp at any zoom */
   --stroke-weight-border: 1px;
   --stroke-weight-2: 2px;
 
   /* Layout
    *
-   * The page is 1440px wide at most, which puts 1286px of content between the
+   * The page is 1440px wide at most, which puts 1280px of content between the
    * gutters. Wider screens gain side padding rather than a wider layout. */
   --page-max-width: 90rem; /* 1440px */
   --content-max-width: 90rem; /* 1440px */
@@ -125,19 +119,12 @@
   :root:not([data-theme='light']) {
     --color-background-primary: #000000;
     --color-background-inverse: #ffffff;
-    /* Dark mode runs the footer at the same black as the page, so the two
-       surfaces read as one continuous field. */
-    --color-background-footer: #000000;
 
     --color-text-main: #ffffff;
-    --color-text-secondary: #e7e7e7;
-    --color-text-tertiary: #707070;
-    --color-text-caption: #8d8d8d;
-    --color-text-inverse: #262626;
-
-    /* On pure black, #404040 falls to 2.03:1 — below the 3:1 that WCAG
-       1.4.11 asks of a meaningful boundary. */
-    --color-border-bold: #6d6d6d;
+    --color-text-secondary: #d6d6d6;
+    --color-text-tertiary: #767676;
+    --color-text-caption: #a5a5a5;
+    --color-text-inverse: #0a0a0a;
   }
 }
 
@@ -145,13 +132,10 @@
 :root[data-theme='dark'] {
   --color-background-primary: #000000;
   --color-background-inverse: #ffffff;
-  --color-background-footer: #000000;
 
   --color-text-main: #ffffff;
-  --color-text-secondary: #e7e7e7;
-  --color-text-tertiary: #707070;
-  --color-text-caption: #8d8d8d;
-  --color-text-inverse: #262626;
-
-  --color-border-bold: #6d6d6d;
+  --color-text-secondary: #d6d6d6;
+  --color-text-tertiary: #767676;
+  --color-text-caption: #a5a5a5;
+  --color-text-inverse: #0a0a0a;
 }
