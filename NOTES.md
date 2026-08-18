@@ -6,8 +6,8 @@ one-off preferences.
 ## Non-negotiables
 
 1. **Use the design tokens.** Never hardcode a color, font size, spacing value,
-   or line height. Everything lives in `src/styles/tokens.css`. If a value you
-   need is missing, add a token — don't inline a literal.
+   or line height. Everything lives in `src/styles/tokens.css`. Reuse an
+   existing token before adding one — see "Reuse tokens" below.
 2. **Use `rem`, not `px`.** The only exceptions are hairline borders
    (`--stroke-weight-border`) and media query breakpoints, which stay in `px`
    deliberately. `rem` keeps the layout scaling with the visitor's browser
@@ -21,14 +21,12 @@ one-off preferences.
 ## Design tokens
 
 Source: Figma `xT2es8olIUtCNago606WmE` — "Portfolio v.4".
-Light = node `1147:4018`, dark = node `1147:733`.
+Light = node `1147:4018`, dark = node `1159:8485`. Both publish their own
+values, so tokens can be read straight from the API.
 
-⚠️ **The Figma API returns light values for _both_ nodes.** The dark palette
-lives in a Figma variable mode that `get_variable_defs` resolves to its light
-default. The dark values in `tokens.css` were read from the rendered design and
-confirmed by the designer. If you re-sync tokens from Figma, you will silently
-overwrite dark mode with light values — check the rendered output, not just the
-API response.
+Colors are a **50–950 grey ramp** of primitives, with semantic tokens pointing
+at steps: `--color-text-main: var(--grey-950)`. Change a step and every use
+follows. Pure white and black sit outside the ramp as `--white` / `--black`.
 
 ### Naming
 
@@ -45,21 +43,60 @@ Tokens mirror the Figma variable names:
 Line heights are **unitless** (design value ÷ font size) so they scale
 correctly. Letter spacing is in **em** for the same reason.
 
+### Reuse tokens; don't add new ones
+
+**Before adding a token, check whether an existing one already carries that
+value.** The set is deliberately small, and every near-duplicate is a chance
+for two things that should match to drift apart.
+
+- Search `tokens.css` for the value first — `0.5rem` is `--sm`, not a new
+  `--gap-small`.
+- If a design hands you a value with no token, prefer the nearest existing
+  step over a new entry. Raise it rather than quietly widening the scale.
+- A genuinely new token needs a distinct *role*, not just a distinct number.
+  `--color-text-error` earns its place because it is deliberately outside the
+  grey ramp; `--item-spacing-xxs` did not, because it duplicated the spacing
+  scale it sat beside.
+- Semantic tokens should reference primitives (`--color-text-main:
+  var(--grey-950)`), so a change to a step flows everywhere it is used.
+
+Removed for this reason, in case a design references them: `--reset` (unused),
+`--item-spacing-xxs` (one use, folded into `--sm`), and `--item-spacing-8`
+(a duplicate of `--sm`).
+
+### Check for dangling references
+
+CSS fails silently: `var(--does-not-exist)` renders as though the property
+were never set, with no error and nothing in the console. After removing or
+renaming a token, confirm nothing still points at it:
+
+```sh
+grep -rhoE '\-\-[a-z0-9-]+' src/components src/pages src/layouts | sort -u |
+  while read t; do grep -q -- "$t:" src/styles/tokens.css || echo "UNDEFINED: $t"; done
+```
+
+This has already caught two live bugs — a navbar gap and a card colour, both
+silently falling back to browser defaults.
+
 ### Layout width and gutter
 
-`--page-max-width` is **1800px**, and every full-width section uses it, so the
-navbar, hero, cards and footer share one measure.
+`--page-max-width` is **1440px**, which puts 1280px of content between the
+gutters. Wider screens gain side padding rather than a wider layout.
 
 `--page-gutter` is the shared left/right page inset — **80px at desktop**,
 stepping down at 1100px and 640px. Change it in one place, not per component.
 
+`--navbar-height` is an estimate for the first paint only: a script in
+`BaseLayout.astro` measures the real navbar and overwrites it, because heroes
+subtract it from the viewport and a stale guess left them short twice.
+
 ### Surfaces per theme
 
-The footer is **not** a fixed dark slab. It is `#262626` in light mode and
-`#000000` in dark, matching the page background so the two read as one field.
-`--color-text-on-footer` / `--color-text-on-footer-muted` are fixed white and
-grey because the footer surface is dark in both themes — check both if you
-change them.
+The footer is **black in both themes**, so text on it does not follow the
+theme: it uses `--white` and `--color-text-caption`, which is `grey-400`
+either way. The contact form's card pins `--grey-900` directly rather than
+using `--color-background-secondary`, which is theme-aware for the case study
+surfaces.
 
 ## Theming
 
@@ -80,24 +117,18 @@ this once and silently limited dark mode to screens under 640px.
 
 Target: **WCAG 2.2 AA**.
 
-Known issue, unresolved by design decision:
+Known issue, accepted by design decision:
 
-- `--color-text-tertiary` / `--color-text-caption` (`#8d8d8d`) on white at 14px
-  is **3.32:1**; AA requires 4.5:1. Affects the project card's client label and
-  captions in light mode. `#767676` (4.54:1) would fix it. The Figma value was
-  implemented as specified — raise it with the designer rather than silently
-  changing it.
+- `--color-text-caption` (`grey-400`, `#a5a5a5`) on white at 12px is
+  **2.35:1**; AA requires 4.5:1. It carries the eyebrow labels and captions.
+  `grey-500` (`#767676`, 4.54:1) would fix it. The Figma values were
+  implemented as specified — raise it with the designer rather than changing
+  it silently.
 
-Passing but tight — don't darken these without rechecking:
-
-- Hero grey `#8d8d8d` at 64px on white: **3.32:1** (large text needs 3.0).
-- Footer copyright `#8d8d8d` on the light-mode footer `#262626`: **4.56:1**.
-
-Dark mode has plenty of headroom since the background went to pure black —
-hero grey `#707070` is 4.24:1 and the caption grey is 6.33:1 there. Note that
-`--color-border-bold` is `#6d6d6d` in dark rather than `#404040`: on black the
-darker value fell to 2.03:1, under the 3:1 that WCAG 1.4.11 expects of a
-meaningful boundary.
+Recheck contrast whenever a grey step moves; several sit close to their
+threshold. Note `--color-border-bold` is `grey-300` in dark rather than a
+darker step, because on black anything below roughly `#5c5c5c` drops under
+the 3:1 that WCAG 1.4.11 expects of a meaningful boundary.
 
 Also required: visible `:focus-visible` rings, a real `<button>` for the theme
 toggle, `prefers-reduced-motion` honored, and one link per card (the title link
@@ -110,7 +141,9 @@ The whole point of Astro here is shipping almost nothing:
 
 - **No JS framework.** No React, no client-side router. Astro components are
   compiled away.
-- **No runtime JS bundle.** The only script is the inline theme toggle.
+- **Minimal JS.** A handful of small inline scripts: the theme toggle, the
+  navbar measurement, the hero scroll sweep, the accordion, and the back to
+  top control. No framework and no client-side router.
 - **Fonts self-hosted** as WOFF2 in `public/fonts/` (~70KB), not the Google
   CDN — it removes a third-party connection from the critical path. DM Sans is
   preloaded.
@@ -120,7 +153,9 @@ The whole point of Astro here is shipping almost nothing:
   **devDependency**; `Icon.astro` reads the SVG off disk during the build, so
   no icon font and no Font Awesome JS ever reach the browser.
 
-Current output: ~200KB total, 2 pages, no JS bundle.
+Media is placeholder-first: `MediaBlock` holds each frame's aspect ratio from
+the design, so the page keeps its shape before artwork exists and dropping a
+file in causes no layout shift.
 
 ## Security
 
@@ -128,9 +163,10 @@ The site is static and collects no user input, which removes most of the attack
 surface. What's in place:
 
 - **Content-Security-Policy** via `<meta http-equiv>` in `BaseLayout.astro`
-  (GitHub Pages cannot send custom headers). Everything is `'self'`;
-  `frame-ancestors 'none'` blocks clickjacking, `form-action 'none'` blocks
-  form-based exfiltration, `object-src 'none'` blocks plugin embedding.
+  (GitHub Pages cannot send custom headers). Everything is `'self'` apart from
+  `api.web3forms.com`, which the contact form posts to and which must appear in
+  **both** `connect-src` and `form-action`. `frame-ancestors 'none'` blocks
+  clickjacking and `object-src 'none'` blocks plugin embedding.
 - `referrer` set to `strict-origin-when-cross-origin`.
 - External links carry `rel="noopener noreferrer"`.
 - No inline event handlers, no `innerHTML` on user-controlled data.
