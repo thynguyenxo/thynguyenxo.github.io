@@ -67,7 +67,7 @@ const year = new Date().getFullYear();
     background: var(--color-background-footer);
     /* The footer surface is dark in both themes, so its text colors are fixed
        rather than theme-dependent. */
-    color: var(--color-text-on-footer);
+    color: var(--color-text-primary-on-dark);
   }
 
   /* Heading first, then the socials and form side by side beneath it.
@@ -136,7 +136,7 @@ const year = new Date().getFullYear();
     padding: var(--sm);
     /* Keeps a comfortable tap target while the glyph stays on the grid. */
     border-radius: 0.25rem;
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
     text-decoration: none;
     transition: opacity 0.2s ease;
   }
@@ -145,7 +145,15 @@ const year = new Date().getFullYear();
     opacity: 0.7;
   }
 
+  /*
+   * `border-style: dashed` gives no control over dash length or gap, so the
+   * rule is a repeating gradient. Both are measured from the design: 6px
+   * dashes separated by 6px.
+   */
   .footer__copyright {
+    --dash-length: 0.375rem;
+    --dash-gap: 0.375rem;
+
     display: flex;
     gap: var(--md);
     align-items: center;
@@ -153,6 +161,17 @@ const year = new Date().getFullYear();
     width: 100%;
     max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
     margin-inline: auto;
+    padding-top: var(--lg);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border-primary) 0,
+      var(--color-border-primary) var(--dash-length),
+      transparent var(--dash-length),
+      transparent calc(var(--dash-length) + var(--dash-gap))
+    );
+    background-repeat: no-repeat;
+    background-size: 100% var(--stroke-weight-border);
+    background-position: top left;
   }
 
   .footer__copyright p {
@@ -162,7 +181,7 @@ const year = new Date().getFullYear();
     line-height: var(--line-height-20);
     letter-spacing: var(--letter-spacing-0-28);
     text-transform: uppercase;
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
   }
 
   @media (max-width: 1100px) {

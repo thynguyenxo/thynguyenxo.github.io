@@ -136,7 +136,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     line-height: var(--line-height-20);
     letter-spacing: var(--letter-spacing-0-28);
     text-transform: uppercase;
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
   }
 
   .contact__to {
@@ -150,7 +150,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
   .contact__recipient {
     font-size: var(--font-size-16);
     line-height: var(--line-height-24);
-    color: var(--color-text-on-footer);
+    color: var(--color-text-primary-on-dark);
   }
 
   /* Ghost button: icon only, no border or label. */
@@ -161,13 +161,13 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     border: 0;
     border-radius: 0.25rem;
     background: none;
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
     cursor: pointer;
     transition: color 0.2s ease;
   }
 
   .contact__copy:hover {
-    color: var(--color-text-on-footer);
+    color: var(--color-text-primary-on-dark);
   }
 
   /* Both glyphs share a cell so the button keeps its width when it flips. */
@@ -195,14 +195,14 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     padding: 0;
     border: 0;
     background: none;
-    color: var(--color-text-on-footer);
+    color: var(--color-text-primary-on-dark);
     font-family: var(--font-family-primary);
     font-size: var(--font-size-16);
     line-height: var(--line-height-24);
   }
 
   .contact__input::placeholder {
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
     opacity: 1;
   }
 
@@ -222,7 +222,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
   /* The row carries the focus indicator, since the input itself is borderless. */
   .contact__row:focus-within {
-    border-bottom-color: var(--color-text-on-footer);
+    border-bottom-color: var(--color-border-primary);
   }
 
   .contact__textarea {
@@ -257,7 +257,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     margin: 0;
     font-size: var(--font-size-12);
     line-height: var(--line-height-20);
-    color: var(--color-text-on-footer-muted);
+    color: var(--color-text-tertiary-on-dark);
   }
 
   .contact__status[data-state='error'] {
@@ -270,10 +270,10 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     align-items: center;
     justify-content: center;
     padding: var(--md) var(--lg);
-    border: var(--stroke-weight-border) solid var(--color-text-on-footer);
+    border: var(--stroke-weight-border) solid var(--color-text-primary-on-dark);
     border-radius: 62.4375rem;
     background: none;
-    color: var(--color-text-on-footer);
+    color: var(--color-text-primary-on-dark);
     font-family: var(--font-family-primary);
     font-size: var(--font-size-16);
     line-height: var(--line-height-24);
