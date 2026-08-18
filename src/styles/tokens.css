@@ -43,14 +43,6 @@
   --color-text-caption: var(--grey-400);
   --color-text-inverse: var(--grey-950);
 
-  /*
-   * The footer sits on black in both themes, so text on it does not follow
-   * the theme. These are the primary and tertiary text tokens as they resolve
-   * against a dark surface, and they stay fixed for that reason.
-   */
-  --color-text-primary-on-dark: var(--white);
-  --color-text-tertiary-on-dark: var(--grey-400);
-
   /* Color — borders */
   --color-border-primary: var(--grey-700);
 
