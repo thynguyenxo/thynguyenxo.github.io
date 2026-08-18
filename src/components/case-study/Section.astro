@@ -1,5 +1,6 @@
 ---
 import PillTag from './PillTag.astro';
+import SectionLabel from './SectionLabel.astro';
 
 /**
  * The standard case study section: a heading label, an optional lead
@@ -27,8 +28,20 @@ const { label, lead, body = [], bordered = false, wide = false } = Astro.props;
 
 <section class:list={['section', wide && 'section--wide']} aria-label={label}>
   <header class="section__head">
-    <PillTag bordered={bordered}>{label}</PillTag>
-    {lead && <p class="section__lead">{lead}</p>}
+    {
+      bordered ? (
+        <PillTag bordered>{label}</PillTag>
+      ) : (
+        <SectionLabel>{label}</SectionLabel>
+      )
+    }
+    {
+      lead && (
+        <p class="section__lead">
+          <PillTag>{lead}</PillTag>
+        </p>
+      )
+    }
   </header>
 
   {
@@ -65,14 +78,10 @@ const { label, lead, body = [], bordered = false, wide = false } = Astro.props;
     gap: var(--sm);
   }
 
+  /* The lead carries the pill's type treatment; the wrapper only handles
+     block flow, since the pill itself is inline. */
   .section__lead {
     margin: 0;
-    font-size: var(--font-size-28);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-44-on-28);
-    letter-spacing: var(--letter-spacing-0-8);
-    color: var(--color-text-main);
-    text-wrap: pretty;
   }
 
   .section__body {

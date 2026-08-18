@@ -1,36 +1,49 @@
 ---
 /**
- * The label that titles a case study section.
+ * The mono display treatment used for section headings and lead lines.
  *
- * Preview uses the bordered pill; Problem, Discovery and the sections that
- * follow use the same type treatment without the outline.
+ * `bordered` draws the outlined pill, which is a fixed-height inline chip.
+ * Without it the type flows as normal block text, so a lead can wrap over
+ * several lines.
  */
 interface Props {
-  /** Draw the outlined pill. Off by default, as most sections are plain. */
   bordered?: boolean;
 }
 
 const { bordered = false } = Astro.props;
 ---
 
-<span class:list={['pill', bordered && 'pill--bordered']}><slot /></span>
+{
+  bordered ? (
+    <span class="pill pill--bordered">
+      <slot />
+    </span>
+  ) : (
+    <span class="pill">
+      <slot />
+    </span>
+  )
+}
 
 <style>
   .pill {
-    display: inline-flex;
-    align-items: center;
+    display: block;
     font-family: var(--font-family-secondary);
-    font-size: var(--font-size-24);
-    line-height: var(--line-height-20);
+    font-size: var(--font-size-20);
+    line-height: var(--line-height-28);
     letter-spacing: -0.12em;
     color: var(--color-text-main);
+    text-wrap: pretty;
   }
 
+  /* The outlined variant is a chip, so it sits inline at a fixed height. */
   .pill--bordered {
+    display: inline-flex;
+    align-items: center;
+    height: 3.25rem;
     padding: 0 var(--lg);
     border: var(--stroke-weight-border) solid var(--color-border-bold);
     border-radius: 62.4375rem;
-    height: 3.25rem;
-
+    line-height: var(--line-height-20);
   }
 </style>
