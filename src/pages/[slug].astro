@@ -3,6 +3,10 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import SectionLabel from '../components/case-study/SectionLabel.astro';
+import PillTag from '../components/case-study/PillTag.astro';
+import MediaBlock from '../components/case-study/MediaBlock.astro';
+import Dialog from '../components/case-study/Dialog.astro';
 import { site, projects } from '../data/site';
 
 // One page per entry in `projects`, so a new project needs no new route file.
@@ -14,6 +18,7 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
+const study = project.study;
 
 const covers = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/**/*.{png,jpg,jpeg,webp,avif}',
@@ -28,19 +33,14 @@ const cover = covers[`../assets/${project.cover}`].default;
 >
   <Navbar />
 
-  <main class="project">
-    <header class="project__header">
-      <p class="project__client">{project.client}</p>
-      <h1 class="project__title">{project.title}</h1>
-      <p class="project__summary">{project.description}</p>
-    </header>
-
-    <div class="project__cover">
+  <main class="study">
+    {/* Full-bleed hero image above the write-up. */}
+    <div class="study__thumbnail">
       <Image
         src={cover}
         alt={project.coverAlt}
-        widths={[880, 1760]}
-        sizes="(max-width: 1100px) 100vw, 1040px"
+        widths={[880, 1440, 2880]}
+        sizes="100vw"
         format="webp"
         quality={82}
         loading="eager"
@@ -48,16 +48,70 @@ const cover = covers[`../assets/${project.cover}`].default;
       />
     </div>
 
-    <div class="project__body">
-      <p class="project__placeholder">
-        The full case study is on its way. In the meantime, feel free to <a
-          href={`mailto:${site.email}`}>reach out</a
-        > if you'd like to walk through this work together.
-      </p>
-    </div>
+    {
+      study ? (
+        <div class="study__body">
+          <section class="intro" aria-label="Project overview">
+            <div class="intro__about">
+              <div class="intro__title">
+                <h1 class="intro__name">{project.client}</h1>
+                <SectionLabel>{study.standfirst}</SectionLabel>
+              </div>
 
-    <nav class="project__nav" aria-label="Project navigation">
-      <a class="project__back" href="/">← Back to all work</a>
+              <div class="intro__columns">
+                {study.intro.map((paragraph) => (
+                  <p class="intro__paragraph">{paragraph}</p>
+                ))}
+              </div>
+            </div>
+
+            <dl class="intro__facts">
+              {study.facts.map((fact) => (
+                <div class="intro__fact">
+                  <dt>
+                    <SectionLabel>{fact.label}</SectionLabel>
+                  </dt>
+                  {fact.values.map((value) => (
+                    <dd class="intro__value">{value}</dd>
+                  ))}
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          <section class="preview" aria-label="Preview">
+            <PillTag>{study.preview.tag}</PillTag>
+            <MediaBlock
+              captionClient={project.client}
+              caption={study.preview.caption}
+            />
+          </section>
+
+          <section class="problem" aria-label={study.problem.label}>
+            <div class="problem__text">
+              <SectionLabel>{study.problem.label}</SectionLabel>
+              {study.problem.body.map((paragraph) => (
+                <p class="problem__paragraph">{paragraph}</p>
+              ))}
+            </div>
+
+            <Dialog label={study.problem.dialog.label}>
+              {study.problem.dialog.question}
+            </Dialog>
+          </section>
+        </div>
+      ) : (
+        <div class="study__body">
+          <section class="problem">
+            <SectionLabel>{project.client}</SectionLabel>
+            <p class="problem__paragraph">{project.description}</p>
+          </section>
+        </div>
+      )
+    }
+
+    <nav class="study__nav" aria-label="Project navigation">
+      <a class="study__back" href="/">← Back to all work</a>
     </nav>
   </main>
 
@@ -70,46 +124,122 @@ const cover = covers[`../assets/${project.cover}`].default;
 </BaseLayout>
 
 <style>
-  .project {
+  .study {
+    background: var(--color-background-primary);
+  }
+
+  /* The hero spans the viewport, unlike the gutter-aligned body below it. */
+  .study__thumbnail {
+    width: 100%;
+    aspect-ratio: 1440 / 630;
+    overflow: hidden;
+  }
+
+  .study__thumbnail :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .study__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--3xl);
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding: var(--3xl) var(--page-gutter) 0;
+  }
+
+  /* Intro: the write-up on the left, a metadata rail on the right. */
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    gap: var(--xxl);
+    align-items: start;
+  }
+
+  .intro__about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+  }
+
+  .intro__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+  }
+
+  .intro__name {
+    margin: 0;
+    font-size: var(--font-size-28);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-44-on-28);
+    letter-spacing: var(--letter-spacing-0-8);
+    color: var(--color-text-main);
+  }
+
+  .intro__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--xl);
+  }
+
+  .intro__paragraph {
+    margin: 0;
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .intro__facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    margin: 0;
+    padding-top: var(--xl);
+  }
+
+  .intro__fact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--item-spacing-xxs);
+  }
+
+  .intro__value {
+    margin: 0;
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+  }
+
+  /* Preview: pill, media, caption. */
+  .preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    align-items: flex-start;
+  }
+
+  /* Problem: narrower measure than the full page, per the design. */
+  .problem {
     display: flex;
     flex-direction: column;
     gap: var(--xxl);
     width: 100%;
-    max-width: var(--page-max-width);
+    max-width: 55rem;
     margin-inline: auto;
-    padding: var(--xxl) var(--page-gutter) var(--3xl);
-    background: var(--color-background-primary);
   }
 
-  .project__header {
+  .problem__text {
     display: flex;
     flex-direction: column;
     gap: var(--lg);
   }
 
-  .project__client {
-    margin: 0;
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-12);
-    line-height: var(--line-height-20);
-    letter-spacing: var(--letter-spacing-0-28);
-    text-transform: uppercase;
-    color: var(--color-text-caption);
-  }
-
-  .project__title {
-    max-width: 18ch;
-    margin: 0;
-    font-size: var(--font-size-64);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-76-8);
-    letter-spacing: var(--letter-spacing-2-56);
-    color: var(--color-text-main);
-    text-wrap: pretty;
-  }
-
-  .project__summary {
-    max-width: 60ch;
+  .problem__paragraph {
     margin: 0;
     font-size: var(--font-size-18);
     line-height: var(--line-height-28);
@@ -117,53 +247,47 @@ const cover = covers[`../assets/${project.cover}`].default;
     text-wrap: pretty;
   }
 
-  .project__cover {
+  .study__nav {
     width: 100%;
-    overflow: hidden;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding: var(--3xl) var(--page-gutter);
   }
 
-  .project__cover :global(img) {
-    width: 100%;
-    height: auto;
-  }
-
-  .project__body {
-    max-width: 60ch;
-  }
-
-  .project__placeholder {
-    margin: 0;
-    font-size: var(--font-size-18);
-    line-height: var(--line-height-28);
-    color: var(--color-text-secondary);
-  }
-
-  .project__nav {
-    padding-top: var(--lg);
-    border-top: var(--stroke-weight-border) dashed var(--color-border-primary);
-  }
-
-  .project__back {
+  .study__back {
     font-size: var(--font-size-16);
     line-height: var(--line-height-24);
     color: var(--color-text-main);
     text-decoration: none;
   }
 
-  .project__back:hover {
+  .study__back:hover {
     text-decoration: underline;
     text-underline-offset: 0.25em;
   }
 
   @media (max-width: 1100px) {
-    .project {
-      gap: var(--xl);
-      padding-block: var(--xl) var(--xxl);
+    .study__body {
+      gap: var(--xxl);
+      padding-top: var(--xxl);
     }
 
-    .project__title {
-      font-size: clamp(2rem, 5.5vw, 4rem);
-      letter-spacing: -0.02em;
+    .intro {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--xl);
+    }
+
+    .intro__facts {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--xl);
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .intro__columns {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

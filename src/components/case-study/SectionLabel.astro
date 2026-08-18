@@ -1,0 +1,25 @@
+---
+/**
+ * The small uppercase label that opens each case study section
+ * ("PROBLEM", "DISCOVERY", "PROCESS"…).
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<p class:list={['section-label', className]}><slot /></p>
+
+<style>
+  .section-label {
+    margin: 0;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
+  }
+</style>

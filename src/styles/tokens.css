@@ -30,9 +30,8 @@
 
   /* Color — surfaces */
   --color-background-primary: var(--white);
-  /* The footer surface is black in both themes, so the card on it is the same
-     grey either way — no dark override needed. */
-  --color-background-secondary: var(--grey-900);
+  /* Raised surfaces: cards and callouts that sit above the page. */
+  --color-background-secondary: var(--grey-50);
   --color-background-inverse: var(--white);
   --color-background-footer: var(--black);
 
@@ -138,6 +137,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --color-background-primary: var(--black);
+    --color-background-secondary: var(--grey-900);
     --color-background-inverse: var(--white);
 
     --color-text-main: var(--white);
@@ -151,6 +151,7 @@
 /* An explicit dark choice wins over the OS preference. */
 :root[data-theme='dark'] {
   --color-background-primary: var(--black);
+  --color-background-secondary: var(--grey-900);
   --color-background-inverse: var(--white);
 
   --color-text-main: var(--white);

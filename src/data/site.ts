@@ -38,6 +38,28 @@ export interface Project {
   coverDark?: string;
   /** Describes the cover for screen readers. */
   coverAlt: string;
+  /** Case study content. Absent while a project has no write-up yet. */
+  study?: CaseStudy;
+}
+
+export interface CaseStudy {
+  /** One-line summary under the project name. */
+  standfirst: string;
+  /** Opening paragraphs, shown as two columns. */
+  intro: string[];
+  /** The metadata rail: role, year, skills. */
+  facts: { label: string; values: string[] }[];
+  preview: {
+    /** Text on the outlined pill above the media. */
+    tag: string;
+    caption: string;
+  };
+  problem: {
+    label: string;
+    /** Paragraphs before the framing question. */
+    body: string[];
+    dialog: { label: string; question: string };
+  };
 }
 
 export const projects: Project[] = [
@@ -51,5 +73,34 @@ export const projects: Project[] = [
     cover: 'tenmin.webp',
     coverAlt:
       'Three Tenmin app screens showing the speaking-practice onboarding flow',
+    study: {
+      standfirst:
+        'designed an engaging onboarding experience and a review screen to help users build trust',
+      intro: [
+        'As one of three designers, I led the prototyping and design for the onboarding flow, collaborating closely with Tenmin\u2019s founders, product manager, and fellow designers.',
+        'I also contributed to the redesign of the review home screen to ensure consistency in tone and visuals across the product.',
+      ],
+      facts: [
+        { label: 'Role', values: ['UX/UI Designer'] },
+        { label: 'Year', values: ['April \u2014 July 2025'] },
+        { label: 'Skills', values: ['UX Design', 'Prototyping'] },
+      ],
+      preview: {
+        tag: 'Preview',
+        caption: 'The redesigned onboarding flow',
+      },
+      problem: {
+        label: 'Problem',
+        body: [
+          'Many AI-powered language learning apps feel either overly robotic or disorganized, which can leave learners unmotivated. Onboarding experiences are often bloated, transactional, or forgettable, failing to inspire confidence or encourage return visits.',
+          'Tenmin wanted to strike a balance between professional polish and youthful energy, while adding a human touch that makes their AI tutor approachable. The onboarding needed to create a sticky first impression, build trust in the AI, and set the tone for ongoing engagement.',
+        ],
+        dialog: {
+          label: 'How might we?',
+          question:
+            'How might we create a warm and trust-building onboarding experience while keeping a brand identity that balances professionalism and youthful energy?',
+        },
+      },
+    },
   },
 ];

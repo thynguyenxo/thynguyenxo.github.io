@@ -97,7 +97,9 @@ const year = new Date().getFullYear();
     max-width: calc(48rem + (var(--xl) * 2));
     padding: var(--xl);
     border-radius: var(--radius-default);
-    background: var(--color-background-secondary);
+    /* The footer always sits on black, so its card pins the dark surface
+       rather than following the theme. */
+    background: var(--grey-900);
   }
 
   .footer__text {
