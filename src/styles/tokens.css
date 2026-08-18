@@ -107,10 +107,14 @@
   --page-max-width: 90rem; /* 1440px */
   --content-max-width: 90rem; /* 1440px */
 
-  /* Navbar height: the logo plus its --lg padding top and bottom. The hero
-     subtracts this from the viewport so the two fill the first screen. */
+  /*
+   * Navbar height: the name and role stack is 4rem tall — taller than the
+   * 3rem logo beside it — so the row is sized by the text, not the mark.
+   * Heroes subtract this from the viewport to fill the first screen.
+   */
   --navbar-logo-size: 3rem;
-  --navbar-height: calc(var(--navbar-logo-size) + (var(--lg) * 2));
+  --navbar-content-height: 4rem;
+  --navbar-height: calc(var(--navbar-content-height) + (var(--lg) * 2));
 
   /* Shared left/right page gutter. Every full-width section uses this so the
      navbar, hero, cards and footer align on one edge. */
@@ -128,7 +132,8 @@
     --page-gutter: var(--lg);
     /* The navbar shrinks on small screens — keep the height in step. */
     --navbar-logo-size: 2.75rem;
-    --navbar-height: calc(var(--navbar-logo-size) + (var(--md) * 2));
+    --navbar-content-height: 3.3125rem;
+    --navbar-height: calc(var(--navbar-content-height) + (var(--md) * 2));
   }
 }
 

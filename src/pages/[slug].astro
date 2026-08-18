@@ -128,10 +128,11 @@ const cover = covers[`../assets/${project.cover}`].default;
     background: var(--color-background-primary);
   }
 
-  /* The hero spans the viewport, unlike the gutter-aligned body below it. */
+  /* The navbar and hero together fill the first screen: the thumbnail takes
+     the viewport height minus whatever the navbar occupies. */
   .study__thumbnail {
     width: 100%;
-    aspect-ratio: 1440 / 630;
+    height: calc(100svh - var(--navbar-height, 0px));
     overflow: hidden;
   }
 
@@ -141,6 +142,7 @@ const cover = covers[`../assets/${project.cover}`].default;
     object-fit: cover;
   }
 
+  /* Everything below the hero sits in one container with an even 80px inset. */
   .study__body {
     display: flex;
     flex-direction: column;
@@ -148,7 +150,7 @@ const cover = covers[`../assets/${project.cover}`].default;
     width: 100%;
     max-width: var(--page-max-width);
     margin-inline: auto;
-    padding: var(--3xl) var(--page-gutter) 0;
+    padding: var(--xxl);
   }
 
   /* Intro: the write-up on the left, a metadata rail on the right. */
@@ -188,9 +190,9 @@ const cover = covers[`../assets/${project.cover}`].default;
 
   .intro__paragraph {
     margin: 0;
-    font-size: var(--font-size-18);
+    font-size: var(--font-size-16);
     line-height: var(--line-height-28);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
     text-wrap: pretty;
   }
 
@@ -251,7 +253,7 @@ const cover = covers[`../assets/${project.cover}`].default;
     width: 100%;
     max-width: var(--page-max-width);
     margin-inline: auto;
-    padding: var(--3xl) var(--page-gutter);
+    padding: 0 var(--xxl) var(--xxl);
   }
 
   .study__back {
@@ -269,7 +271,7 @@ const cover = covers[`../assets/${project.cover}`].default;
   @media (max-width: 1100px) {
     .study__body {
       gap: var(--xxl);
-      padding-top: var(--xxl);
+      padding: var(--xl);
     }
 
     .intro {
