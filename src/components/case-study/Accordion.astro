@@ -131,8 +131,8 @@ const { items, openIndex = 0 } = Astro.props;
   }
 
   .accordion__title {
-    font-size: var(--font-size-24);
-    font-weight: var(--font-weight-400);
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-500);
     line-height: var(--line-height-44-on-24);
     color: var(--color-text-main);
     text-wrap: pretty;
@@ -175,6 +175,8 @@ const { items, openIndex = 0 } = Astro.props;
   }
 
   .accordion__panel {
+    /* Separates the body from the title above it. */
+    padding-top: var(--sm);
     padding-bottom: var(--lg);
   }
 
@@ -196,7 +198,7 @@ const { items, openIndex = 0 } = Astro.props;
     margin: 0;
     font-size: var(--font-size-16);
     line-height: var(--line-height-28);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
     text-wrap: pretty;
   }
 </style>
