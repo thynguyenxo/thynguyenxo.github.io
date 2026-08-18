@@ -80,7 +80,7 @@ const cover = covers[`../assets/${project.cover}`].default;
           </section>
 
           <section class="preview" aria-label="Preview">
-            <PillTag>{study.preview.tag}</PillTag>
+            <PillTag bordered>{study.preview.tag}</PillTag>
             <MediaBlock
               captionClient={project.client}
               caption={study.preview.caption}
@@ -89,7 +89,7 @@ const cover = covers[`../assets/${project.cover}`].default;
 
           <section class="problem" aria-label={study.problem.label}>
             <div class="problem__text">
-              <SectionLabel>{study.problem.label}</SectionLabel>
+              <PillTag>{study.problem.label}</PillTag>
               {study.problem.body.map((paragraph) => (
                 <p class="problem__paragraph">{paragraph}</p>
               ))}
@@ -103,7 +103,7 @@ const cover = covers[`../assets/${project.cover}`].default;
       ) : (
         <div class="study__body">
           <section class="problem">
-            <SectionLabel>{project.client}</SectionLabel>
+            <PillTag>{project.client}</PillTag>
             <p class="problem__paragraph">{project.description}</p>
           </section>
         </div>
@@ -180,12 +180,11 @@ const cover = covers[`../assets/${project.cover}`].default;
   .intro__title {
     display: flex;
     flex-direction: column;
-    gap: var(--sm);
   }
 
   .intro__name {
     margin: 0;
-    font-size: var(--font-size-28);
+    font-size: var(--font-size-40);
     font-weight: var(--font-weight-medium);
     line-height: var(--line-height-44-on-28);
     letter-spacing: var(--letter-spacing-0-8);
@@ -248,12 +247,12 @@ const cover = covers[`../assets/${project.cover}`].default;
   .problem__text {
     display: flex;
     flex-direction: column;
-    gap: var(--lg);
+    gap: var(--xl);
   }
 
   .problem__paragraph {
     margin: 0;
-    font-size: var(--font-size-18);
+    font-size: var(--font-size-16);
     line-height: var(--line-height-28);
     color: var(--color-text-primary);
     text-wrap: pretty;

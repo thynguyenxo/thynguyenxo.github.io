@@ -1,21 +1,35 @@
 ---
-/** Outlined pill that titles a section, e.g. the Preview block. */
+/**
+ * The label that titles a case study section.
+ *
+ * Preview uses the bordered pill; Problem, Discovery and the sections that
+ * follow use the same type treatment without the outline.
+ */
+interface Props {
+  /** Draw the outlined pill. Off by default, as most sections are plain. */
+  bordered?: boolean;
+}
+
+const { bordered = false } = Astro.props;
 ---
 
-<span class="pill"><slot /></span>
+<span class:list={['pill', bordered && 'pill--bordered']}><slot /></span>
 
 <style>
   .pill {
     display: inline-flex;
     align-items: center;
-    padding: 0 var(--lg);
-    border: var(--stroke-weight-border) solid var(--color-border-bold);
-    border-radius: 62.4375rem;
+    height: 3.25rem;
     font-family: var(--font-family-secondary);
     font-size: var(--font-size-20);
     line-height: var(--line-height-20);
     letter-spacing: -0.12em;
     color: var(--color-text-main);
-    height: 52px;
+  }
+
+  .pill--bordered {
+    padding: 0 var(--lg);
+    border: var(--stroke-weight-border) solid var(--color-border-bold);
+    border-radius: 62.4375rem;
   }
 </style>
