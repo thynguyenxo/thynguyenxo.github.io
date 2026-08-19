@@ -177,7 +177,7 @@ export const projects: Project[] = [
       'Three Tenmin app screens showing the speaking-practice onboarding flow',
     study: {
       standfirst:
-        'Reshaping onboarding around a tutor learners never met',
+        'Reshaping onboarding around an AI tutor learners never met',
       introColumns: true,
       intro: [
         'Tenmin is an AI-powered language learning app built around speaking rather than memorization. Learners get real-time pronunciation feedback, personalized lessons, and conversation practice that simulates real interactions.',
@@ -209,8 +209,8 @@ export const projects: Project[] = [
       problem: {
         lead: 'Problem',
         body: [
-          'Tenmin\u2019s original onboarding asked learners to sign in before it explained anything, then moved through five screens of taps and typed input. The AI tutor, the reason the product exists, first appeared as a dropdown setting for which language it should speak in.',
-          'The result: learners reached their first conversation without knowing who they were about to talk to. In an app built on speaking out loud, that is the moment hesitation costs you a user.',
+          'Tenmin\u2019s original onboarding asked learners to sign in before it explained anything, then moved through five screens of taps and typed input. The AI tutor is the reason the product exists. It first appeared on screen four, as a dropdown setting for which language it should speak in.',
+          'Learners reached their first conversation without knowing who they were about to talk to, and the first thing the app asked them to do was speak out loud to it',
         ],
       },
       sections: [
