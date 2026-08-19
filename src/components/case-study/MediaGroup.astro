@@ -24,6 +24,8 @@ const { items, assets = {} } = Astro.props;
         caption={item.caption}
         ratio={item.ratio}
         video={item.video}
+        videoSrc={item.videoSrc}
+        poster={item.poster ? assets[item.poster] : undefined}
       />
     ))
   }

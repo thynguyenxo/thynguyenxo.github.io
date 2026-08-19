@@ -91,6 +91,18 @@ export interface StudyMedia {
   caption?: string;
   /** Video rather than still. */
   video?: boolean;
+  /**
+   * Video file under public/<slug>/, e.g. `onboarding.mp4`. Video skips the
+   * image pipeline, so it lives in public/ and is referenced by URL rather
+   * than imported. Setting this implies `video`.
+   */
+  videoSrc?: string;
+  /**
+   * Still shown before playback, in src/assets/<slug>/. Without one the
+   * frame sits empty until the first frame decodes, so supply it whenever
+   * `videoSrc` is set.
+   */
+  poster?: string;
 }
 
 export interface StudySection {
