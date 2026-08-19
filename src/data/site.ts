@@ -183,7 +183,7 @@ export const projects: Project[] = [
       preview: {
         tag: 'Preview',
         caption: 'The redesigned onboarding flow',
-        ratio: '16 / 9',
+        ratio: '665 / 436',
         videoSrc: '/tenmin/quick-demo-intro.mp4',
         poster: 'quick-demo-intro-poster.png',
         alt: 'Walkthrough of the redesigned Tenmin onboarding flow',
