@@ -50,30 +50,38 @@ const { items } = Astro.props;
    * A fixed rail: the ticks are spread down 200px however many there are,
    * so the outline occupies the same band on every case study rather than
    * growing with the number of sections.
+   *
+   * Anchored to its own right edge, so opening the names grows the panel
+   * leftward into the margin instead of pushing the ticks off screen.
    */
   .toc__list {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: flex-start;
+    align-self: flex-end;
     height: 12.5rem;
-    /* Stretch rather than flex-end: the rows are all the width of the
-       longest name, so every rule ends on the same edge instead of being
-       pushed left by the label beside it. */
-    align-items: stretch;
     margin: 0;
+    margin-left: auto;
     padding: 0;
     list-style: none;
     pointer-events: auto;
     isolation: isolate;
+    width: fit-content;
   }
 
-  /* Names read left to right and the rules pin to the right edge, so the
-     ticks stay in one column whatever the labels beside them measure. */
+  .toc__item {
+    width: 100%;
+  }
+
+  /* The rule leads and the name follows, both flush left, so the panel can
+     close around the longest name rather than around the tick column. */
   .toc__link {
     position: relative;
     display: flex;
+    gap: var(--sm);
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     text-decoration: none;
     color: var(--color-text-secondary);
   }
@@ -83,6 +91,7 @@ const { items } = Astro.props;
      of links. */
   .toc__rule {
     display: block;
+    flex: none;
     width: 1rem;
     height: var(--stroke-weight-2);
     border-radius: var(--radius-pill);
@@ -98,42 +107,33 @@ const { items } = Astro.props;
   }
 
   /*
-   * Names are laid out at all times and revealed by opacity, so opening the
-   * list costs no layout and the rules never shift under the pointer.
-   */
-  /*
-   * Taken out of flow so the rail is only ever as wide as the rules. The
-   * names are laid over the ticks when the list opens rather than beside
-   * them, so nothing in the page has to make room for a panel that is
-   * hidden most of the time.
+   * Collapsed to nothing at rest, so the closed rail is only as wide as the
+   * rules. Opening gives the names their width, and the panel is sized from
+   * them, so it wraps the labels rather than just the tick column.
    */
   .toc__label {
-    position: absolute;
-    right: 0;
     z-index: 2;
-    max-width: 12rem;
+    max-width: 0;
     overflow: hidden;
-    text-align: right;
+    text-align: left;
     font-family: var(--font-family-secondary);
     font-size: var(--font-size-12);
-    line-height: var(--line-height-20);
-    letter-spacing: var(--letter-spacing-0-28);
     text-transform: uppercase;
     white-space: nowrap;
     text-overflow: ellipsis;
     opacity: 0;
     transition:
+      max-width 0.2s ease,
       opacity 0.2s ease,
       color 0.2s ease;
   }
 
-  /* One card over the whole list, drawn only while it is open. It covers
-     the rules rather than displacing them. */
+  /* One card behind the list, drawn only while it is open. */
   .toc__list::before {
     content: '';
     position: absolute;
-    inset: calc(var(--sm) * -1) calc(var(--md) * -1);
-    z-index: 1;
+    inset: calc(var(--md) * -1);
+    z-index: -1;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
@@ -148,12 +148,21 @@ const { items } = Astro.props;
     opacity: 1;
   }
 
+  .toc:hover .toc__label,
+  .toc:focus-within .toc__label {
+    max-width: 12rem;
+  }
+
   /*
    * TEMPORARY — holds the list open so it can be styled without hovering.
    * Delete this block to restore hover-only behaviour before shipping.
    */
-  .toc__list::before,
+  .toc__list::before {
+    opacity: 1;
+  }
+
   .toc__label {
+    max-width: 12rem;
     opacity: 1;
   }
 
