@@ -207,12 +207,12 @@ export const projects: Project[] = [
             {
               src: 'before-onboarding.png',
               alt: 'The original Tenmin onboarding screens before the redesign',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
             {
               src: 'before-review-screen.png',
               alt: 'The original Tenmin review screen before the redesign',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
           ],
           lead: 'User interviews revealed a key issue: many people didn\u2019t realize who or what the AI tutor was until later in the experience',
@@ -259,7 +259,7 @@ export const projects: Project[] = [
             {
               src: 'after-onboarding.png',
               alt: 'The redesigned Tenmin onboarding sequence',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
             {
               src: 'after-review-screen.png',
@@ -292,7 +292,7 @@ export const projects: Project[] = [
             {
               src: 'design-assets.png',
               alt: 'Illustration and component assets from the Tenmin design system',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
             {
               src: 'after-onboarding-whole.png',
@@ -302,12 +302,12 @@ export const projects: Project[] = [
             {
               src: 'after-onboarding-1.png',
               alt: 'Redesigned onboarding screens, first detail view',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
             {
               src: 'after-onboarding-2.png',
               alt: 'Redesigned onboarding screens, second detail view',
-              ratio: '4 / 3',
+              ratio: '120 / 73',
             },
           ],
           lead: 'Early feedback suggested that the onboarding fostered stronger emotional engagement and helped users quickly understand the AI tutor\u2019s role',
