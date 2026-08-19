@@ -204,8 +204,16 @@ export const projects: Project[] = [
         {
           label: 'Discovery',
           media: [
-            { ratio: '1200 / 960' },
-            { ratio: '1200 / 700' },
+            {
+              src: 'before-onboarding.png',
+              alt: 'The original Tenmin onboarding screens before the redesign',
+              ratio: '4 / 3',
+            },
+            {
+              src: 'before-review-screen.png',
+              alt: 'The original Tenmin review screen before the redesign',
+              ratio: '4 / 3',
+            },
           ],
           lead: 'User interviews revealed a key issue: many people didn\u2019t realize who or what the AI tutor was until later in the experience',
           body: [
@@ -242,9 +250,22 @@ export const projects: Project[] = [
         {
           label: 'Outcomes',
           media: [
-            { ratio: '1200 / 675', video: true },
-            { ratio: '1200 / 900' },
-            { ratio: '1200 / 960' },
+            {
+              videoSrc: '/tenmin/tenmin-redesign.mp4',
+              poster: 'tenmin-redesign-poster.png',
+              alt: 'Walkthrough of the redesigned Tenmin onboarding and review screens',
+              ratio: '16 / 9',
+            },
+            {
+              src: 'after-onboarding.png',
+              alt: 'The redesigned Tenmin onboarding sequence',
+              ratio: '4 / 3',
+            },
+            {
+              src: 'after-review-screen.png',
+              alt: 'The redesigned Tenmin review screen',
+              ratio: '4 / 3',
+            },
           ],
           lead: 'Usability testing with three language learners showed positive feedback. Participants particularly liked the onboarding\u2019s tone, visuals, and clarity',
           body: [
@@ -268,10 +289,26 @@ export const projects: Project[] = [
         {
           label: 'Retrospective',
           media: [
-            { ratio: '1200 / 900' },
-            { ratio: '1200 / 960' },
-            { ratio: '1200 / 960' },
-            { ratio: '1200 / 960' },
+            {
+              src: 'design-assets.png',
+              alt: 'Illustration and component assets from the Tenmin design system',
+              ratio: '4 / 3',
+            },
+            {
+              src: 'after-onboarding-whole.png',
+              alt: 'The full redesigned onboarding flow shown end to end',
+              ratio: '4 / 3',
+            },
+            {
+              src: 'after-onboarding-1.png',
+              alt: 'Redesigned onboarding screens, first detail view',
+              ratio: '4 / 3',
+            },
+            {
+              src: 'after-onboarding-2.png',
+              alt: 'Redesigned onboarding screens, second detail view',
+              ratio: '4 / 3',
+            },
           ],
           lead: 'Early feedback suggested that the onboarding fostered stronger emotional engagement and helped users quickly understand the AI tutor\u2019s role',
           body: [
