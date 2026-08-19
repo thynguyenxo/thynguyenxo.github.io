@@ -51,17 +51,25 @@ const posterUrl = poster
     {
       videoSrc ? (
         /*
-         * `preload="none"` keeps the video off the initial load entirely --
-         * the poster carries the frame until someone presses play. Controls
-         * stay on so playback is deliberate rather than automatic.
+         * Autoplays muted and loops, so a demo reads as a moving still
+         * rather than something to operate. `muted` is what makes autoplay
+         * permitted at all -- browsers block audible autoplay outright.
+         *
+         * The source hangs on `data-src` until the frame scrolls into view,
+         * so a page of clips costs nothing to open; the poster holds each
+         * frame until its turn. Controls stay available for replay and for
+         * anyone who would rather scrub than watch.
          */
         <video
           class="media__video"
-          src={videoSrc}
+          data-src={videoSrc}
           poster={posterUrl}
           controls
-          preload="none"
+          autoplay
+          muted
+          loop
           playsinline
+          preload="none"
           aria-label={alt || undefined}
         />
       ) : image ? (
@@ -92,6 +100,55 @@ const posterUrl = poster
     )
   }
 </figure>
+
+<script>
+  /*
+   * Loads each clip only once its frame is near the viewport, then plays it.
+   * `autoplay` alone would have every video on the page fetch at once, so the
+   * source is withheld until it is worth spending.
+   */
+  const videos =
+    document.querySelectorAll<HTMLVideoElement>('video[data-src]');
+
+  // A looping clip is exactly the kind of motion this setting asks us to
+  // stop. The video still loads and stays playable by hand; it just does
+  // not start moving on its own.
+  const wantsLessMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+
+  const start = (video: HTMLVideoElement) => {
+    if (video.src) return;
+    video.src = video.dataset.src ?? '';
+    if (wantsLessMotion) {
+      video.loop = false;
+      return;
+    }
+    // Autoplay can still be refused (low power mode, a per-site setting).
+    // The poster and controls remain, so the frame stays usable either way.
+    video.play().catch(() => {});
+  };
+
+  // Without IntersectionObserver, load everything rather than nothing.
+  if (!('IntersectionObserver' in window)) {
+    videos.forEach(start);
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          start(entry.target as HTMLVideoElement);
+          observer.unobserve(entry.target);
+        }
+      },
+      // A margin of one viewport gives the clip a head start on the scroll,
+      // so it is already running by the time it is actually on screen.
+      { rootMargin: '100% 0px' },
+    );
+
+    videos.forEach((video) => observer.observe(video));
+  }
+</script>
 
 <style>
   .media {
