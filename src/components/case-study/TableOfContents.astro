@@ -60,7 +60,6 @@ const { items } = Astro.props;
     justify-content: space-between;
     align-items: flex-start;
     align-self: flex-end;
-    height: 12.5rem;
     margin: 0;
     margin-left: auto;
     padding: 0;
@@ -74,14 +73,14 @@ const { items } = Astro.props;
     width: 100%;
   }
 
-  /* The rule leads and the name follows, both flush left, so the panel can
-     close around the longest name rather than around the tick column. */
+  /* The name leads and the rule trails it on the outer edge, so the panel
+     can close around the labels while the ticks stay outside it. */
   .toc__link {
     position: relative;
     display: flex;
     gap: var(--sm);
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
     text-decoration: none;
     color: var(--color-text-secondary);
   }
@@ -112,13 +111,15 @@ const { items } = Astro.props;
    * them, so it wraps the labels rather than just the tick column.
    */
   .toc__label {
+    order: -1;
+    margin-right: auto;
     z-index: 2;
     max-width: 0;
     overflow: hidden;
     text-align: left;
-    font-family: var(--font-family-secondary);
+    font-family: var(--font-family-primary);
+    line-height: var(----line-height-24);
     font-size: var(--font-size-12);
-    text-transform: uppercase;
     white-space: nowrap;
     text-overflow: ellipsis;
     opacity: 0;
@@ -128,11 +129,20 @@ const { items } = Astro.props;
       color 0.2s ease;
   }
 
-  /* One card behind the list, drawn only while it is open. */
+  /*
+   * One card behind the labels only. It stops short of the tick column on
+   * the right, so the rules stay outside the panel and keep reading as the
+   * thing being pointed at.
+   */
   .toc__list::before {
     content: '';
     position: absolute;
-    inset: calc(var(--md) * -1);
+    top: calc(var(--md) * -1);
+    /* Clears the widest a rule gets — the current one at 1.5rem — plus the
+       gap, so an active tick never crosses the panel edge. */
+    right: calc(1.5rem + var(--sm));
+    bottom: calc(var(--md) * -1);
+    left: calc(var(--md) * -1);
     z-index: -1;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
