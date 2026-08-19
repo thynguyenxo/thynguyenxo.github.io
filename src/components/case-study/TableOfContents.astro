@@ -132,7 +132,7 @@ const { items } = Astro.props;
     text-decoration: none;
     text-align: left;
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-12);
+    font-size: var(--font-size-16);
     line-height: var(--line-height-24);
     color: var(--color-text-secondary);
     transition: color 0.2s ease;
@@ -147,16 +147,6 @@ const { items } = Astro.props;
     outline: var(--stroke-weight-2) solid var(--color-text-main);
     outline-offset: 0.25rem;
     border-radius: 0.125rem;
-  }
-
-  /*
-   * TEMPORARY — holds the panel open so it can be styled without hovering.
-   * Delete this block to restore hover-only behaviour before shipping.
-   */
-  .toc__panel {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
