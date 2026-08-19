@@ -1,6 +1,8 @@
 import { defineConfig } from 'astro/config';
 
-// User site: served from the domain root, so no `base` path is needed.
+// Served from the domain root, so no `base` path is needed. Update `site` to
+// the custom domain if one is added — it feeds canonical URLs, so a stale
+// value points search engines at the wrong host.
 export default defineConfig({
-  site: 'https://thynguyenxo.github.io',
+  site: 'https://design-portfolio.pages.dev',
 });

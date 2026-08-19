@@ -162,8 +162,10 @@ file in causes no layout shift.
 The site is static and collects no user input, which removes most of the attack
 surface. What's in place:
 
-- **Content-Security-Policy** via `<meta http-equiv>` in `BaseLayout.astro`
-  (GitHub Pages cannot send custom headers). Everything is `'self'` apart from
+- **Content-Security-Policy** via `<meta http-equiv>` in `BaseLayout.astro`.
+  Cloudflare Pages *can* send real headers via a `_headers` file, which would
+  be stricter — the meta tag cannot carry `frame-ancestors` reliably — but the
+  meta tag is what is in place today. Everything is `'self'` apart from
   `api.web3forms.com`, which the contact form posts to and which must appear in
   **both** `connect-src` and `form-action`. `frame-ancestors 'none'` blocks
   clickjacking and `object-src 'none'` blocks plugin embedding.
@@ -181,6 +183,51 @@ Rules going forward:
   user-supplied or fetched content to it.
 - Keep dependencies minimal and prefer devDependencies, so little third-party
   code reaches visitors.
+
+## Hosting and the password gate
+
+The site is hosted on **Cloudflare Pages**, built from `main` of the private
+`design-portfolio` repository. It moved off GitHub Pages because a password
+gate needs somewhere the public cannot reach around: a gate in front of a
+still-live `github.io` origin is obscurity, not protection.
+
+`functions/_middleware.ts` runs at the edge on every request and challenges
+for HTTP Basic Auth on the paths in `PROTECTED_PREFIXES`. The password is the
+`CASE_STUDY_PASSWORD` environment variable, set as an encrypted secret in the
+Pages dashboard — **never** committed here.
+
+To protect a project:
+
+1. Set `protected: true` on its entry in `src/data/site.ts`. That drives the
+   badge on the card, so visitors know before they click.
+2. Add both `/<slug>` and `/protected/<slug>` to `PROTECTED_PREFIXES`.
+3. Put its artwork in `public/protected/<slug>/`, not `src/assets/<slug>/`.
+
+Step 3 is the easy one to miss. Astro flattens `src/assets/**` into a shared
+`dist/_astro/` directory that also holds every public page's images, so it
+cannot be gated per project — artwork left there stays publicly fetchable
+while the page asks for a password. Files in `public/` are copied verbatim and
+land somewhere a path rule can cover. The cost is losing `<Image>`
+optimisation, so export those webp files at their display size (2x for
+retina).
+
+`isProtected()` normalizes the path before matching, and that normalization is
+load-bearing rather than defensive tidying. Three spellings served the full
+protected page in local testing against a plain `startsWith` check:
+`//wemolo-ds/` (leading double slash), `/WEMOLO-DS/` (Cloudflare's asset
+lookup is case-insensitive), and `/wemolo-ds%2f` (percent-encoded separator).
+Don't simplify that function without re-running those cases.
+
+Two things that follow from the gate:
+
+- Protected content must never be committed to a public repository. Git
+  history is permanent; making a repo private afterwards retracts nothing.
+- Basic Auth sends the password on every request, so the site must stay
+  HTTPS-only. Cloudflare provides that; leave Always Use HTTPS on.
+
+Deploys happen on push. The monthly rebuild that refreshes the baked-in
+copyright year runs from `.github/workflows/refresh.yml`, which calls a
+Cloudflare deploy hook rather than deploying itself.
 
 ## Adding a project
 
@@ -211,6 +258,8 @@ src/
   pages/        index.astro, [slug].astro
   styles/       tokens.css (design tokens), global.css (reset, fonts, base)
 public/fonts/   self-hosted WOFF2
+public/protected/<slug>/  artwork for password-gated case studies
+functions/      Cloudflare Pages Functions — the password gate
 ```
 
 ## Commands
@@ -219,7 +268,7 @@ public/fonts/   self-hosted WOFF2
 npm run dev      # localhost:4321, live reload
 npm run build    # production build to dist/
 npm run preview  # serve the built output
-npm run check    # astro check — must stay at 0 errors
+npm run check    # astro check + the Pages Function — must stay at 0 errors
 ```
 
 ## Attribution

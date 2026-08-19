@@ -40,6 +40,7 @@ const covers = import.meta.glob<{ default: ImageMetadata }>(
             }
             imageAlt={project.coverAlt}
             href={`/${project.slug}`}
+            protected={project.protected}
           />
         ))
       }

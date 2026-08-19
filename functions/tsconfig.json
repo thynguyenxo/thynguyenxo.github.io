@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // Pages Functions execute on the Workers runtime, so they type against
+    // its globals (PagesFunction, its fetch types) rather than the DOM.
+    "types": ["@cloudflare/workers-types"],
+    "lib": ["ES2022"],
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

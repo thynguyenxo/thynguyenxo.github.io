@@ -105,6 +105,9 @@
   /* Radii */
   --radius-default: 1.5rem;
   /* 24px */
+  /* Larger than any pill's height, so the ends stay fully round whatever the
+     type size. Shared by PillTag and the card's password badge. */
+  --radius-pill: 62.4375rem;
 
   /* Borders — px so hairlines stay crisp at any zoom */
   --stroke-weight-border: 1px;
