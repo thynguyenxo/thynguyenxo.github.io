@@ -38,7 +38,7 @@ const { items } = Astro.props;
   .toc {
     position: fixed;
     top: 50%;
-    right: var(--xl);
+    right: 1.5rem;
     z-index: 9;
     transform: translateY(-50%);
     /* The rail is only a target while the pointer is over it; the gap it
@@ -50,13 +50,18 @@ const { items } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--sm);
-    align-items: flex-end;
+    /* Stretch rather than flex-end: the rows are all the width of the
+       longest name, so every rule ends on the same edge instead of being
+       pushed left by the label beside it. */
+    align-items: stretch;
     margin: 0;
     padding: 0;
     list-style: none;
     pointer-events: auto;
   }
 
+  /* Names read left to right and the rules pin to the right edge, so the
+     ticks stay in one column whatever the labels beside them measure. */
   .toc__link {
     display: flex;
     gap: var(--sm);
@@ -90,8 +95,13 @@ const { items } = Astro.props;
    * list costs no layout and the rules never shift under the pointer.
    */
   .toc__label {
+    /* Drawn before the rule and pushed off it, so the rules stay in one
+       column no matter how wide the name beside them is. */
+    order: -1;
+    margin-right: auto;
     max-width: 12rem;
     overflow: hidden;
+    text-align: right;
     font-family: var(--font-family-secondary);
     font-size: var(--font-size-12);
     line-height: var(--line-height-20);
