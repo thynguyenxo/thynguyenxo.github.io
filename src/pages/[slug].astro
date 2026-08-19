@@ -155,9 +155,11 @@ const studyAssets = Object.fromEntries(
             lead={study.problem.lead}
             body={study.problem.body}
           >
-            <Dialog label={study.problem.dialog.label}>
-              {study.problem.dialog.question}
-            </Dialog>
+            {study.problem.dialog && (
+              <Dialog label={study.problem.dialog.label}>
+                {study.problem.dialog.question}
+              </Dialog>
+            )}
           </Section>
 
           {
@@ -172,6 +174,11 @@ const studyAssets = Object.fromEntries(
                   body={section.body}
                 >
                   {section.accordion && <Accordion items={section.accordion} />}
+                  {section.dialog && (
+                    <Dialog label={section.dialog.label}>
+                      {section.dialog.question}
+                    </Dialog>
+                  )}
                 </Section>
               </>
             ))

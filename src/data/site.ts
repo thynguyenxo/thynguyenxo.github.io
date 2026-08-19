@@ -82,13 +82,8 @@ export interface CaseStudy {
     /** Describes the media for assistive tech. */
     alt?: string;
   };
-  /**
-   * The opening section. A StudySection like any other, plus the framing
-   * question that closes it.
-   */
-  problem: StudySection & {
-    dialog: { label: string; question: string };
-  };
+  /** The opening section. A StudySection like any other. */
+  problem: StudySection;
   /**
    * The sections that follow. Case studies name these differently —
    * Discovery, Process, Solution, Outcomes — so the name is content and the
@@ -136,6 +131,8 @@ export interface StudySection {
   accordion?: { title: string; body: string }[];
   /** Media shown above the section, illustrating what it describes. */
   media?: StudyMedia[];
+  /** Framing question, set apart at the end of the section. */
+  dialog?: { label: string; question: string };
 }
 
 export const projects: Project[] = [
@@ -215,11 +212,6 @@ export const projects: Project[] = [
           'Tenmin\u2019s original onboarding asked learners to sign in before it explained anything, then moved through five screens of taps and typed input. The AI tutor, the reason the product exists, first appeared as a dropdown setting for which language it should speak in.',
           'The result: learners reached their first conversation without knowing who they were about to talk to. In an app built on speaking out loud, that is the moment hesitation costs you a user.',
         ],
-        dialog: {
-          label: 'How might we?',
-          question:
-            'How might we create a warm and trust-building onboarding experience while keeping a brand identity that balances professionalism and youthful energy?',
-        },
       },
       sections: [
         {
@@ -241,6 +233,11 @@ export const projects: Project[] = [
             'Without that early clarity, it was harder for them to feel a personal connection and trust the experience.',
             'Additionally, our competitor analysis showed that most onboarding flows either rushed through introductions or overloaded users with feature lists, leaving little room to build rapport.',
           ],
+          dialog: {
+            label: 'How might we?',
+            question:
+              'How might we create a warm and trust-building onboarding experience while keeping a brand identity that balances professionalism and youthful energy?',
+          },
         },
         {
           label: 'Process',
