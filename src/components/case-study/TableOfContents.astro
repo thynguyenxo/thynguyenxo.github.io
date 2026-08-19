@@ -56,6 +56,19 @@ const { items } = Astro.props;
     /* The rail is only a target while the pointer is over it; the gap it
        leaves beside the text should stay clickable for selection. */
     pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Withdrawn once the footer is up: the outline belongs to the article,
+     and there is nothing left to navigate by the time the page ends. */
+  .toc[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .toc[data-hidden] .toc__ticks {
+    pointer-events: none;
   }
 
   /*
@@ -154,38 +167,6 @@ const { items } = Astro.props;
       visibility 0s linear;
   }
 
-  /*
-   * The names follow the panel in, each a beat after the last. The stagger
-   * is small enough to read as one movement with a grain to it rather than
-   * as six separate entrances.
-   */
-  .toc__panel li {
-    opacity: 0;
-    transform: translateX(0.375rem);
-    transition:
-      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .toc:hover .toc__panel li,
-  .toc:focus-within .toc__panel li {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .toc__panel li:nth-child(1) { transition-delay: 0.04s; }
-  .toc__panel li:nth-child(2) { transition-delay: 0.07s; }
-  .toc__panel li:nth-child(3) { transition-delay: 0.1s; }
-  .toc__panel li:nth-child(4) { transition-delay: 0.13s; }
-  .toc__panel li:nth-child(5) { transition-delay: 0.16s; }
-  .toc__panel li:nth-child(6) { transition-delay: 0.19s; }
-
-  /* Leaving, the names go together and at once — a staggered exit makes a
-     dismissal feel reluctant. */
-  .toc:not(:hover):not(:focus-within) .toc__panel li {
-    transition-delay: 0s;
-  }
-
   .toc__link {
     display: block;
     /* The panel is a fixed width now, so a longer section name is trimmed
@@ -225,10 +206,6 @@ const { items } = Astro.props;
       transform: translateY(-50%);
     }
 
-    .toc__panel li {
-      transform: none;
-      transition-delay: 0s;
-    }
   }
 
   /*
@@ -285,5 +262,27 @@ const { items } = Astro.props;
     );
 
     for (const section of sections) observer.observe(section);
+  }
+
+  /*
+   * Withdraws the rail once the footer comes into view, so the ticks never
+   * sit over it. An observer rather than a scroll handler, so this costs
+   * nothing while the reader is in the body of the page.
+   */
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  const footer = document.querySelector('footer');
+
+  if (toc && footer) {
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) toc.setAttribute('data-hidden', '');
+        else toc.removeAttribute('data-hidden');
+      },
+      // Starts withdrawing a little before the footer lands, so the two
+      // never share the screen.
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+
+    footerObserver.observe(footer);
   }
 </script>
