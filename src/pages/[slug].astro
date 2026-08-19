@@ -35,6 +35,16 @@ const cover = project.cover
 
 // Case study artwork lives in src/assets/<slug>/. Keyed by the filename the
 // data refers to, so a missing file falls through to the placeholder.
+// Team portraits sit a level deeper, in src/assets/<slug>/team/.
+const teamAssets = Object.fromEntries(
+  Object.entries(covers)
+    .filter(([path]) => path.startsWith(`../assets/${project.slug}/team/`))
+    .map(([path, mod]) => [
+      path.replace(`../assets/${project.slug}/team/`, ''),
+      mod.default,
+    ])
+);
+
 const studyAssets = Object.fromEntries(
   Object.entries(covers)
     .filter(([path]) => path.startsWith(`../assets/${project.slug}/`))
@@ -100,6 +110,24 @@ const studyAssets = Object.fromEntries(
                   {fact.values.map((value) => (
                     <dd class="intro__value">{value}</dd>
                   ))}
+                  {fact.avatars && (
+                    <dd class="intro__avatars">
+                      {fact.avatars.map((avatar) => (
+                        <Image
+                          class="intro__avatar"
+                          src={teamAssets[avatar.src]}
+                          alt={avatar.alt}
+                          width={112}
+                          height={112}
+                          densities={[1, 2]}
+                          format="webp"
+                          quality={85}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ))}
+                    </dd>
+                  )}
                 </div>
               ))}
             </dl>
@@ -277,6 +305,23 @@ const studyAssets = Object.fromEntries(
     font-size: var(--font-size-16);
     line-height: var(--line-height-28);
     color: var(--color-text-primary);
+  }
+
+  .intro__avatars {
+    display: flex;
+    gap: var(--sm);
+    margin: 0;
+  }
+
+  /* A ring in the page background separates the faces where they sit
+     against one another, so the row reads as four people rather than a
+     single strip. */
+  .intro__avatar {
+    width: 7rem;
+    height: 7rem;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    box-shadow: 0 0 0 var(--stroke-weight-2) var(--color-background-primary);
   }
 
   /* Preview: pill, media, caption. */

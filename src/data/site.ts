@@ -59,7 +59,16 @@ export interface CaseStudy {
   /** Set the opening paragraphs side by side instead of stacked. */
   introColumns?: boolean;
   /** The metadata rail: role, year, skills. */
-  facts: { label: string; values: string[] }[];
+  facts: {
+    label: string;
+    values: string[];
+    /**
+     * Avatars shown in place of text values, from
+     * src/assets/<slug>/team/. Used for the team credit, where the faces
+     * carry the line and a list of names would not.
+     */
+    avatars?: { src: string; alt: string }[];
+  }[];
   preview: {
     /** Text on the outlined pill above the media. */
     tag: string;
@@ -179,6 +188,16 @@ export const projects: Project[] = [
       ],
       facts: [
         { label: 'Role', values: ['UX/UI Designer'] },
+        {
+          label: 'Team',
+          values: [],
+          avatars: [
+            { src: 'member-1.png', alt: '' },
+            { src: 'member-2.png', alt: '' },
+            { src: 'member-3.png', alt: '' },
+            { src: 'member-4.png', alt: '' },
+          ],
+        },
         { label: 'Year', values: ['April \u2014 July 2025'] },
         { label: 'Skills', values: ['UX Design', 'Prototyping'] },
       ],
