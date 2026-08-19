@@ -171,9 +171,11 @@ export const projects: Project[] = [
       'Three Tenmin app screens showing the speaking-practice onboarding flow',
     study: {
       standfirst:
-        'designed an engaging onboarding experience and a review screen to help users build trust',
+        'Reshaping onboarding around a tutor learners never met',
+      introColumns: true,
       intro: [
-        'As one of three designers, I led the prototyping and design for the onboarding flow, collaborating closely with Tenmin\u2019s founders, product manager, and fellow designers. I also contributed to the redesign of the review home screen to ensure consistency in tone and visuals across the product.',
+        'Tenmin is an AI-powered language learning app built around speaking rather than memorization. Learners get real-time pronunciation feedback, personalized lessons, and conversation practice that simulates real interactions.',
+        'I led design and prototyping for the onboarding flow, working closely with the founders, PM, and fellow designers. I also redesigned the review home screen so the tone established in onboarding carried through to daily use.',
       ],
       facts: [
         { label: 'Role', values: ['UX/UI Designer'] },
@@ -191,8 +193,8 @@ export const projects: Project[] = [
       problem: {
         lead: 'Problem',
         body: [
-          'Many AI-powered language learning apps feel either overly robotic or disorganized, which can leave learners unmotivated. Onboarding experiences are often bloated, transactional, or forgettable, failing to inspire confidence or encourage return visits.',
-          'Tenmin wanted to strike a balance between professional polish and youthful energy, while adding a human touch that makes their AI tutor approachable. The onboarding needed to create a sticky first impression, build trust in the AI, and set the tone for ongoing engagement.',
+          'Tenmin\u2019s original onboarding asked learners to sign in before it explained anything, then moved through five screens of taps and typed input. The AI tutor, the reason the product exists, first appeared as a dropdown setting for which language it should speak in.',
+          'The result: learners reached their first conversation without knowing who they were about to talk to. In an app built on speaking out loud, that is the moment hesitation costs you a user.',
         ],
         dialog: {
           label: 'How might we?',
