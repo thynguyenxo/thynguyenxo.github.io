@@ -51,20 +51,24 @@ const posterUrl = poster
     {
       videoSrc ? (
         /*
-         * Autoplays muted and loops, so a demo reads as a moving still
-         * rather than something to operate. `muted` is what makes autoplay
-         * permitted at all -- browsers block audible autoplay outright.
+         * Autoplays muted and loops with no control bar, so a demo reads as
+         * a moving still rather than something to operate. `muted` is what
+         * makes autoplay permitted at all -- browsers block audible
+         * autoplay outright.
          *
          * The source hangs on `data-src` until the frame scrolls into view,
          * so a page of clips costs nothing to open; the poster holds each
-         * frame until its turn. Controls stay available for replay and for
-         * anyone who would rather scrub than watch.
+         * frame until its turn.
+         *
+         * Controls come back whenever the clip is not going to play by
+         * itself -- under reduced motion, or once a browser refuses the
+         * autoplay -- since without them a still frame would be all
+         * anyone ever got.
          */
         <video
           class="media__video"
           data-src={videoSrc}
           poster={posterUrl}
-          controls
           autoplay
           muted
           loop
@@ -122,11 +126,15 @@ const posterUrl = poster
     video.src = video.dataset.src ?? '';
     if (wantsLessMotion) {
       video.loop = false;
+      video.controls = true;
       return;
     }
     // Autoplay can still be refused (low power mode, a per-site setting).
-    // The poster and controls remain, so the frame stays usable either way.
-    video.play().catch(() => {});
+    // Restore the controls when it is, so the clip does not strand the
+    // visitor on a poster with no way to start it.
+    video.play().catch(() => {
+      video.controls = true;
+    });
   };
 
   // Without IntersectionObserver, load everything rather than nothing.
@@ -185,6 +193,13 @@ const posterUrl = poster
     height: 100%;
     object-fit: contain;
     background: var(--color-background-secondary);
+  }
+
+  /* With no control bar there is nothing to aim at, so the clip should not
+     invite a click it will not answer. Restored for the fallback cases,
+     where the controls come back and the video is operated by hand. */
+  .media__video:not([controls]) {
+    pointer-events: none;
   }
 
   .media__caption {
