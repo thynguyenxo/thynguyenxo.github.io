@@ -234,6 +234,16 @@ const studyAssets = Object.fromEntries(
 
   /* One container holds everything below the navbar, so the thumbnail shares
      the same 80px inset as the write-up beneath it. */
+  /*
+   * Landing space for the table of contents links. Without it a jump puts
+   * the section label hard against the top edge, which reads as though the
+   * heading has been cut off rather than arrived at.
+   */
+  :global(.section[id]),
+  .preview {
+    scroll-margin-top: var(--xxl);
+  }
+
   .study__container {
     width: 100%;
     max-width: var(--page-max-width);

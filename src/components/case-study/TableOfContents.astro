@@ -106,19 +106,6 @@ const { items } = Astro.props;
     background: var(--color-text-main);
   }
 
-  /* The rail answers the pointer on its own, a moment ahead of the panel,
-     so the hover is acknowledged the instant it lands. */
-  .toc:hover .toc__rule,
-  .toc:focus-within .toc__rule {
-    width: 1.5rem;
-    background: var(--color-text-secondary);
-  }
-
-  .toc:hover .toc__rule[data-current],
-  .toc:focus-within .toc__rule[data-current] {
-    background: var(--color-text-main);
-  }
-
   /*
    * The panel: laid over the ticks and sized to its own names, so the two
    * layers need not share a rhythm. Anchored right so it grows leftward
