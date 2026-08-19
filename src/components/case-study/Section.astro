@@ -21,9 +21,18 @@ interface Props {
   bordered?: boolean;
   /** Span the full container rather than the narrower reading measure. */
   wide?: boolean;
+  /** Anchor target, so the table of contents can link here. */
+  id?: string;
 }
 
-const { label, lead, body = [], bordered = false, wide = false } = Astro.props;
+const {
+  label,
+  lead,
+  body = [],
+  bordered = false,
+  wide = false,
+  id,
+} = Astro.props;
 
 // A section is labelled by whichever of the two it has.
 const accessibleName = label ?? lead;
@@ -32,6 +41,7 @@ const accessibleName = label ?? lead;
 <section
   class:list={['section', wide && 'section--wide']}
   aria-label={accessibleName}
+  id={id}
 >
   <header class="section__head">
     {

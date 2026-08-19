@@ -1,0 +1,201 @@
+---
+/**
+ * A quiet outline of the case study, pinned to the right edge.
+ *
+ * At rest it is a stack of short rules — enough to show how long the piece
+ * is and where you are in it, without competing with the page. Pointing at
+ * it opens the whole list rather than one name at a time, so the outline
+ * can be read at a glance instead of hunted through.
+ *
+ * Hover is the only way in, so it is hidden entirely on narrow screens
+ * where there is no pointer and no room for it.
+ */
+interface Props {
+  items: { id: string; label: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <nav class="toc" aria-label="On this page" data-toc>
+      <ul class="toc__list">
+        {items.map((item) => (
+          <li class="toc__item">
+            <a class="toc__link" href={`#${item.id}`} data-toc-link={item.id}>
+              <span class="toc__rule" aria-hidden="true" />
+              <span class="toc__label">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: fixed;
+    top: 50%;
+    right: var(--xl);
+    z-index: 9;
+    transform: translateY(-50%);
+    /* The rail is only a target while the pointer is over it; the gap it
+       leaves beside the text should stay clickable for selection. */
+    pointer-events: none;
+  }
+
+  .toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+    align-items: flex-end;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: auto;
+  }
+
+  .toc__link {
+    display: flex;
+    gap: var(--sm);
+    align-items: center;
+    justify-content: flex-end;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+  }
+
+  /* The rule is the whole control at rest. Current section aside, they are
+     uniform, so the stack reads as a measure of the page rather than a list
+     of links. */
+  .toc__rule {
+    display: block;
+    width: 1rem;
+    height: var(--stroke-weight-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-border-bold);
+    transition:
+      width 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .toc__link[data-current] .toc__rule {
+    width: 1.5rem;
+    background: var(--color-text-main);
+  }
+
+  /*
+   * Names are laid out at all times and revealed by opacity, so opening the
+   * list costs no layout and the rules never shift under the pointer.
+   */
+  .toc__label {
+    max-width: 12rem;
+    overflow: hidden;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      color 0.2s ease;
+  }
+
+  /* One card behind the whole list, drawn only while it is open. */
+  .toc__list::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--sm) * -1) calc(var(--md) * -1);
+    z-index: -1;
+    border: var(--stroke-weight-border) solid var(--color-border-secondary);
+    border-radius: var(--radius-default);
+    background: var(--color-background-primary);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .toc:hover .toc__list::before,
+  .toc:focus-within .toc__list::before,
+  .toc:hover .toc__label,
+  .toc:focus-within .toc__label {
+    opacity: 1;
+  }
+
+  .toc__link:hover .toc__label,
+  .toc__link[data-current] .toc__label {
+    color: var(--color-text-main);
+  }
+
+  .toc__link:focus-visible {
+    outline: var(--stroke-weight-2) solid var(--color-text-main);
+    outline-offset: 0.25rem;
+    border-radius: 0.125rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc__rule,
+    .toc__label,
+    .toc__list::before {
+      transition: none;
+    }
+  }
+
+  /*
+   * Below the two column layout there is no rail to sit in, and no pointer
+   * to open it with. Back to top already covers navigation there.
+   */
+  @media (max-width: 1100px) {
+    .toc {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Marks the section currently in view. The observer watches a band across
+   * the upper half of the viewport, so a section becomes current as it
+   * settles into reading position rather than the moment it appears.
+   */
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+
+  if (links.length > 0) {
+    const byId = new Map<string, HTMLAnchorElement>();
+    for (const link of links) {
+      const id = link.dataset.tocLink;
+      if (id) byId.set(id, link);
+    }
+
+    const sections = [...byId.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let current: HTMLAnchorElement | null = null;
+
+    const setCurrent = (id: string) => {
+      const link = byId.get(id);
+      if (!link || link === current) return;
+      current?.removeAttribute('data-current');
+      link.setAttribute('data-current', '');
+      current = link;
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Several sections can straddle the band at once; the highest one
+        // on the page is the one being read.
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]?.target.id) setCurrent(visible[0].target.id);
+      },
+      { rootMargin: '-10% 0px -60% 0px' },
+    );
+
+    for (const section of sections) observer.observe(section);
+  }
+</script>

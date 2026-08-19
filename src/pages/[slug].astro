@@ -12,6 +12,7 @@ import BackToTop from '../components/case-study/BackToTop.astro';
 import MediaPlaceholder from '../components/MediaPlaceholder.astro';
 import MediaBlock from '../components/case-study/MediaBlock.astro';
 import Dialog from '../components/case-study/Dialog.astro';
+import TableOfContents from '../components/case-study/TableOfContents.astro';
 import { site, projects } from '../data/site';
 
 // One page per entry in `projects`, so a new project needs no new route file.
@@ -44,6 +45,24 @@ const teamAssets = Object.fromEntries(
       mod.default,
     ])
 );
+
+// Anchors are derived from the section name, so the outline and the page
+// cannot drift apart the way a hand-kept list would.
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const tocItems = study
+  ? [
+      { id: 'preview', label: study.preview.tag },
+      ...[study.problem, ...study.sections]
+        .map((section) => section.label ?? section.lead)
+        .filter((label): label is string => Boolean(label))
+        .map((label) => ({ id: slugify(label), label })),
+    ]
+  : [];
 
 const studyAssets = Object.fromEntries(
   Object.entries(covers)
@@ -134,7 +153,7 @@ const studyAssets = Object.fromEntries(
             </dl>
           </section>
 
-          <section class="preview" aria-label="Preview">
+          <section class="preview" aria-label="Preview" id="preview">
             <PillTag bordered>{study.preview.tag}</PillTag>
             <MediaBlock
               captionClient={project.client}
@@ -154,6 +173,7 @@ const studyAssets = Object.fromEntries(
             label={study.problem.label}
             lead={study.problem.lead}
             body={study.problem.body}
+            id={slugify(study.problem.label ?? study.problem.lead ?? '')}
           >
             {study.problem.dialog && (
               <Dialog label={study.problem.dialog.label}>
@@ -172,6 +192,7 @@ const studyAssets = Object.fromEntries(
                   label={section.label}
                   lead={section.lead}
                   body={section.body}
+                  id={slugify(section.label ?? section.lead ?? '')}
                 >
                   {section.accordion && <Accordion items={section.accordion} />}
                   {section.dialog && (
@@ -193,6 +214,8 @@ const studyAssets = Object.fromEntries(
 
     </div>
   </main>
+
+  <TableOfContents items={tocItems} />
 
   <BackToTop />
 
