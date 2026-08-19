@@ -115,7 +115,7 @@ const { items } = Astro.props;
     position: absolute;
     top: 50%;
     right: 0;
-    width: 12.5rem;
+    width: 10rem;
     display: flex;
     flex-direction: column;
     gap: var(--sm);
@@ -125,6 +125,7 @@ const { items } = Astro.props;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
+    box-shadow: var(--shadow-raised);
     /*
      * Shoots out from the right: the panel starts hard against the page
      * edge, clear of the rail, and slides left into place. The travel stops
@@ -166,10 +167,11 @@ const { items } = Astro.props;
     text-overflow: ellipsis;
     text-decoration: none;
     text-align: left;
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-16);
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
     line-height: var(--line-height-24);
-    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
     transition: color 0.2s ease;
   }
 

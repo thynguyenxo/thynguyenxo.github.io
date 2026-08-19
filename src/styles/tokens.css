@@ -43,6 +43,13 @@
   --color-text-inverse: var(--grey-950);
 
   /* Color — borders */
+
+  /* Raised surfaces. Weighted downward so a panel reads as lifted off the
+     page rather than outlined. Deeper and more opaque in dark mode, where a
+     faint shadow on a near-black ground is invisible. */
+  --shadow-raised:
+    0 0.125rem 0.25rem rgb(0 0 0 / 0.04), 0 0.75rem 1.5rem rgb(0 0 0 / 0.08);
+
   --color-border-primary: var(--grey-700);
   --color-border-secondary: var(--grey-200);
   --color-border-bold: var(--grey-500);
@@ -170,6 +177,9 @@
 
     --color-border-secondary: var(--grey-600);
     --color-border-bold: var(--grey-300);
+
+    --shadow-raised:
+      0 0.125rem 0.25rem rgb(0 0 0 / 0.4), 0 0.75rem 1.5rem rgb(0 0 0 / 0.56);
   }
 }
 
@@ -187,4 +197,7 @@
 
   --color-border-secondary: var(--grey-600);
   --color-border-bold: var(--grey-300);
+
+  --shadow-raised:
+    0 0.125rem 0.25rem rgb(0 0 0 / 0.4), 0 0.75rem 1.5rem rgb(0 0 0 / 0.56);
 }
