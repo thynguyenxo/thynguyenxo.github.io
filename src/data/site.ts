@@ -257,9 +257,9 @@ export const projects: Project[] = [
               ratio: '16 / 9',
             },
             {
-              src: 'after-onboarding.png',
-              alt: 'The redesigned Tenmin onboarding sequence',
-              ratio: '120 / 73',
+              src: 'onboarding-comparison.png',
+              alt: 'The original and redesigned Tenmin onboarding shown side by side',
+              ratio: '4 / 3',
             },
             {
               src: 'after-review-screen.png',
