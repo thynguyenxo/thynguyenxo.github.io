@@ -20,12 +20,24 @@ const { items } = Astro.props;
 {
   items.length > 0 && (
     <nav class="toc" aria-label="On this page" data-toc>
-      <ul class="toc__list">
+      {/*
+        Two layers rather than one list of rows: the ticks stay in flow and
+        keep their own rhythm, and the panel sits over them sized to the
+        names. Neither has to line up with the other.
+      */}
+      <ul class="toc__ticks" aria-hidden="true">
         {items.map((item) => (
-          <li class="toc__item">
+          <li>
+            <span class="toc__rule" data-toc-rule={item.id} />
+          </li>
+        ))}
+      </ul>
+
+      <ul class="toc__panel">
+        {items.map((item) => (
+          <li>
             <a class="toc__link" href={`#${item.id}`} data-toc-link={item.id}>
-              <span class="toc__rule" aria-hidden="true" />
-              <span class="toc__label">{item.label}</span>
+              {item.label}
             </a>
           </li>
         ))}
@@ -47,50 +59,25 @@ const { items } = Astro.props;
   }
 
   /*
-   * A fixed rail: the ticks are spread down 200px however many there are,
-   * so the outline occupies the same band on every case study rather than
-   * growing with the number of sections.
-   *
-   * Anchored to its own right edge, so opening the names grows the panel
-   * leftward into the margin instead of pushing the ticks off screen.
+   * The ticks: a fixed 200px band whatever the section count, so the
+   * outline sits in the same place on every case study.
    */
-  .toc__list {
+  .toc__ticks {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
-    align-self: flex-end;
+    align-items: flex-end;
+    height: 12.5rem;
     margin: 0;
-    margin-left: auto;
     padding: 0;
     list-style: none;
     pointer-events: auto;
-    isolation: isolate;
-    width: fit-content;
   }
 
-  .toc__item {
-    width: 100%;
-  }
-
-  /* The name leads and the rule trails it on the outer edge, so the panel
-     can close around the labels while the ticks stay outside it. */
-  .toc__link {
-    position: relative;
-    display: flex;
-    gap: var(--sm);
-    align-items: center;
-    justify-content: flex-end;
-    text-decoration: none;
-    color: var(--color-text-secondary);
-  }
-
-  /* The rule is the whole control at rest. Current section aside, they are
-     uniform, so the stack reads as a measure of the page rather than a list
-     of links. */
+  /* Uniform apart from the current one, so the stack reads as a measure of
+     the page rather than a list of links. */
   .toc__rule {
     display: block;
-    flex: none;
     width: 1rem;
     height: var(--stroke-weight-2);
     border-radius: var(--radius-pill);
@@ -100,84 +87,59 @@ const { items } = Astro.props;
       background-color 0.2s ease;
   }
 
-  .toc__link[data-current] .toc__rule {
+  .toc__rule[data-current] {
     width: 1.5rem;
     background: var(--color-text-main);
   }
 
   /*
-   * Collapsed to nothing at rest, so the closed rail is only as wide as the
-   * rules. Opening gives the names their width, and the panel is sized from
-   * them, so it wraps the labels rather than just the tick column.
+   * The panel: laid over the ticks and sized to its own names, so the two
+   * layers need not share a rhythm. Anchored right so it grows leftward
+   * into the margin as the names appear.
    */
-  .toc__label {
-    order: -1;
-    margin-right: auto;
-    z-index: 2;
-    max-width: 0;
-    overflow: hidden;
-    text-align: left;
-    font-family: var(--font-family-primary);
-    line-height: var(----line-height-24);
-    font-size: var(--font-size-12);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    opacity: 0;
-    transition:
-      max-width 0.2s ease,
-      opacity 0.2s ease,
-      color 0.2s ease;
-  }
-
-  /*
-   * One card behind the labels only. It stops short of the tick column on
-   * the right, so the rules stay outside the panel and keep reading as the
-   * thing being pointed at.
-   */
-  .toc__list::before {
-    content: '';
+  .toc__panel {
     position: absolute;
-    top: calc(var(--md) * -1);
-    /* Clears the widest a rule gets — the current one at 1.5rem — plus the
-       gap, so an active tick never crosses the panel edge. */
-    right: calc(1.5rem + var(--sm));
-    bottom: calc(var(--md) * -1);
-    left: calc(var(--md) * -1);
-    z-index: -1;
+    top: 50%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+    margin: 0;
+    padding: var(--md);
+    list-style: none;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
+    transform: translateY(-50%);
     opacity: 0;
-    transition: opacity 0.2s ease;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease;
   }
 
-  .toc:hover .toc__list::before,
-  .toc:focus-within .toc__list::before,
-  .toc:hover .toc__label,
-  .toc:focus-within .toc__label {
+  .toc:hover .toc__panel,
+  .toc:focus-within .toc__panel {
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
-  .toc:hover .toc__label,
-  .toc:focus-within .toc__label {
-    max-width: 12rem;
+  .toc__link {
+    display: block;
+    white-space: nowrap;
+    text-decoration: none;
+    text-align: left;
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-24);
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
   }
 
-  /*
-   * TEMPORARY — holds the list open so it can be styled without hovering.
-   * Delete this block to restore hover-only behaviour before shipping.
-   */
-  .toc__list::before {
-    opacity: 1;
-  }
-
-  .toc__label {
-    max-width: 12rem;
-    opacity: 1;
-  }
-
-  .toc__link:hover .toc__label,
-  .toc__link[data-current] .toc__label {
+  .toc__link:hover,
+  .toc__link[data-current] {
     color: var(--color-text-main);
   }
 
@@ -187,10 +149,20 @@ const { items } = Astro.props;
     border-radius: 0.125rem;
   }
 
+  /*
+   * TEMPORARY — holds the panel open so it can be styled without hovering.
+   * Delete this block to restore hover-only behaviour before shipping.
+   */
+  .toc__panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .toc__rule,
-    .toc__label,
-    .toc__list::before {
+    .toc__panel,
+    .toc__link {
       transition: none;
     }
   }
@@ -208,31 +180,32 @@ const { items } = Astro.props;
 
 <script>
   /*
-   * Marks the section currently in view. The observer watches a band across
-   * the upper half of the viewport, so a section becomes current as it
-   * settles into reading position rather than the moment it appears.
+   * Marks the section currently in view on both layers: the tick shows it
+   * at rest, the name shows it once the panel is open.
    */
   const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
 
   if (links.length > 0) {
-    const byId = new Map<string, HTMLAnchorElement>();
+    const marks = new Map<string, Element[]>();
     for (const link of links) {
       const id = link.dataset.tocLink;
-      if (id) byId.set(id, link);
+      if (!id) continue;
+      const rule = document.querySelector(`[data-toc-rule="${id}"]`);
+      marks.set(id, rule ? [link, rule] : [link]);
     }
 
-    const sections = [...byId.keys()]
+    const sections = [...marks.keys()]
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
 
-    let current: HTMLAnchorElement | null = null;
+    let current: Element[] = [];
 
     const setCurrent = (id: string) => {
-      const link = byId.get(id);
-      if (!link || link === current) return;
-      current?.removeAttribute('data-current');
-      link.setAttribute('data-current', '');
-      current = link;
+      const next = marks.get(id);
+      if (!next || next === current) return;
+      for (const el of current) el.removeAttribute('data-current');
+      for (const el of next) el.setAttribute('data-current', '');
+      current = next;
     };
 
     const observer = new IntersectionObserver(
