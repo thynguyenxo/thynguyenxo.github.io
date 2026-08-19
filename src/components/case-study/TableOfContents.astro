@@ -59,6 +59,7 @@ const { items } = Astro.props;
     transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+
   /* Withdrawn once the footer is up: the outline belongs to the article,
      and there is nothing left to navigate by the time the page ends. */
   .toc[data-hidden] {
@@ -138,32 +139,34 @@ const { items } = Astro.props;
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
     /*
-     * Settles in from the ticks rather than appearing: a short drift left
-     * and a fractional scale, on an ease-out so nearly all the movement is
-     * over in the first third and the panel comes to rest rather than
-     * stopping. The origin is the right edge, where the ticks are, so it
-     * reads as opening out of them.
+     * Shoots out from the right: the panel starts hard against the page
+     * edge, clear of the rail, and slides left into place. The travel stops
+     * at the viewport edge rather than beyond it, so the closed state can
+     * never widen the document.
+     *
+     * The ease-out puts nearly all the distance in the first third, so it
+     * arrives quickly and eases the last few pixels rather than braking.
      */
     transform-origin: right center;
-    transform: translate(0.5rem, -50%) scale(0.98);
+    transform: translate(1.5rem, -50%);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition:
-      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0.28s;
+      opacity 0.18s ease-out,
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.3s;
   }
 
   .toc:hover .toc__panel,
   .toc:focus-within .toc__panel {
-    transform: translate(0, -50%) scale(1);
+    transform: translate(0, -50%);
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     transition:
-      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.14s ease-out,
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
       visibility 0s linear;
   }
 
