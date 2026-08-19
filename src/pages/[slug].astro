@@ -117,8 +117,9 @@ const studyAssets = Object.fromEntries(
                           class="intro__avatar"
                           src={teamAssets[avatar.src]}
                           alt={avatar.alt}
-                          width={112}
-                          height={112}
+                          title={avatar.alt}
+                          width={44}
+                          height={44}
                           densities={[1, 2]}
                           format="webp"
                           quality={85}
@@ -309,16 +310,24 @@ const studyAssets = Object.fromEntries(
 
   .intro__avatars {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--sm);
     margin: 0;
   }
 
-  /* A ring in the page background separates the faces where they sit
-     against one another, so the row reads as four people rather than a
-     single strip. */
+  /*
+   * The facts rail is 20rem, so the design's 112px circles would run well
+   * past it. At 2.75rem the four faces and their gaps sit inside the
+   * column with room to spare, and stay legible at a glance.
+   *
+   * The ring is painted in the page background so the faces separate where
+   * they sit beside one another, and it follows the theme rather than
+   * assuming a white page.
+   */
   .intro__avatar {
-    width: 7rem;
-    height: 7rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
     border-radius: var(--radius-pill);
     object-fit: cover;
     box-shadow: 0 0 0 var(--stroke-weight-2) var(--color-background-primary);
