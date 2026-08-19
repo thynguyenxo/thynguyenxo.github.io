@@ -49,7 +49,7 @@ const { items } = Astro.props;
   .toc__list {
     display: flex;
     flex-direction: column;
-    gap: var(--sm);
+    gap: 0.375rem;
     /* Stretch rather than flex-end: the rows are all the width of the
        longest name, so every rule ends on the same edge instead of being
        pushed left by the label beside it. */
@@ -58,13 +58,14 @@ const { items } = Astro.props;
     padding: 0;
     list-style: none;
     pointer-events: auto;
+    isolation: isolate;
   }
 
   /* Names read left to right and the rules pin to the right edge, so the
      ticks stay in one column whatever the labels beside them measure. */
   .toc__link {
+    position: relative;
     display: flex;
-    gap: var(--sm);
     align-items: center;
     justify-content: flex-end;
     text-decoration: none;
@@ -94,11 +95,16 @@ const { items } = Astro.props;
    * Names are laid out at all times and revealed by opacity, so opening the
    * list costs no layout and the rules never shift under the pointer.
    */
+  /*
+   * Taken out of flow so the rail is only ever as wide as the rules. The
+   * names are laid over the ticks when the list opens rather than beside
+   * them, so nothing in the page has to make room for a panel that is
+   * hidden most of the time.
+   */
   .toc__label {
-    /* Drawn before the rule and pushed off it, so the rules stay in one
-       column no matter how wide the name beside them is. */
-    order: -1;
-    margin-right: auto;
+    position: absolute;
+    right: 0;
+    z-index: 2;
     max-width: 12rem;
     overflow: hidden;
     text-align: right;
@@ -115,12 +121,13 @@ const { items } = Astro.props;
       color 0.2s ease;
   }
 
-  /* One card behind the whole list, drawn only while it is open. */
+  /* One card over the whole list, drawn only while it is open. It covers
+     the rules rather than displacing them. */
   .toc__list::before {
     content: '';
     position: absolute;
     inset: calc(var(--sm) * -1) calc(var(--md) * -1);
-    z-index: -1;
+    z-index: 1;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
@@ -132,6 +139,15 @@ const { items } = Astro.props;
   .toc:focus-within .toc__list::before,
   .toc:hover .toc__label,
   .toc:focus-within .toc__label {
+    opacity: 1;
+  }
+
+  /*
+   * TEMPORARY — holds the list open so it can be styled without hovering.
+   * Delete this block to restore hover-only behaviour before shipping.
+   */
+  .toc__list::before,
+  .toc__label {
     opacity: 1;
   }
 
