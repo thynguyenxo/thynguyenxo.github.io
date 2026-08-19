@@ -187,7 +187,6 @@ export const projects: Project[] = [
         'I led design and prototyping for the onboarding flow, working closely with the founders, PM, and fellow designers. I also redesigned the review home screen so the tone established in onboarding carried through to daily use.',
       ],
       facts: [
-        { label: 'Role', values: ['UX/UI Designer'] },
         {
           label: 'Team',
           values: [],
@@ -198,6 +197,7 @@ export const projects: Project[] = [
             { src: 'member-4.png', alt: 'Juna Han' },
           ],
         },
+        { label: 'Role', values: ['UX/UI Designer'] },
         { label: 'Year', values: ['April \u2014 July 2025'] },
         { label: 'Skills', values: ['UX Design', 'Prototyping'] },
       ],
