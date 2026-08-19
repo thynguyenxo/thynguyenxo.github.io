@@ -110,6 +110,14 @@ const studyAssets = Object.fromEntries(
             <MediaBlock
               captionClient={project.client}
               caption={study.preview.caption}
+              ratio={study.preview.ratio}
+              videoSrc={study.preview.videoSrc}
+              poster={
+                study.preview.poster
+                  ? studyAssets[study.preview.poster]
+                  : undefined
+              }
+              alt={study.preview.alt ?? ''}
             />
           </section>
 

@@ -64,6 +64,14 @@ export interface CaseStudy {
     /** Text on the outlined pill above the media. */
     tag: string;
     caption: string;
+    /** Intrinsic size, as `width / height`. Sets the box before it loads. */
+    ratio?: string;
+    /** Video file under public/<slug>/, e.g. `quick-demo-intro.mp4`. */
+    videoSrc?: string;
+    /** Still in src/assets/<slug>/, shown before playback. */
+    poster?: string;
+    /** Describes the media for assistive tech. */
+    alt?: string;
   };
   /**
    * The opening section. A StudySection like any other, plus the framing
@@ -175,6 +183,10 @@ export const projects: Project[] = [
       preview: {
         tag: 'Preview',
         caption: 'The redesigned onboarding flow',
+        ratio: '16 / 9',
+        videoSrc: '/tenmin/quick-demo-intro.mp4',
+        poster: 'quick-demo-intro-poster.png',
+        alt: 'Walkthrough of the redesigned Tenmin onboarding flow',
       },
       problem: {
         lead: 'Problem',
