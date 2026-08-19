@@ -83,12 +83,25 @@ const { items } = Astro.props;
     border-radius: var(--radius-pill);
     background: var(--color-text-tertiary);
     transition:
-      width 0.2s ease,
-      background-color 0.2s ease;
+      width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .toc__rule[data-current] {
     width: 1.5rem;
+    background: var(--color-text-main);
+  }
+
+  /* The rail answers the pointer on its own, a moment ahead of the panel,
+     so the hover is acknowledged the instant it lands. */
+  .toc:hover .toc__rule,
+  .toc:focus-within .toc__rule {
+    width: 1.5rem;
+    background: var(--color-text-secondary);
+  }
+
+  .toc:hover .toc__rule[data-current],
+  .toc:focus-within .toc__rule[data-current] {
     background: var(--color-text-main);
   }
 
@@ -111,20 +124,66 @@ const { items } = Astro.props;
     border: var(--stroke-weight-border) solid var(--color-border-secondary);
     border-radius: var(--radius-default);
     background: var(--color-background-primary);
-    transform: translateY(-50%);
+    /*
+     * Settles in from the ticks rather than appearing: a short drift left
+     * and a fractional scale, on an ease-out so nearly all the movement is
+     * over in the first third and the panel comes to rest rather than
+     * stopping. The origin is the right edge, where the ticks are, so it
+     * reads as opening out of them.
+     */
+    transform-origin: right center;
+    transform: translate(0.5rem, -50%) scale(0.98);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition:
-      opacity 0.2s ease,
-      visibility 0.2s ease;
+      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.28s;
   }
 
   .toc:hover .toc__panel,
   .toc:focus-within .toc__panel {
+    transform: translate(0, -50%) scale(1);
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition:
+      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear;
+  }
+
+  /*
+   * The names follow the panel in, each a beat after the last. The stagger
+   * is small enough to read as one movement with a grain to it rather than
+   * as six separate entrances.
+   */
+  .toc__panel li {
+    opacity: 0;
+    transform: translateX(0.375rem);
+    transition:
+      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .toc:hover .toc__panel li,
+  .toc:focus-within .toc__panel li {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .toc__panel li:nth-child(1) { transition-delay: 0.04s; }
+  .toc__panel li:nth-child(2) { transition-delay: 0.07s; }
+  .toc__panel li:nth-child(3) { transition-delay: 0.1s; }
+  .toc__panel li:nth-child(4) { transition-delay: 0.13s; }
+  .toc__panel li:nth-child(5) { transition-delay: 0.16s; }
+  .toc__panel li:nth-child(6) { transition-delay: 0.19s; }
+
+  /* Leaving, the names go together and at once — a staggered exit makes a
+     dismissal feel reluctant. */
+  .toc:not(:hover):not(:focus-within) .toc__panel li {
+    transition-delay: 0s;
   }
 
   .toc__link {
@@ -154,11 +213,21 @@ const { items } = Astro.props;
     border-radius: 0.125rem;
   }
 
+  /*
+   * Durations are already cut globally; what is left to undo here is the
+   * travel, which would otherwise jump rather than move. The panel still
+   * appears and disappears, it just does so in place.
+   */
   @media (prefers-reduced-motion: reduce) {
-    .toc__rule,
     .toc__panel,
-    .toc__link {
-      transition: none;
+    .toc:hover .toc__panel,
+    .toc:focus-within .toc__panel {
+      transform: translateY(-50%);
+    }
+
+    .toc__panel li {
+      transform: none;
+      transition-delay: 0s;
     }
   }
 
