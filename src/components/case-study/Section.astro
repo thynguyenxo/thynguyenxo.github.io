@@ -1,0 +1,129 @@
+---
+import PillTag from './PillTag.astro';
+import SectionLabel from './SectionLabel.astro';
+
+/**
+ * The standard case study section: a heading label, an optional lead
+ * sentence, body paragraphs, and whatever else is slotted after them.
+ *
+ * Sections are named differently in each case study — Discovery, Process,
+ * Solution, Outcomes — but share this layout, so the name is content rather
+ * than structure.
+ */
+interface Props {
+  /** Section name, e.g. "Discovery". Omit to open on the lead alone. */
+  label?: string;
+  /** Larger opening line beneath the label. */
+  lead?: string;
+  /** Body paragraphs following the lead. */
+  body?: string[];
+  /** Draw the label as an outlined pill, as the Preview section does. */
+  bordered?: boolean;
+  /** Span the full container rather than the narrower reading measure. */
+  wide?: boolean;
+  /** Anchor target, so the table of contents can link here. */
+  id?: string;
+}
+
+const {
+  label,
+  lead,
+  body = [],
+  bordered = false,
+  wide = false,
+  id,
+} = Astro.props;
+
+// A section is labelled by whichever of the two it has.
+const accessibleName = label ?? lead;
+---
+
+<section
+  class:list={['section', wide && 'section--wide']}
+  aria-label={accessibleName}
+  id={id}
+>
+  <header class="section__head">
+    {
+      label &&
+        (bordered ? (
+          <PillTag bordered>{label}</PillTag>
+        ) : (
+          <SectionLabel>{label}</SectionLabel>
+        ))
+    }
+    {
+      lead && (
+        <p class="section__lead">
+          <PillTag>{lead}</PillTag>
+        </p>
+      )
+    }
+  </header>
+
+  {
+    body.length > 0 && (
+      <div class="section__body">
+        {body.map((paragraph) => (
+          <p class="section__paragraph">{paragraph}</p>
+        ))}
+      </div>
+    )
+  }
+
+  <slot />
+</section>
+
+<style>
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    width: 100%;
+    /* Body copy holds a comfortable measure; media can opt out with `wide`. */
+    max-width: 55rem;
+    margin-inline: auto;
+  }
+
+  .section--wide {
+    max-width: none;
+  }
+
+  /* A section only runs wide so its media can. Everything else it holds --
+     the prose, and whatever is slotted in after it: accordions, cards, a
+     dialog -- keeps the reading measure, so a section with media and one
+     without look the same above the fold. Constraining every child and
+     exempting the media is what keeps that true for a component added
+     later, which listing the narrow ones by name would not. */
+  .section--wide > :global(:not(.section-media)) {
+    width: 100%;
+    max-width: 55rem;
+    margin-inline: auto;
+  }
+
+  .section__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+  }
+
+  /* The lead carries the pill's type treatment; the wrapper only handles
+     block flow, since the pill itself is inline. */
+  .section__lead {
+    margin: 0;
+  }
+
+  .section__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+  }
+
+  .section__paragraph {
+    margin: 0;
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-28);
+    color: var(--color-text-primary);
+    text-wrap: pretty;
+  }
+</style>

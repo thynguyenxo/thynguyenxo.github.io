@@ -1,0 +1,314 @@
+---
+import { Image } from 'astro:assets';
+import MediaPlaceholder from './MediaPlaceholder.astro';
+
+interface Props {
+  client: string;
+  /** Descriptor shown after the client name in the eyebrow. */
+  tagline?: string;
+  title: string;
+  description: string;
+  /** Cover artwork. Omit to show a placeholder frame. */
+  image?: ImageMetadata;
+  /** Optional dark-mode artwork; falls back to `image` when absent. */
+  imageDark?: ImageMetadata;
+  imageAlt: string;
+  href?: string;
+}
+
+const {
+  client,
+  tagline,
+  title,
+  description,
+  image,
+  imageDark,
+  imageAlt,
+  href,
+} = Astro.props;
+---
+
+<article class="card">
+  <div class="card__description">
+    <div class="card__container">
+      <p class="card__eyebrow">
+        <span class="card__client-name">{client}</span>
+        {tagline && <span class="card__sep"> / </span>}
+        {tagline && <span>{tagline}</span>}
+      </p>
+      <h2 class="card__title">
+        {
+          href ? (
+            <a class="card__link" href={href}>
+              {title}
+            </a>
+          ) : (
+            title
+          )
+        }
+      </h2>
+    </div>
+    <p class="card__body">{description}</p>
+  </div>
+
+  {/*
+    Both artworks are rendered and CSS reveals the one matching the theme,
+    so the toggle swaps them instantly with no flash and no JS.
+  */}
+  <div class="card__image">
+    {
+      !image && <MediaPlaceholder />
+    }
+    {image && (
+    <Image
+      class="card__art card__art--light"
+      src={image}
+      alt={imageAlt}
+      width={1480}
+      widths={[740, 1180, 1480, 1920]}
+      sizes="(max-width: 1100px) 100vw, 740px"
+      format="webp"
+      quality={85}
+      loading="lazy"
+      decoding="async"
+    />
+    )}
+    {
+      image && imageDark && (
+        <Image
+          class="card__art card__art--dark"
+          src={imageDark}
+          alt=""
+          aria-hidden="true"
+          width={1480}
+          widths={[740, 1180, 1480, 1920]}
+          sizes="(max-width: 1100px) 100vw, 740px"
+          format="webp"
+          quality={85}
+          loading="lazy"
+          decoding="async"
+        />
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    /* Anchors the title link's ::after overlay, which makes the whole card
+       clickable while keeping a single link in the accessibility tree. */
+    position: relative;
+    display: flex;
+    gap: var(--xl);
+    align-items: flex-start;
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    /* Both edges use the page gutter, so the card lines up with the navbar
+       and footer instead of the image bleeding to the viewport edge. */
+    padding-inline: var(--page-gutter);
+  }
+
+  .card__description {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    justify-content: flex-start;
+    flex: 0 0 31.25rem;
+    max-width: 31.25rem;
+  }
+
+  .card__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+    justify-content: center;
+  }
+
+  .card__eyebrow {
+    margin: 0;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* The client name carries the emphasis; the descriptor sits back. */
+  .card__client-name {
+    color: var(--color-text-main);
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: var(--font-size-28);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-44-on-28);
+    letter-spacing: var(--letter-spacing-0-8);
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  .card__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Spans the whole card so the image and copy are both clickable. */
+  .card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* The focus ring belongs on the whole card, not the inline text box, since
+     the overlay is what visitors actually click. */
+  .card__link:focus-visible {
+    outline: none;
+  }
+
+  .card:has(.card__link:focus-visible) {
+    outline: var(--stroke-weight-2) solid var(--color-text-main);
+    outline-offset: 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  /* The artwork scales inside its rounded frame on hover; the frame itself
+     stays put, so the layout never shifts. An even ease-in-out over a longer
+     duration keeps a move this small feeling like a drift rather than a snap. */
+  .card__image :global(.card__art) {
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Keeps the scaled artwork from shimmering during the transition. */
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .card:has(.card__link:hover) .card__image :global(.card__art),
+  .card:has(.card__link:focus-visible) .card__image :global(.card__art) {
+    transform: scale(1.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card__image :global(.card__art) {
+      transition: none;
+    }
+
+    .card:has(.card__link:hover) .card__image :global(.card__art),
+    .card:has(.card__link:focus-visible) .card__image :global(.card__art) {
+      transform: none;
+    }
+  }
+
+  .card__body {
+    margin: 0;
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-28);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+
+  .card__image {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* 740 x 450 in the design. */
+    aspect-ratio: 740 / 450;
+    overflow: hidden;
+    border-radius: var(--radius-default);
+  }
+
+  .card__image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* The two artworks share one grid cell so the box keeps its size. */
+  .card__image:has(.card__art--dark) {
+    display: grid;
+    /* Safari can let a grid child paint over a rounded parent, so the clip is
+       stated on the images too. */
+    isolation: isolate;
+  }
+
+  .card__image :global(.card__art) {
+    border-radius: inherit;
+  }
+
+  .card__image:has(.card__art--dark) :global(.card__art) {
+    grid-area: 1 / 1;
+  }
+
+  /*
+   * The theme swap only applies where a dark artwork exists. Scoped to
+   * :has(), so a project with a single cover keeps showing it in both
+   * themes rather than being hidden in dark mode.
+   */
+  .card__image:has(.card__art--dark) :global(.card__art--dark) {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light']))
+      .card__image:has(.card__art--dark)
+      :global(.card__art--light) {
+      display: none;
+    }
+
+    :global(:root:not([data-theme='light']))
+      .card__image:has(.card__art--dark)
+      :global(.card__art--dark) {
+      display: block;
+    }
+  }
+
+  :global(:root[data-theme='dark'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--light) {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--dark) {
+    display: block;
+  }
+
+  :global(:root[data-theme='light'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--light) {
+    display: block;
+  }
+
+  :global(:root[data-theme='light'])
+    .card__image:has(.card__art--dark)
+    :global(.card__art--dark) {
+    display: none;
+  }
+
+  /* Below the design canvas the two columns stack: image first, then the
+     description, so the visual still leads. */
+  @media (max-width: 1100px) {
+    .card {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: var(--lg);
+    }
+
+    .card__description {
+      flex-basis: auto;
+      max-width: none;
+    }
+
+    .card__image {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 740 / 450;
+    }
+  }
+</style>

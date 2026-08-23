@@ -1,7 +1,7 @@
-# thynguyenxo.github.io
+# design-portfolio
 
 Design portfolio of Thy Nguyen, built with [Astro](https://astro.build) and
-deployed to GitHub Pages.
+deployed to [Cloudflare Pages](https://pages.cloudflare.com).
 
 ## Development
 
@@ -14,8 +14,16 @@ npm run preview  # preview the production build
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
-and publishes `dist/` to GitHub Pages. No manual deploy step is needed.
+Pushing to `main` triggers a Cloudflare Pages build (`npm run build`, output
+`dist/`). No manual deploy step is needed.
+
+`.github/workflows/refresh.yml` calls a Cloudflare deploy hook on the 1st of
+each month so the baked-in copyright year stays current. It needs the
+`CLOUDFLARE_DEPLOY_HOOK` repository secret.
+
+Some case studies are password-gated by `functions/_middleware.ts`, which runs
+at the edge before any file is served. See the hosting section of
+[NOTES.md](./NOTES.md).
 
 ## Structure
 

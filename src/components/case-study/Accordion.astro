@@ -1,0 +1,220 @@
+---
+import Icon from '../Icon.astro';
+
+/**
+ * A disclosure list. Built on <details>, so it opens and closes without
+ * scripting, is keyboard operable, and its content stays findable by
+ * in-page search even while collapsed.
+ *
+ * A small script keeps one item open at a time; without it the list still
+ * works, items just open independently.
+ */
+export interface AccordionItem {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  items: AccordionItem[];
+  /** Index of the item open on load. -1 leaves them all closed. */
+  openIndex?: number;
+}
+
+const { items, openIndex = 0 } = Astro.props;
+---
+
+<div class="accordion" data-accordion>
+  {
+    items.map((item, index) => (
+      <details class="accordion__item" open={index === openIndex}>
+        <summary class="accordion__summary">
+          <span class="accordion__title">{item.title}</span>
+          <span class="accordion__icon" aria-hidden="true">
+            <Icon name="plus" size="1rem" class="accordion__plus" />
+            <Icon name="minus" size="1rem" class="accordion__minus" />
+          </span>
+        </summary>
+        <div class="accordion__panel">
+          <p class="accordion__body">{item.body}</p>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .accordion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+    width: 100%;
+    padding: var(--xl);
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
+  }
+
+  .accordion__item {
+    border-bottom: var(--stroke-weight-border) solid
+      var(--color-border-secondary);
+  }
+
+  .accordion__item:last-child {
+    border-bottom: 0;
+  }
+
+  /*
+   * Animating a <details> panel needs `interpolate-size` for `auto` to be
+   * interpolable, and ::details-content to reach the panel at all. Where
+   * either is missing the panel simply appears, which is the native
+   * behaviour.
+   */
+  @supports selector(::details-content) {
+    .accordion {
+      interpolate-size: allow-keywords;
+    }
+
+    .accordion__item::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        content-visibility 0.35s allow-discrete;
+      transition-behavior: allow-discrete;
+    }
+
+    .accordion__item[open]::details-content {
+      block-size: auto;
+    }
+  }
+
+  /* Browsers without ::details-content still fade the panel in. */
+  @supports not selector(::details-content) {
+    .accordion__item[open] .accordion__panel {
+      animation: accordion-reveal 0.3s ease both;
+    }
+
+    @keyframes accordion-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(-0.25rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
+  .accordion__summary {
+    display: flex;
+    gap: var(--lg);
+    align-items: flex-start;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    list-style: none;
+  }
+
+  /* Safari draws its own marker unless this is cleared. */
+  .accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__summary:hover {
+    opacity: 0.7;
+  }
+
+  .accordion__summary:focus-visible {
+    outline: var(--stroke-weight-2) solid var(--color-text-main);
+    outline-offset: 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .accordion__title {
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-500);
+    color: var(--color-text-primary);
+    text-wrap: pretty;
+  }
+
+  /* Both glyphs share a cell so the row never shifts as they swap. The plus
+     rotates as it fades, so the change reads as one mark turning. */
+  .accordion__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    /* Centres the 16px mark against the title's 44px line. */
+    margin-top: 0.875rem;
+    color: var(--color-text-main);
+  }
+
+  .accordion__icon :global(svg) {
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .accordion__icon :global(.accordion__minus) {
+    opacity: 0;
+    transform: rotate(-90deg);
+  }
+
+  [open] .accordion__icon :global(.accordion__plus) {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+
+  [open] .accordion__icon :global(.accordion__minus) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .accordion__item:not([open]) .accordion__summary {
+    padding-bottom: var(--lg);
+  }
+
+  .accordion__panel {
+    /* Separates the body from the title above it. */
+    padding-top: var(--lg);
+    padding-bottom: var(--lg);
+  }
+
+  /* Motion is decorative; the disclosure still works without it. */
+  @media (prefers-reduced-motion: reduce) {
+    .accordion__item::details-content,
+    .accordion__icon :global(svg),
+    .accordion__summary {
+      transition: none;
+    }
+
+    .accordion__item[open] .accordion__panel {
+      animation: none;
+    }
+  }
+
+  .accordion__body {
+    max-width: 60ch;
+    margin: 0;
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-28);
+    color: var(--color-text-primary);
+    text-wrap: pretty;
+  }
+</style>
+
+<script>
+  // One item open at a time. The list works without this; it only closes the
+  // sibling that was previously open.
+  document.querySelectorAll<HTMLElement>('[data-accordion]').forEach((list) => {
+    const items = [...list.querySelectorAll('details')];
+
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (!item.open) return;
+        items.forEach((other) => {
+          if (other !== item) other.open = false;
+        });
+      });
+    });
+  });
+</script>

@@ -1,4 +1,7 @@
 ---
+import '../styles/tokens.css';
+import '../styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -6,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = 'Design portfolio of Thy Nguyen.',
+  description = 'Thy Nguyen is a product designer working on intuitive, polished digital products.',
 } = Astro.props;
 ---
 
@@ -16,6 +19,28 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+
+    {/*
+      GitHub Pages cannot send custom response headers, so the policy is
+      delivered in a meta tag. Everything the site needs is same-origin: no
+      third-party scripts, styles, fonts or frames. 'unsafe-inline' covers
+      Astro's inlined styles and the pre-paint theme script; there is no
+      user-supplied content on the page for it to be leveraged against.
+
+      api.web3forms.com is allowed in `connect-src` for the contact form's
+      fetch, and in `form-action` for the no-JS fallback POST. Adding any
+      other third-party service means listing it here too.
+    */}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    {/* SVG first for crisp tabs; the PNG covers browsers that ignore it. */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 
@@ -23,63 +48,90 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
 
+    {/* Preloaded so the display type paints without a swap on first render. */}
+    <link
+      rel="preload"
+      href="/fonts/dm-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <title>{title}</title>
+
+    {/* Runs before first paint so a stored theme choice never flashes. */}
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          if (stored === 'dark' || stored === 'light') {
+            document.documentElement.dataset.theme = stored;
+          }
+        } catch {
+          /* Storage can be unavailable (private mode); fall back to the OS. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
-    <style is:global>
-      :root {
-        --bg: #fbfaf8;
-        --fg: #16150f;
-        --muted: #6b6559;
-        --rule: #e4e0d8;
-        --accent: #b4552d;
 
-        --measure: 34rem;
-        --font-sans:
-          ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial,
-          sans-serif;
-        --font-mono:
-          ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
-          monospace;
-      }
+    <script>
+      // The navbar's height depends on its text, which changes with type
+      // settings. Measuring it keeps --navbar-height accurate rather than
+      // relying on a hardcoded guess that drifts when the type changes.
+      const navbar = document.querySelector('.navbar');
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #14130f;
-          --fg: #f2efe8;
-          --muted: #9b948a;
-          --rule: #2c2a24;
-          --accent: #e08a5c;
+      if (navbar) {
+        const syncNavbarHeight = () => {
+          document.documentElement.style.setProperty(
+            '--navbar-height',
+            `${navbar.getBoundingClientRect().height}px`
+          );
+        };
+
+        syncNavbarHeight();
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(syncNavbarHeight).observe(navbar);
         }
+        document.fonts?.ready.then(syncNavbarHeight);
       }
 
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
+      const root = document.documentElement;
 
-      body {
-        margin: 0;
-        padding: 0;
-        background: var(--bg);
-        color: var(--fg);
-        font-family: var(--font-sans);
-        font-size: 1rem;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-      }
+      const isDark = () =>
+        root.dataset.theme
+          ? root.dataset.theme === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      a {
-        color: inherit;
-        text-decoration-color: var(--rule);
-        text-underline-offset: 0.25em;
-      }
+      const syncButtons = () => {
+        const dark = isDark();
+        document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+          button.setAttribute('aria-pressed', String(dark));
+        });
+      };
 
-      a:hover {
-        text-decoration-color: var(--accent);
-      }
-    </style>
+      document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const next = isDark() ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try {
+            localStorage.setItem('theme', next);
+          } catch {
+            /* Ignore storage failures — the toggle still works this session. */
+          }
+          syncButtons();
+        });
+      });
+
+      // Track the OS preference until the visitor makes an explicit choice.
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', () => {
+          if (!root.dataset.theme) syncButtons();
+        });
+
+      syncButtons();
+    </script>
   </body>
 </html>

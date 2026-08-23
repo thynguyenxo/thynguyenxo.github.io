@@ -1,0 +1,299 @@
+---
+/**
+ * A quiet outline of the case study, pinned to the right edge.
+ *
+ * At rest it is a stack of short rules — enough to show how long the piece
+ * is and where you are in it, without competing with the page. Pointing at
+ * it opens the whole list rather than one name at a time, so the outline
+ * can be read at a glance instead of hunted through.
+ *
+ * Hover is the only way in, so it is hidden entirely on narrow screens
+ * where there is no pointer and no room for it.
+ */
+interface Props {
+  items: { id: string; label: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <nav class="toc" aria-label="On this page" data-toc>
+      {/*
+        Two layers rather than one list of rows: the ticks stay in flow and
+        keep their own rhythm, and the panel sits over them sized to the
+        names. Neither has to line up with the other.
+      */}
+      <ul class="toc__ticks" aria-hidden="true">
+        {items.map((item) => (
+          <li>
+            <span class="toc__rule" data-toc-rule={item.id} />
+          </li>
+        ))}
+      </ul>
+
+      <ul class="toc__panel">
+        {items.map((item) => (
+          <li>
+            <a class="toc__link" href={`#${item.id}`} data-toc-link={item.id}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: fixed;
+    top: 50%;
+    right: 1.5rem;
+    z-index: 9;
+    transform: translateY(-50%);
+    /* The rail is only a target while the pointer is over it; the gap it
+       leaves beside the text should stay clickable for selection. */
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+
+  /* Withdrawn once the footer is up: the outline belongs to the article,
+     and there is nothing left to navigate by the time the page ends. */
+  .toc[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .toc[data-hidden] .toc__ticks {
+    pointer-events: none;
+  }
+
+  /*
+   * The ticks: a fixed 200px band whatever the section count, so the
+   * outline sits in the same place on every case study.
+   */
+  .toc__ticks {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: var(--sm);
+    height: 4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: auto;
+  }
+
+  /* Uniform apart from the current one, so the stack reads as a measure of
+     the page rather than a list of links. The rest are held back so the
+     current tick carries the eye: dimming the others separates them further
+     than brightening one ever could, and opacity does it in one value that
+     holds in both themes. */
+  .toc__rule {
+    display: block;
+    width: 1rem;
+    height: var(--stroke-weight-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-text-caption);
+    opacity: 0.4;
+    transition:
+      width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .toc__rule[data-current] {
+    width: 1.5rem;
+    background: var(--color-text-main);
+    opacity: 1;
+  }
+
+  /* Pointing at the rail is a question about the whole outline, so the
+     stack comes back up as a set and the current tick keeps its lead. */
+  .toc:hover .toc__rule,
+  .toc:focus-within .toc__rule {
+    opacity: 0.7;
+  }
+
+  .toc:hover .toc__rule[data-current],
+  .toc:focus-within .toc__rule[data-current] {
+    opacity: 1;
+  }
+
+  /*
+   * The panel: laid over the ticks and sized to its own names, so the two
+   * layers need not share a rhythm. Anchored right so it grows leftward
+   * into the margin as the names appear.
+   */
+  .toc__panel {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+    margin: 0;
+    padding: var(--md);
+    list-style: none;
+    border: var(--stroke-weight-border) solid var(--color-border-secondary);
+    border-radius: var(--radius-default);
+    background: var(--color-background-primary);
+    box-shadow: var(--shadow-raised);
+    /*
+     * Shoots out from the right: the panel starts hard against the page
+     * edge, clear of the rail, and slides left into place. The travel stops
+     * at the viewport edge rather than beyond it, so the closed state can
+     * never widen the document.
+     *
+     * The ease-out puts nearly all the distance in the first third, so it
+     * arrives quickly and eases the last few pixels rather than braking.
+     */
+    transform-origin: right center;
+    transform: translate(1.5rem, -50%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.18s ease-out,
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.3s;
+  }
+
+  .toc:hover .toc__panel,
+  .toc:focus-within .toc__panel {
+    transform: translate(0, -50%);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.14s ease-out,
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear;
+  }
+
+  .toc__link {
+    display: block;
+    /* The panel is a fixed width now, so a longer section name is trimmed
+       rather than pushed through its edge. */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    text-align: left;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-24);
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    transition: color 0.2s ease;
+  }
+
+  .toc__link:hover,
+  .toc__link[data-current] {
+    color: var(--color-text-main);
+  }
+
+  .toc__link:focus-visible {
+    outline: var(--stroke-weight-2) solid var(--color-text-main);
+    outline-offset: 0.25rem;
+    border-radius: 0.125rem;
+  }
+
+  /*
+   * Durations are already cut globally; what is left to undo here is the
+   * travel, which would otherwise jump rather than move. The panel still
+   * appears and disappears, it just does so in place.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .toc__panel,
+    .toc:hover .toc__panel,
+    .toc:focus-within .toc__panel {
+      transform: translateY(-50%);
+    }
+
+  }
+
+  /*
+   * Below the two column layout there is no rail to sit in, and no pointer
+   * to open it with. Back to top already covers navigation there.
+   */
+  @media (max-width: 1100px) {
+    .toc {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Marks the section currently in view on both layers: the tick shows it
+   * at rest, the name shows it once the panel is open.
+   */
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+
+  if (links.length > 0) {
+    const marks = new Map<string, Element[]>();
+    for (const link of links) {
+      const id = link.dataset.tocLink;
+      if (!id) continue;
+      const rule = document.querySelector(`[data-toc-rule="${id}"]`);
+      marks.set(id, rule ? [link, rule] : [link]);
+    }
+
+    const sections = [...marks.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let current: Element[] = [];
+
+    const setCurrent = (id: string) => {
+      const next = marks.get(id);
+      if (!next || next === current) return;
+      for (const el of current) el.removeAttribute('data-current');
+      for (const el of next) el.setAttribute('data-current', '');
+      current = next;
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Several sections can straddle the band at once; the highest one
+        // on the page is the one being read.
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]?.target.id) setCurrent(visible[0].target.id);
+      },
+      { rootMargin: '-10% 0px -60% 0px' },
+    );
+
+    for (const section of sections) observer.observe(section);
+  }
+
+  /*
+   * Withdraws the rail once the footer comes into view, so the ticks never
+   * sit over it. An observer rather than a scroll handler, so this costs
+   * nothing while the reader is in the body of the page.
+   */
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  const footer = document.querySelector('footer');
+
+  if (toc && footer) {
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) toc.setAttribute('data-hidden', '');
+        else toc.removeAttribute('data-hidden');
+      },
+      // Starts withdrawing a little before the footer lands, so the two
+      // never share the screen.
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+
+    footerObserver.observe(footer);
+  }
+</script>

@@ -1,0 +1,257 @@
+---
+import { Image, getImage } from 'astro:assets';
+import MediaPlaceholder from '../MediaPlaceholder.astro';
+
+/**
+ * A media container: rounded surface holding an image or video, with an
+ * optional caption beneath. Used for every visual in the case study.
+ */
+interface Props {
+  /** Resolved image; omit to render a placeholder until artwork arrives. */
+  image?: ImageMetadata;
+  alt?: string;
+  /** Client name shown before the slash in the caption. */
+  captionClient?: string;
+  /** Caption text after the slash. */
+  caption?: string;
+  /** Turns a phrase inside `caption` into a link, to credit a source. */
+  captionLink?: { text: string; href: string };
+  /** Width / height of the media box. Defaults to the design's 1280x787. */
+  ratio?: string;
+  /** Full-bleed inside the container rather than inset. */
+  wide?: boolean;
+  /** Marks the slot as awaiting a video rather than a still. */
+  video?: boolean;
+  /** Absolute URL of a video in public/, e.g. `/tenmin/onboarding.mp4`. */
+  videoSrc?: string;
+  /** Still shown before playback begins. */
+  poster?: ImageMetadata;
+}
+
+const {
+  image,
+  alt = '',
+  captionClient,
+  caption,
+  captionLink,
+  ratio = '1280 / 787',
+  wide = false,
+  video = false,
+  videoSrc,
+  poster,
+} = Astro.props;
+
+// The poster runs through the image pipeline so the still is as light as any
+// other frame on the page; the video itself is served straight from public/.
+// The caption is split around the linked phrase rather than assembled as
+// markup, so the copy in the data stays plain text. An unmatched phrase
+// leaves the caption whole.
+const linkIndex =
+  caption && captionLink ? caption.indexOf(captionLink.text) : -1;
+const captionParts =
+  caption && captionLink && linkIndex !== -1
+    ? {
+        before: caption.slice(0, linkIndex),
+        after: caption.slice(linkIndex + captionLink.text.length),
+      }
+    : undefined;
+
+const posterUrl = poster
+  ? (await getImage({ src: poster, format: 'webp', quality: 82, width: 1200 }))
+      .src
+  : undefined;
+---
+
+<figure class:list={['media', wide && 'media--wide']}>
+  <div class="media__frame" style={`--media-ratio:${ratio}`}>
+    {
+      videoSrc ? (
+        /*
+         * Autoplays muted and loops with no control bar, so a demo reads as
+         * a moving still rather than something to operate. `muted` is what
+         * makes autoplay permitted at all -- browsers block audible
+         * autoplay outright.
+         *
+         * The source hangs on `data-src` until the frame scrolls into view,
+         * so a page of clips costs nothing to open; the poster holds each
+         * frame until its turn.
+         *
+         * Controls come back whenever the clip is not going to play by
+         * itself -- under reduced motion, or once a browser refuses the
+         * autoplay -- since without them a still frame would be all
+         * anyone ever got.
+         */
+        <video
+          class="media__video"
+          data-src={videoSrc}
+          poster={posterUrl}
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label={alt || undefined}
+        />
+      ) : image ? (
+        <Image
+          class="media__art"
+          src={image}
+          alt={alt}
+          widths={[1200, 1800, 2400]}
+          sizes="(max-width: 900px) 100vw, 1200px"
+          format="webp"
+          quality={82}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <MediaPlaceholder label={video ? 'Video' : 'Image'} />
+      )
+    }
+  </div>
+
+  {
+    (captionClient || caption) && (
+      <figcaption class="media__caption">
+        {captionClient && <span class="media__client">{captionClient}</span>}
+        {captionClient && caption && <span class="media__sep"> / </span>}
+        {caption &&
+          (captionParts && captionLink ? (
+            <span>
+              {captionParts.before}<a
+                class="media__link"
+                href={captionLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >{captionLink.text}</a>{captionParts.after}
+            </span>
+          ) : (
+            <span>{caption}</span>
+          ))}
+      </figcaption>
+    )
+  }
+</figure>
+
+<script>
+  /*
+   * Loads each clip only once its frame is near the viewport, then plays it.
+   * `autoplay` alone would have every video on the page fetch at once, so the
+   * source is withheld until it is worth spending.
+   */
+  const videos =
+    document.querySelectorAll<HTMLVideoElement>('video[data-src]');
+
+  // A looping clip is exactly the kind of motion this setting asks us to
+  // stop. The video still loads and stays playable by hand; it just does
+  // not start moving on its own.
+  const wantsLessMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+
+  const start = (video: HTMLVideoElement) => {
+    if (video.src) return;
+    video.src = video.dataset.src ?? '';
+    if (wantsLessMotion) {
+      video.loop = false;
+      video.controls = true;
+      return;
+    }
+    // Autoplay can still be refused (low power mode, a per-site setting).
+    // Restore the controls when it is, so the clip does not strand the
+    // visitor on a poster with no way to start it.
+    video.play().catch(() => {
+      video.controls = true;
+    });
+  };
+
+  // Without IntersectionObserver, load everything rather than nothing.
+  if (!('IntersectionObserver' in window)) {
+    videos.forEach(start);
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          start(entry.target as HTMLVideoElement);
+          observer.unobserve(entry.target);
+        }
+      },
+      // A margin of one viewport gives the clip a head start on the scroll,
+      // so it is already running by the time it is actually on screen.
+      { rootMargin: '100% 0px' },
+    );
+
+    videos.forEach((video) => observer.observe(video));
+  }
+</script>
+
+<style>
+  .media {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    margin: 0;
+    width: 100%;
+  }
+
+  .media__frame {
+    width: 100%;
+    aspect-ratio: var(--media-ratio);
+    overflow: hidden;
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
+  }
+
+  .media__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Fills the frame the same way a still does, so a video slot and an image
+     slot are the same shape whether or not playback has started. */
+  /* `contain` rather than `cover`: a still can be cropped to fill its frame,
+     but a demo cannot -- cropping a screen recording cuts off the interface
+     it exists to show. The frame ratio is set from the video's display
+     aspect, so a matching clip fills it with no letterboxing anyway. */
+  .media__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: var(--color-background-secondary);
+  }
+
+  /* With no control bar there is nothing to aim at, so the clip should not
+     invite a click it will not answer. Restored for the fallback cases,
+     where the controls come back and the video is operated by hand. */
+  .media__video:not([controls]) {
+    pointer-events: none;
+  }
+
+  .media__caption {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-text-caption);
+  }
+
+  .media__client {
+    color: var(--color-text-main);
+  }
+
+  .media__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    transition: color 0.2s ease;
+  }
+
+  .media__link:hover {
+    color: var(--color-text-main);
+  }
+</style>

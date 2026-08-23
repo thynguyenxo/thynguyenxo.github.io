@@ -1,0 +1,213 @@
+---
+import Icon from './Icon.astro';
+import ContactForm from './ContactForm.astro';
+
+interface Props {
+  email: string;
+  displayName: string;
+  linkedin: string;
+  /** Web3Forms access key; falls back to mailto when unset. */
+  accessKey?: string;
+}
+
+const { email, displayName, linkedin, accessKey } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__container">
+    <div class="footer__text">
+      <h2 class="footer__title">
+        <span class="footer__mark" aria-hidden="true">✺</span>
+        <span>let's connect</span>
+      </h2>
+    </div>
+
+    <div class="footer__form">
+      <ContactForm
+        email={email}
+        displayName={displayName}
+        accessKey={accessKey}
+      />
+    </div>
+  </div>
+
+  <div class="footer__copyright">
+    <p>© {year} all rights reserved</p>
+
+    <nav class="footer__socials" aria-label="Social links">
+      <a class="footer__social" href={`mailto:${email}`} title="Email">
+        <Icon name="envelope" size="1rem" label="Email" />
+      </a>
+      <a
+        class="footer__social"
+        href={linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="LinkedIn"
+      >
+        <Icon name="linkedin" size="1rem" label="LinkedIn" />
+      </a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--xxl);
+    /* The form and copyright together own the last screen. */
+    min-height: 100svh;
+    padding: var(--xxl) var(--page-gutter) var(--xl);
+    /* The background still spans the viewport, but the content inside is
+       capped and centred like every other section, so wide screens gain
+       side padding rather than a wider footer. */
+    background: var(--color-background-footer);
+    /* The footer surface is dark in both themes, so its text colors are fixed
+       rather than theme-dependent. */
+    color: var(--white);
+  }
+
+  /* Heading first, then the socials and form side by side beneath it.
+     The cap subtracts the gutters so the footer's content lines up with the
+     navbar, hero and cards rather than running 160px wider. */
+  .footer__container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--xl);
+    justify-content: center;
+    width: 100%;
+    max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
+    margin-inline: auto;
+  }
+
+  /* The form sits at the right edge of the footer, on a raised card. */
+  .footer__form {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .footer__form > :global(.contact) {
+    /* The card's padding sits outside the 48rem field measure, so the fields
+       keep their width rather than shrinking to absorb it. */
+    max-width: calc(48rem + (var(--xl) * 2));
+    padding: var(--xl);
+    border-radius: var(--radius-default);
+    /* The footer always sits on black, so its card pins the dark surface
+       rather than following the theme. */
+    background: var(--grey-900);
+  }
+
+  .footer__text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer__title {
+    display: flex;
+    gap: var(--md);
+    align-items: baseline;
+    margin: 0;
+    font-size: var(--font-size-64);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-76-8);
+    letter-spacing: var(--letter-spacing-2-56);
+  }
+
+  .footer__mark {
+    font-weight: var(--font-weight-400);
+  }
+
+  /* Icon-only links; the accessible name comes from the icon's label. */
+  .footer__socials {
+    display: flex;
+    gap: var(--sm);
+    align-items: center;
+    /* Offsets the last link's padding so the glyph, not its hit area, lines
+       up with the gutter. */
+    margin-right: calc(var(--sm) * -1);
+  }
+
+  .footer__social {
+    display: grid;
+    place-items: center;
+    padding: var(--sm);
+    /* Keeps a comfortable tap target while the glyph stays on the grid. */
+    border-radius: 0.25rem;
+    color: var(--color-text-caption);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer__social:hover {
+    opacity: 0.7;
+  }
+
+  /*
+   * `border-style: dashed` gives no control over dash length or gap, so the
+   * rule is a repeating gradient. Both are measured from the design: 6px
+   * dashes separated by 6px.
+   */
+  .footer__copyright {
+    --dash-length: 0.375rem;
+    --dash-gap: 0.375rem;
+
+    display: flex;
+    gap: var(--md);
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: calc(var(--content-max-width) - (var(--page-gutter) * 2));
+    margin-inline: auto;
+    padding-top: var(--lg);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border-primary) 0,
+      var(--color-border-primary) var(--dash-length),
+      transparent var(--dash-length),
+      transparent calc(var(--dash-length) + var(--dash-gap))
+    );
+    background-repeat: no-repeat;
+    background-size: 100% var(--stroke-weight-border);
+    background-position: top left;
+  }
+
+  .footer__copyright p {
+    margin: 0;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-20);
+    letter-spacing: var(--letter-spacing-0-28);
+    text-transform: uppercase;
+    color: var(--color-text-caption);
+  }
+
+  @media (max-width: 1100px) {
+    .footer {
+      padding-block: var(--xxl) var(--xl);
+    }
+
+    .footer__title {
+      font-size: clamp(2.25rem, 7vw, 4rem);
+      letter-spacing: -0.02em;
+    }
+  }
+
+  /* Below the design canvas the form spans the footer rather than sitting
+     at the right edge. */
+  @media (max-width: 820px) {
+    .footer__form {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding-block: var(--xl) var(--lg);
+    }
+  }
+</style>

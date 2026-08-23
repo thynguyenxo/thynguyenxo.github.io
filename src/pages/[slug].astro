@@ -1,0 +1,484 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import SectionLabel from '../components/case-study/SectionLabel.astro';
+import PillTag from '../components/case-study/PillTag.astro';
+import Section from '../components/case-study/Section.astro';
+import Accordion from '../components/case-study/Accordion.astro';
+import DiscoveryCards from '../components/case-study/DiscoveryCards.astro';
+import MediaGroup from '../components/case-study/MediaGroup.astro';
+import BackToTop from '../components/case-study/BackToTop.astro';
+import MediaPlaceholder from '../components/MediaPlaceholder.astro';
+import MediaBlock from '../components/case-study/MediaBlock.astro';
+import Dialog from '../components/case-study/Dialog.astro';
+import TableOfContents from '../components/case-study/TableOfContents.astro';
+import { site, projects } from '../data/site';
+
+// One page per entry in `projects`, so a new project needs no new route file.
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const study = project.study;
+
+const covers = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/**/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true }
+);
+const cover = project.cover
+  ? covers[`../assets/${project.cover}`].default
+  : undefined;
+
+// Case study artwork lives in src/assets/<slug>/. Keyed by the filename the
+// data refers to, so a missing file falls through to the placeholder.
+// Team portraits sit a level deeper, in src/assets/<slug>/team/.
+const teamAssets = Object.fromEntries(
+  Object.entries(covers)
+    .filter(([path]) => path.startsWith(`../assets/${project.slug}/team/`))
+    .map(([path, mod]) => [
+      path.replace(`../assets/${project.slug}/team/`, ''),
+      mod.default,
+    ])
+);
+
+// A portrait names a file in this study's own team folder, but someone who
+// worked on two projects is one image, not two copies of it — so a `src`
+// carrying a slash is read as a path from the assets root instead.
+const portrait = (src: string) =>
+  src.includes('/')
+    ? covers[`../assets/${src}`]?.default
+    : teamAssets[src];
+
+// Anchors are derived from the section name, so the outline and the page
+// cannot drift apart the way a hand-kept list would.
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+// A section is anchored under the same name the outline lists it by.
+const anchorId = (section: { label?: string; tocLabel?: string }) => {
+  const name = section.label ?? section.tocLabel;
+  return name ? slugify(name) : undefined;
+};
+
+const tocItems = study
+  ? [
+      ...(study.preview ? [{ id: 'preview', label: study.preview.tag }] : []),
+      // Listed by whichever name the section carries: its printed label, or a
+      // `tocLabel` for one that belongs in the outline without showing a
+      // label on the page. A section with neither continues the one above it,
+      // and its lead is a sentence rather than a name — too long to list.
+      ...[study.problem, ...study.sections]
+        .map((section) => section.label ?? section.tocLabel)
+        .filter((label): label is string => Boolean(label))
+        .map((label) => ({ id: slugify(label), label })),
+    ]
+  : [];
+
+// The rail reads in the same order on every case study, whatever order the
+// entry happens to list its facts in. Anything unrecognised keeps its place
+// at the end rather than being dropped.
+const FACT_ORDER = ['Team', 'Role', 'Timeline', 'Focus'];
+const facts = study
+  ? [...study.facts].sort((a, b) => {
+      const rank = (label: string) => {
+        const i = FACT_ORDER.indexOf(label);
+        return i === -1 ? FACT_ORDER.length : i;
+      };
+      return rank(a.label) - rank(b.label);
+    })
+  : [];
+
+// Two paragraphs sit side by side; a single one has nothing to pair with and
+// would leave half the row empty. `introColumns` overrides either way, for a
+// study whose copy wants the other shape.
+const introSplit = study
+  ? (study.introColumns ?? study.intro.length > 1)
+  : false;
+
+const studyAssets = Object.fromEntries(
+  Object.entries(covers)
+    .filter(([path]) => path.startsWith(`../assets/${project.slug}/`))
+    .map(([path, mod]) => [
+      path.replace(`../assets/${project.slug}/`, ''),
+      mod.default,
+    ])
+);
+---
+
+<BaseLayout
+  title={`${site.name} — ${project.client}`}
+  description={project.description}
+>
+  <Navbar />
+
+  <main class="study">
+    <div class="study__container">
+      <div class="study__thumbnail">
+        {!cover && <MediaPlaceholder />}
+        {cover && (
+        <Image
+          src={cover}
+          alt={project.coverAlt}
+          widths={[880, 1440, 2880]}
+          sizes="(max-width: 1440px) 100vw, 1280px"
+          format="webp"
+          quality={82}
+          loading="eager"
+          fetchpriority="high"
+        />
+        )}
+      </div>
+
+      {
+      study ? (
+        <div class="study__body">
+          <section class="intro" aria-label="Project overview">
+            <div class="intro__about">
+              <div class="intro__title">
+                <h1 class="intro__name">{project.client}</h1>
+                <SectionLabel>{study.standfirst}</SectionLabel>
+              </div>
+
+              <div
+                class:list={['intro__columns', introSplit && 'intro__columns--split']}
+              >
+                {study.intro.map((paragraph) => (
+                  <p class="intro__paragraph">{paragraph}</p>
+                ))}
+              </div>
+            </div>
+
+            <dl class="intro__facts">
+              {facts.map((fact) => (
+                <div class="intro__fact">
+                  <dt>
+                    <SectionLabel>{fact.label}</SectionLabel>
+                  </dt>
+                  {fact.values.map((value) => (
+                    <dd class="intro__value">{value}</dd>
+                  ))}
+                  {fact.avatars && (
+                    <dd class="intro__avatars">
+                      {fact.avatars.map((avatar) => (
+                        <Image
+                          class="intro__avatar"
+                          src={portrait(avatar.src)}
+                          alt={avatar.alt}
+                          title={avatar.alt}
+                          width={44}
+                          height={44}
+                          densities={[1, 2]}
+                          format="webp"
+                          quality={85}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ))}
+                    </dd>
+                  )}
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          {study.preview && (
+            <section class="preview" aria-label="Preview" id="preview">
+              <PillTag bordered>{study.preview.tag}</PillTag>
+              <MediaBlock
+                captionClient={project.client}
+                caption={study.preview.caption}
+                ratio={study.preview.ratio}
+                videoSrc={study.preview.videoSrc}
+                poster={
+                  study.preview.poster
+                    ? studyAssets[study.preview.poster]
+                    : undefined
+                }
+                alt={study.preview.alt ?? ''}
+              />
+            </section>
+          )}
+
+          {study.problem.mediaBefore && (
+            <MediaGroup items={study.problem.mediaBefore} assets={studyAssets} />
+          )}
+          <Section
+            label={study.problem.label}
+            lead={study.problem.lead}
+            body={study.problem.body}
+            wide={Boolean(study.problem.media)}
+            id={anchorId(study.problem)}
+          >
+            {study.problem.cards && (
+              <DiscoveryCards items={study.problem.cards} />
+            )}
+            {study.problem.dialog && (
+              <Dialog label={study.problem.dialog.label}>
+                {study.problem.dialog.question}
+              </Dialog>
+            )}
+            {study.problem.media && (
+              <div class="section-media">
+                <MediaGroup items={study.problem.media} assets={studyAssets} />
+              </div>
+            )}
+          </Section>
+
+          {
+            study.sections.map((section) => (
+              <>
+                {section.mediaBefore && (
+                  <MediaGroup items={section.mediaBefore} assets={studyAssets} />
+                )}
+                <Section
+                  label={section.label}
+                  lead={section.lead}
+                  body={section.body}
+                  wide={Boolean(section.media)}
+                  id={anchorId(section)}
+                >
+                  {section.accordion && <Accordion items={section.accordion} />}
+                  {section.cards && (
+                    <DiscoveryCards items={section.cards} />
+                  )}
+                  {section.dialog && (
+                    <Dialog label={section.dialog.label}>
+                      {section.dialog.question}
+                    </Dialog>
+                  )}
+                  {section.media && (
+                    <div class="section-media">
+                      <MediaGroup items={section.media} assets={studyAssets} />
+                    </div>
+                  )}
+                </Section>
+              </>
+            ))
+          }
+        </div>
+      ) : (
+        <div class="study__body">
+          <Section label={project.client} body={[project.description]} />
+        </div>
+      )
+    }
+
+    </div>
+  </main>
+
+  <TableOfContents items={tocItems} />
+
+  <BackToTop />
+
+  <Footer
+    email={site.email}
+    displayName={site.name}
+    linkedin={site.linkedin}
+    accessKey={site.formAccessKey || undefined}
+  />
+</BaseLayout>
+
+<style>
+  .study {
+    background: var(--color-background-primary);
+  }
+
+  /* One container holds everything below the navbar, so the thumbnail shares
+     the same 80px inset as the write-up beneath it. */
+  /*
+   * Landing space for the table of contents links. Without it a jump puts
+   * the section label hard against the top edge, which reads as though the
+   * heading has been cut off rather than arrived at.
+   */
+  :global(.section[id]),
+  .preview {
+    scroll-margin-top: var(--xxl);
+  }
+
+  .study__container {
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    padding-inline: var(--xxl);
+    /* Held by the back link's nav until it was removed; without it the last
+       section sits flush against the footer. */
+    padding-bottom: var(--xxl);
+  }
+
+  /* The navbar and hero together fill the first screen: the thumbnail takes
+     the viewport height minus whatever the navbar occupies. */
+  /* The navbar and thumbnail together fill the first screen. */
+  .study__thumbnail {
+    width: 100%;
+    height: calc(100svh - var(--navbar-height, 0px));
+    overflow: hidden;
+    border-radius: var(--radius-default);
+  }
+
+  .study__thumbnail :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The container above already applies the page inset, so this only spaces
+     the sections vertically. */
+  .study__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xxl);
+    width: 100%;
+    padding-block: var(--xl);
+  }
+
+  /* Media that closes a section keeps the section's own spacing, but not its
+     reading measure -- images run the full width here as they do everywhere
+     else on the page. */
+  .section-media {
+    width: 100%;
+  }
+
+  /* Intro: the write-up on the left, a metadata rail on the right. */
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    gap: var(--xxl);
+    align-items: start;
+  }
+
+  .intro__about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+  }
+
+  .intro__title {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .intro__name {
+    margin: 0;
+    font-size: var(--font-size-40);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-0-8);
+    color: var(--color-text-main);
+  }
+
+  /* Stacked by default; a study can opt into two columns. */
+  .intro__columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lg);
+  }
+
+  .intro__columns--split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--xl);
+  }
+
+  .intro__paragraph {
+    margin: 0;
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-28);
+    color: var(--color-text-primary);
+    text-wrap: pretty;
+  }
+
+  .intro__facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+    margin: 0;
+    padding-top: var(--xl);
+  }
+
+  .intro__fact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+  }
+
+  .intro__value {
+    margin: 0;
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-28);
+    color: var(--color-text-primary);
+  }
+
+  .intro__avatars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sm);
+    margin: 0;
+  }
+
+  /*
+   * The facts rail is 20rem, so the design's 112px circles would run well
+   * past it. At 2.75rem the four faces and their gaps sit inside the
+   * column with room to spare, and stay legible at a glance.
+   *
+   * The ring is painted in the page background so the faces separate where
+   * they sit beside one another, and it follows the theme rather than
+   * assuming a white page.
+   */
+  .intro__avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    box-shadow: 0 0 0 var(--stroke-weight-2) var(--color-background-primary);
+  }
+
+  /* Preview: pill, media, caption. */
+  .preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    align-items: flex-start;
+  }
+
+  /* Problem: narrower measure than the full page, per the design. */
+
+
+
+  @media (max-width: 1100px) {
+    .study__container {
+      padding-inline: var(--xl);
+    }
+
+    .study__body {
+      gap: var(--xxl);
+      padding-block: var(--xl);
+    }
+
+    .intro {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--xl);
+    }
+
+    .intro__facts {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--xl);
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .intro__columns--split {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--lg);
+    }
+  }
+</style>

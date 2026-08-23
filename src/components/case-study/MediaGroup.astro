@@ -1,0 +1,42 @@
+---
+import MediaBlock from './MediaBlock.astro';
+import type { StudyMedia } from '../../data/site';
+
+/**
+ * A run of media illustrating the section that follows. Each item keeps its
+ * own aspect ratio, so the page holds its shape before anything loads.
+ */
+interface Props {
+  items: StudyMedia[];
+  /** Resolved assets, keyed by the `src` given in the data. */
+  assets?: Record<string, ImageMetadata>;
+}
+
+const { items, assets = {} } = Astro.props;
+---
+
+<div class="media-group">
+  {
+    items.map((item) => (
+      <MediaBlock
+        image={item.src ? assets[item.src] : undefined}
+        alt={item.alt ?? ''}
+        caption={item.caption}
+        captionLink={item.captionLink}
+        ratio={item.ratio}
+        video={item.video}
+        videoSrc={item.videoSrc}
+        poster={item.poster ? assets[item.poster] : undefined}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .media-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xl);
+    width: 100%;
+  }
+</style>

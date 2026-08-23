@@ -5,6 +5,9 @@ node_modules/
 dist/
 .astro/
 
+# Wrangler's local state from `wrangler pages dev`
+.wrangler/
+
 # Environment variables
 .env
 .env.local

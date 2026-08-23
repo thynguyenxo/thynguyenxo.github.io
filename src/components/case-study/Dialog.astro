@@ -1,0 +1,75 @@
+---
+import Icon from '../Icon.astro';
+import SectionLabel from './SectionLabel.astro';
+
+/**
+ * The framing-question callout — a raised card holding a label, a rule and a
+ * quoted statement.
+ */
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<aside class="dialog">
+  <div class="dialog__inner">
+    <div class="dialog__head">
+      <SectionLabel>{label}</SectionLabel>
+    </div>
+
+    <div class="dialog__body">
+      <Icon name="quote-left" size="3rem" class="dialog__mark" />
+      <p class="dialog__statement"><slot /></p>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .dialog {
+    width: 100%;
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
+  }
+
+  .dialog__inner {
+    display: flex;
+    flex-direction: column;
+    padding: var(--xxl);
+  }
+
+  .dialog__head {
+    padding-bottom: var(--lg);
+    border-bottom: var(--stroke-weight-border) solid
+      var(--color-border-secondary);
+  }
+
+  .dialog__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lg);
+    padding-top: var(--xl);
+  }
+
+  .dialog :global(.dialog__mark) {
+    color: var(--color-text-caption);
+  }
+
+  .dialog__statement {
+    max-width: 40ch;
+    margin: 0;
+    font-size: var(--font-size-24);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-44-on-28);
+    letter-spacing: var(--letter-spacing-0-8);
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 640px) {
+    .dialog__inner {
+      padding: var(--xl) var(--lg);
+    }
+  }
+</style>

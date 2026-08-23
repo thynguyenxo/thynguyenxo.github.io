@@ -1,0 +1,159 @@
+---
+/**
+ * A row of findings, each on its own raised panel: an icon above a title and
+ * a short caption. Used where a section enumerates what research turned up
+ * and the items read as siblings rather than as a list.
+ *
+ * The icon is optional. Until artwork is supplied the slot holds a neutral
+ * placeholder, so the row keeps its rhythm rather than collapsing.
+ */
+import SectionLabel from './SectionLabel.astro';
+
+interface Props {
+  items: {
+    /** Heading, e.g. "Unintuitive layout and navigation". */
+    title: string;
+    /** Supporting line beneath the title. */
+    caption: string;
+    /** Icon file in src/assets/<slug>/. Omit for a placeholder. */
+    icon?: string;
+    /** Describes the icon. Required once real artwork is supplied. */
+    iconAlt?: string;
+  }[];
+}
+
+const { items } = Astro.props;
+
+/*
+ * The icons are small multi-colour illustrations, so they are inlined rather
+ * than run through the image pipeline: their fills have to survive, and at
+ * this size a raster would cost more than the markup does. Eager, because
+ * `set:html` needs the source at build time.
+ */
+const icons = import.meta.glob<string>('../../assets/**/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+
+const iconFor = (slug?: string) =>
+  slug
+    ? Object.entries(icons).find(([path]) => path.endsWith(`/${slug}`))?.[1]
+    : undefined;
+
+// Read from the artwork's own viewBox, so a new wide icon is handled without
+// naming it here. The threshold sits well above square but below the
+// progress bar's 3.5, so only genuinely wide marks step down.
+const isWide = (svg: string) => {
+  const box = svg.match(/viewBox="([\d.\s-]+)"/)?.[1]?.trim().split(/\s+/);
+  if (!box || box.length < 4) return false;
+  const [, , w, h] = box.map(Number);
+  return h > 0 && w / h >= 2;
+};
+---
+
+<ul class="cards" role="list">
+  {
+    items.map((item) => {
+      const icon = iconFor(item.icon);
+      return (
+        <li class="cards__card">
+          <div class="cards__icon">
+            {icon ? (
+              <span
+                class:list={['cards__art', isWide(icon) && 'cards__art--wide']}
+                role={item.iconAlt ? 'img' : undefined}
+                aria-label={item.iconAlt || undefined}
+                aria-hidden={item.iconAlt ? undefined : 'true'}
+                set:html={icon}
+              />
+            ) : (
+              <span class="cards__placeholder" aria-hidden="true" />
+            )}
+          </div>
+
+          <h3 class="cards__title">{item.title}</h3>
+          <SectionLabel class="cards__caption">{item.caption}</SectionLabel>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  /* Equal columns so the panels stay the same width whatever the copy, and
+     collapse to one column before the text gets too narrow to read. */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--sm);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .cards__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--lg);
+    padding: var(--xl);
+    border-radius: var(--radius-default);
+    background: var(--color-background-secondary);
+    text-align: center;
+  }
+
+  .cards__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Held at the icon's own height so a card with artwork and one with a
+       placeholder line up. */
+    height: 2.5rem;
+  }
+
+  /* The artwork keeps its own aspect, but a wide mark held to the same height
+     as a square one reads far bigger -- the eye judges area, not height. So
+     the taller-than-wide default steps down as the shape widens, which brings
+     the three closer to matching weight than a single height ever could. */
+  .cards__art {
+    display: block;
+    height: 2.5rem;
+  }
+
+  /* Two thirds of the square height, which holds the wide mark to roughly
+     the same visual area rather than the same height. */
+  .cards__art--wide {
+    height: 1.6667rem;
+  }
+
+  .cards__art :global(svg) {
+    display: block;
+    width: auto;
+    height: 100%;
+  }
+
+  .cards__placeholder {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-default);
+    background: var(--color-border-secondary);
+  }
+
+  .cards__title {
+    margin: 0;
+    font-size: var(--font-size-24);
+    line-height: var(--line-height-24);
+    letter-spacing: var(--letter-spacing-0-8);
+    font-weight: 400;
+    color: var(--color-text-primary);
+    text-wrap: balance;
+  }
+
+  /* Pushed to the foot so captions of different lengths still sit on a
+     common baseline across the row. */
+  .cards :global(.cards__caption) {
+    margin-top: auto;
+    text-wrap: balance;
+  }
+</style>

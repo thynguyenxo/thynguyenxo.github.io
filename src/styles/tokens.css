@@ -1,0 +1,203 @@
+/*
+ * Design tokens — Portfolio v.4 (Figma: xT2es8olIUtCNago606WmE)
+ *
+ * Light mode: node 1147:4018. Dark mode: node 1159:8485.
+ * Both nodes publish their own values, so these are read straight from the
+ * Figma variables rather than sampled from a render.
+ *
+ * Sizes are rem so the layout scales with the visitor's browser font size.
+ * Values that must not scale (hairline borders) stay in px.
+ */
+
+:root {
+  /* Primitives — grey ramp
+   *
+   * The raw scale. Semantic tokens below reference these rather than repeating
+   * hex values, so a change to a step flows everywhere it is used. */
+  --grey-50: #fafafa;
+  --grey-100: #f5f5f5;
+  --grey-200: #e6e6e6;
+  --grey-300: #d6d6d6;
+  --grey-400: #a5a5a5;
+  --grey-500: #767676;
+  --grey-600: #575757;
+  --grey-700: #434343;
+  --grey-800: #262626;
+  --grey-900: #1a1a1a;
+  --grey-950: #0a0a0a;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Color — surfaces */
+  --color-background-primary: var(--white);
+  /* Raised surfaces: cards and callouts that sit above the page. */
+  --color-background-secondary: var(--grey-50);
+  --color-background-inverse: var(--white);
+  --color-background-footer: var(--black);
+
+  /* Color — text */
+  --color-text-main: var(--grey-950);
+  --color-text-secondary: var(--grey-500);
+  --color-text-tertiary: var(--grey-400);
+  --color-text-caption: var(--grey-400);
+  --color-text-inverse: var(--grey-950);
+
+  /* Color — borders */
+
+  /* Raised surfaces. Weighted downward so a panel reads as lifted off the
+     page rather than outlined. Deeper and more opaque in dark mode, where a
+     faint shadow on a near-black ground is invisible. */
+  --shadow-raised:
+    0 0.125rem 0.25rem rgb(0 0 0 / 0.03), 0 0.75rem 1.5rem rgb(0 0 0 / 0.06);
+
+  --color-border-primary: var(--grey-700);
+  --color-border-secondary: var(--grey-200);
+  --color-border-bold: var(--grey-500);
+
+  /* Color — status. Outside the grey ramp on purpose: a failed submission
+     needs to read as an error, not as muted text. */
+  --color-text-error: #ffb4a8;
+
+  /* Typography — families */
+  --font-family-primary: 'DM Sans', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-family-secondary: 'DM Mono', ui-monospace, SFMono-Regular, Menlo,
+    Consolas, 'Liberation Mono', monospace;
+
+  /* Typography — sizes */
+  --font-size-12: 0.75rem;
+  --font-size-16: 1rem;
+  --font-size-18: 1.125rem;
+  --font-size-24: 1.5rem;
+  --font-size-28: 1.75rem;
+  --font-size-40: 2.5rem;
+  --font-size-64: 4rem;
+
+  /* Typography — line heights (unitless: design value / font size) */
+  --line-height-20: 1.6667;
+  /* 20 / 12 */
+  --line-height-24: 1.5;
+  /* 24 / 16 */
+  --line-height-28: 1.5556;
+  /* 28 / 18 */
+  --line-height-44-on-24: 1.8333;
+  /* 44 / 24 */
+  --line-height-44-on-28: 1.5714;
+  /* 44 / 28 */
+  --line-height-76-8: 1.2;
+  /* 76.8 / 64 */
+
+  /* Typography — weights */
+  --font-weight-400: 400;
+  --font-weight-500: 500;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+
+  /* Typography — letter spacing (em, so it tracks the font size) */
+  --letter-spacing-0-28: 0.0233em;
+  /* 0.28 / 12 */
+  --letter-spacing-0-8: -0.0286em;
+  /* -0.8 / 28 */
+  --letter-spacing-2-56: -0.04em;
+  /* -2.56 / 64 */
+
+  /* Spacing */
+  --sm: 0.5rem;
+  --md: 1rem;
+  --lg: 1.5rem;
+  --xl: 2.5rem;
+  --xxl: 5rem;
+  --3xl: 10rem;
+
+  /* Radii */
+  --radius-default: 1.5rem;
+  /* 24px */
+  /* Larger than any pill's height, so the ends stay fully round whatever the
+     type size. Shared by PillTag and the other pill-shaped labels. */
+  --radius-pill: 62.4375rem;
+
+  /* Borders — px so hairlines stay crisp at any zoom */
+  --stroke-weight-border: 1px;
+  --stroke-weight-2: 2px;
+
+  /* Layout
+   *
+   * The page is 1440px wide at most, which puts 1280px of content between the
+   * gutters. Wider screens gain side padding rather than a wider layout. */
+  --page-max-width: 90rem;
+  /* 1440px */
+  --content-max-width: 90rem;
+  /* 1440px */
+
+  /*
+   * Navbar height. Heroes subtract this from the viewport to fill the first
+   * screen. The value here is the pre-paint estimate — the row is sized by
+   * the name and role stack beside the logo, which shifts with type settings,
+   * so a script measures the real height and overwrites this once the navbar
+   * is in the document.
+   */
+  --navbar-logo-size: 3rem;
+  --navbar-content-height: 3.5rem;
+  --navbar-height: calc(var(--navbar-content-height) + (var(--lg) * 2));
+
+  /* Shared left/right page gutter. Every full-width section uses this so the
+     navbar, hero, cards and footer align on one edge. */
+  --page-gutter: var(--xxl);
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --page-gutter: var(--xl);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-gutter: var(--lg);
+    /* The navbar shrinks on small screens — keep the height in step. */
+    --navbar-logo-size: 2.75rem;
+    --navbar-content-height: 3.3125rem;
+    --navbar-height: calc(var(--navbar-content-height) + (var(--md) * 2));
+  }
+}
+
+/* Dark palette — applied when the OS asks for it and the visitor has not
+   explicitly chosen light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background-primary: var(--black);
+    --color-background-secondary: var(--grey-900);
+    --color-background-inverse: var(--white);
+
+    --color-text-main: var(--white);
+    --color-text-secondary: var(--grey-300);
+    --color-text-tertiary: var(--grey-500);
+    --color-text-caption: var(--grey-400);
+    --color-text-inverse: var(--grey-950);
+
+    --color-border-secondary: var(--grey-600);
+    --color-border-bold: var(--grey-300);
+
+    --shadow-raised:
+      0 0.125rem 0.25rem rgb(0 0 0 / 0.32), 0 0.75rem 1.5rem rgb(0 0 0 / 0.44);
+  }
+}
+
+/* An explicit dark choice wins over the OS preference. */
+:root[data-theme='dark'] {
+  --color-background-primary: var(--black);
+  --color-background-secondary: var(--grey-900);
+  --color-background-inverse: var(--white);
+
+  --color-text-main: var(--white);
+  --color-text-secondary: var(--grey-300);
+  --color-text-tertiary: var(--grey-500);
+  --color-text-caption: var(--grey-400);
+  --color-text-inverse: var(--grey-950);
+
+  --color-border-secondary: var(--grey-600);
+  --color-border-bold: var(--grey-300);
+
+  --shadow-raised:
+    0 0.125rem 0.25rem rgb(0 0 0 / 0.32), 0 0.75rem 1.5rem rgb(0 0 0 / 0.44);
+}

@@ -1,0 +1,49 @@
+---
+/**
+ * The mono display treatment used for section headings and lead lines.
+ *
+ * `bordered` draws the outlined pill, which is a fixed-height inline chip.
+ * Without it the type flows as normal block text, so a lead can wrap over
+ * several lines.
+ */
+interface Props {
+  bordered?: boolean;
+}
+
+const { bordered = false } = Astro.props;
+---
+
+{
+  bordered ? (
+    <span class="pill pill--bordered">
+      <slot />
+    </span>
+  ) : (
+    <span class="pill">
+      <slot />
+    </span>
+  )
+}
+
+<style>
+  .pill {
+    display: block;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-24);
+    line-height: var(--line-height-28);
+    letter-spacing: -0.11em;
+    color: var(--color-text-main);
+    text-wrap: pretty;
+  }
+
+  /* The outlined variant is a chip, so it sits inline at a fixed height. */
+  .pill--bordered {
+    display: inline-flex;
+    align-items: center;
+    height: 3.25rem;
+    padding: 0 var(--lg);
+    border: var(--stroke-weight-border) solid var(--color-border-bold);
+    border-radius: var(--radius-pill);
+    line-height: var(--line-height-20);
+  }
+</style>
