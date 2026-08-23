@@ -22,6 +22,7 @@ const { items, assets = {} } = Astro.props;
         image={item.src ? assets[item.src] : undefined}
         alt={item.alt ?? ''}
         caption={item.caption}
+        captionLink={item.captionLink}
         ratio={item.ratio}
         video={item.video}
         videoSrc={item.videoSrc}

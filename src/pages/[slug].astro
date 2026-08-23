@@ -7,6 +7,7 @@ import SectionLabel from '../components/case-study/SectionLabel.astro';
 import PillTag from '../components/case-study/PillTag.astro';
 import Section from '../components/case-study/Section.astro';
 import Accordion from '../components/case-study/Accordion.astro';
+import DiscoveryCards from '../components/case-study/DiscoveryCards.astro';
 import MediaGroup from '../components/case-study/MediaGroup.astro';
 import BackToTop from '../components/case-study/BackToTop.astro';
 import MediaPlaceholder from '../components/MediaPlaceholder.astro';
@@ -46,6 +47,14 @@ const teamAssets = Object.fromEntries(
     ])
 );
 
+// A portrait names a file in this study's own team folder, but someone who
+// worked on two projects is one image, not two copies of it — so a `src`
+// carrying a slash is read as a path from the assets root instead.
+const portrait = (src: string) =>
+  src.includes('/')
+    ? covers[`../assets/${src}`]?.default
+    : teamAssets[src];
+
 // Anchors are derived from the section name, so the outline and the page
 // cannot drift apart the way a hand-kept list would.
 const slugify = (value: string) =>
@@ -54,15 +63,46 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
+// A section is anchored under the same name the outline lists it by.
+const anchorId = (section: { label?: string; tocLabel?: string }) => {
+  const name = section.label ?? section.tocLabel;
+  return name ? slugify(name) : undefined;
+};
+
 const tocItems = study
   ? [
-      { id: 'preview', label: study.preview.tag },
+      ...(study.preview ? [{ id: 'preview', label: study.preview.tag }] : []),
+      // Listed by whichever name the section carries: its printed label, or a
+      // `tocLabel` for one that belongs in the outline without showing a
+      // label on the page. A section with neither continues the one above it,
+      // and its lead is a sentence rather than a name — too long to list.
       ...[study.problem, ...study.sections]
-        .map((section) => section.label ?? section.lead)
+        .map((section) => section.label ?? section.tocLabel)
         .filter((label): label is string => Boolean(label))
         .map((label) => ({ id: slugify(label), label })),
     ]
   : [];
+
+// The rail reads in the same order on every case study, whatever order the
+// entry happens to list its facts in. Anything unrecognised keeps its place
+// at the end rather than being dropped.
+const FACT_ORDER = ['Team', 'Role', 'Timeline', 'Focus'];
+const facts = study
+  ? [...study.facts].sort((a, b) => {
+      const rank = (label: string) => {
+        const i = FACT_ORDER.indexOf(label);
+        return i === -1 ? FACT_ORDER.length : i;
+      };
+      return rank(a.label) - rank(b.label);
+    })
+  : [];
+
+// Two paragraphs sit side by side; a single one has nothing to pair with and
+// would leave half the row empty. `introColumns` overrides either way, for a
+// study whose copy wants the other shape.
+const introSplit = study
+  ? (study.introColumns ?? study.intro.length > 1)
+  : false;
 
 const studyAssets = Object.fromEntries(
   Object.entries(covers)
@@ -109,10 +149,7 @@ const studyAssets = Object.fromEntries(
               </div>
 
               <div
-                class:list={[
-                  'intro__columns',
-                  study.introColumns && 'intro__columns--split',
-                ]}
+                class:list={['intro__columns', introSplit && 'intro__columns--split']}
               >
                 {study.intro.map((paragraph) => (
                   <p class="intro__paragraph">{paragraph}</p>
@@ -121,7 +158,7 @@ const studyAssets = Object.fromEntries(
             </div>
 
             <dl class="intro__facts">
-              {study.facts.map((fact) => (
+              {facts.map((fact) => (
                 <div class="intro__fact">
                   <dt>
                     <SectionLabel>{fact.label}</SectionLabel>
@@ -134,7 +171,7 @@ const studyAssets = Object.fromEntries(
                       {fact.avatars.map((avatar) => (
                         <Image
                           class="intro__avatar"
-                          src={teamAssets[avatar.src]}
+                          src={portrait(avatar.src)}
                           alt={avatar.alt}
                           title={avatar.alt}
                           width={44}
@@ -153,52 +190,75 @@ const studyAssets = Object.fromEntries(
             </dl>
           </section>
 
-          <section class="preview" aria-label="Preview" id="preview">
-            <PillTag bordered>{study.preview.tag}</PillTag>
-            <MediaBlock
-              captionClient={project.client}
-              caption={study.preview.caption}
-              ratio={study.preview.ratio}
-              videoSrc={study.preview.videoSrc}
-              poster={
-                study.preview.poster
-                  ? studyAssets[study.preview.poster]
-                  : undefined
-              }
-              alt={study.preview.alt ?? ''}
-            />
-          </section>
+          {study.preview && (
+            <section class="preview" aria-label="Preview" id="preview">
+              <PillTag bordered>{study.preview.tag}</PillTag>
+              <MediaBlock
+                captionClient={project.client}
+                caption={study.preview.caption}
+                ratio={study.preview.ratio}
+                videoSrc={study.preview.videoSrc}
+                poster={
+                  study.preview.poster
+                    ? studyAssets[study.preview.poster]
+                    : undefined
+                }
+                alt={study.preview.alt ?? ''}
+              />
+            </section>
+          )}
 
+          {study.problem.mediaBefore && (
+            <MediaGroup items={study.problem.mediaBefore} assets={studyAssets} />
+          )}
           <Section
             label={study.problem.label}
             lead={study.problem.lead}
             body={study.problem.body}
-            id={slugify(study.problem.label ?? study.problem.lead ?? '')}
+            wide={Boolean(study.problem.media)}
+            id={anchorId(study.problem)}
           >
+            {study.problem.cards && (
+              <DiscoveryCards items={study.problem.cards} />
+            )}
             {study.problem.dialog && (
               <Dialog label={study.problem.dialog.label}>
                 {study.problem.dialog.question}
               </Dialog>
+            )}
+            {study.problem.media && (
+              <div class="section-media">
+                <MediaGroup items={study.problem.media} assets={studyAssets} />
+              </div>
             )}
           </Section>
 
           {
             study.sections.map((section) => (
               <>
-                {section.media && (
-                  <MediaGroup items={section.media} assets={studyAssets} />
+                {section.mediaBefore && (
+                  <MediaGroup items={section.mediaBefore} assets={studyAssets} />
                 )}
                 <Section
                   label={section.label}
                   lead={section.lead}
                   body={section.body}
-                  id={slugify(section.label ?? section.lead ?? '')}
+                  wide={Boolean(section.media)}
+                  id={anchorId(section)}
                 >
                   {section.accordion && <Accordion items={section.accordion} />}
+                  {section.cards && (
+                    <DiscoveryCards items={section.cards} />
+                  )}
                   {section.dialog && (
                     <Dialog label={section.dialog.label}>
                       {section.dialog.question}
                     </Dialog>
+                  )}
+                  {section.media && (
+                    <div class="section-media">
+                      <MediaGroup items={section.media} assets={studyAssets} />
+                    </div>
                   )}
                 </Section>
               </>
@@ -278,6 +338,13 @@ const studyAssets = Object.fromEntries(
     gap: var(--xxl);
     width: 100%;
     padding-block: var(--xl);
+  }
+
+  /* Media that closes a section keeps the section's own spacing, but not its
+     reading measure -- images run the full width here as they do everywhere
+     else on the page. */
+  .section-media {
+    width: 100%;
   }
 
   /* Intro: the write-up on the left, a metadata rail on the right. */

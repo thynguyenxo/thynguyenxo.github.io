@@ -14,6 +14,8 @@ interface Props {
   captionClient?: string;
   /** Caption text after the slash. */
   caption?: string;
+  /** Turns a phrase inside `caption` into a link, to credit a source. */
+  captionLink?: { text: string; href: string };
   /** Width / height of the media box. Defaults to the design's 1280x787. */
   ratio?: string;
   /** Full-bleed inside the container rather than inset. */
@@ -31,6 +33,7 @@ const {
   alt = '',
   captionClient,
   caption,
+  captionLink,
   ratio = '1280 / 787',
   wide = false,
   video = false,
@@ -40,6 +43,19 @@ const {
 
 // The poster runs through the image pipeline so the still is as light as any
 // other frame on the page; the video itself is served straight from public/.
+// The caption is split around the linked phrase rather than assembled as
+// markup, so the copy in the data stays plain text. An unmatched phrase
+// leaves the caption whole.
+const linkIndex =
+  caption && captionLink ? caption.indexOf(captionLink.text) : -1;
+const captionParts =
+  caption && captionLink && linkIndex !== -1
+    ? {
+        before: caption.slice(0, linkIndex),
+        after: caption.slice(linkIndex + captionLink.text.length),
+      }
+    : undefined;
+
 const posterUrl = poster
   ? (await getImage({ src: poster, format: 'webp', quality: 82, width: 1200 }))
       .src
@@ -99,7 +115,19 @@ const posterUrl = poster
       <figcaption class="media__caption">
         {captionClient && <span class="media__client">{captionClient}</span>}
         {captionClient && caption && <span class="media__sep"> / </span>}
-        {caption && <span>{caption}</span>}
+        {caption &&
+          (captionParts && captionLink ? (
+            <span>
+              {captionParts.before}<a
+                class="media__link"
+                href={captionLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >{captionLink.text}</a>{captionParts.after}
+            </span>
+          ) : (
+            <span>{caption}</span>
+          ))}
       </figcaption>
     )
   }
@@ -213,6 +241,17 @@ const posterUrl = poster
   }
 
   .media__client {
+    color: var(--color-text-main);
+  }
+
+  .media__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    transition: color 0.2s ease;
+  }
+
+  .media__link:hover {
     color: var(--color-text-main);
   }
 </style>

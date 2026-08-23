@@ -89,6 +89,18 @@ const accessibleName = label ?? lead;
     max-width: none;
   }
 
+  /* A section only runs wide so its media can. Everything else it holds --
+     the prose, and whatever is slotted in after it: accordions, cards, a
+     dialog -- keeps the reading measure, so a section with media and one
+     without look the same above the fold. Constraining every child and
+     exempting the media is what keeps that true for a component added
+     later, which listing the narrow ones by name would not. */
+  .section--wide > :global(:not(.section-media)) {
+    width: 100%;
+    max-width: 55rem;
+    margin-inline: auto;
+  }
+
   .section__head {
     display: flex;
     flex-direction: column;
