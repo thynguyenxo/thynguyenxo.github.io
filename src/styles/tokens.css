@@ -113,7 +113,7 @@
   --radius-default: 1.5rem;
   /* 24px */
   /* Larger than any pill's height, so the ends stay fully round whatever the
-     type size. Shared by PillTag and the card's password badge. */
+     type size. Shared by PillTag and the other pill-shaped labels. */
   --radius-pill: 62.4375rem;
 
   /* Borders — px so hairlines stay crisp at any zoom */

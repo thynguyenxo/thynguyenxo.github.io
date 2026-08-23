@@ -1,7 +1,7 @@
 # thynguyenxo.github.io
 
 Design portfolio built with Astro, deployed to Cloudflare Pages from `main`
-of the private `design-portfolio` repository.
+of the public `thynguyenxo.github.io` repository.
 
 **Read [NOTES.md](./NOTES.md) before changing anything.** It carries the
 standing conventions for this repo: design tokens, rem-over-px, Font Awesome
@@ -18,6 +18,3 @@ The short version:
 - Extract reusable components rather than repeating markup.
 - Keep the site JS-free apart from the inline theme script.
 - `npm run check` must stay at 0 errors.
-- Password-gated case studies keep their artwork in `public/protected/<slug>/`,
-  never `src/assets/` — see the hosting section of NOTES.md for why. Never
-  commit the gate's password.

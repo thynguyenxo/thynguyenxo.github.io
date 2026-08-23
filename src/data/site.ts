@@ -40,13 +40,6 @@ export interface Project {
   coverDark?: string;
   /** Describes the cover for screen readers. */
   coverAlt: string;
-  /**
-   * Puts the project page behind the shared password. The gate itself is
-   * enforced at the edge by functions/_middleware.ts, which reads the same
-   * slug list; this flag only drives the badge on the card, so a visitor
-   * knows the link asks for a password before they click it.
-   */
-  protected?: boolean;
   /** Case study content. Absent while a project has no write-up yet. */
   study?: CaseStudy;
 }
@@ -204,7 +197,6 @@ export const projects: Project[] = [
     description:
       'Placeholder description. Replace with the project summary once the case study copy is written.',
     coverAlt: 'Wemolo case study cover',
-    protected: true,
   },
   {
     slug: 'diehl-metering',

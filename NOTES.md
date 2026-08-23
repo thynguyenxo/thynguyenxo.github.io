@@ -184,46 +184,18 @@ Rules going forward:
 - Keep dependencies minimal and prefer devDependencies, so little third-party
   code reaches visitors.
 
-## Hosting and the password gate
+## Hosting
 
-The site is hosted on **Cloudflare Pages**, built from `main` of the private
-`design-portfolio` repository. It moved off GitHub Pages because a password
-gate needs somewhere the public cannot reach around: a gate in front of a
-still-live `github.io` origin is obscurity, not protection.
+The site is hosted on **Cloudflare Pages**, built from `main` of the public
+`thynguyenxo.github.io` repository.
 
-`functions/_middleware.ts` runs at the edge on every request and challenges
-for HTTP Basic Auth on the paths in `PROTECTED_PREFIXES`. The password is the
-`CASE_STUDY_PASSWORD` environment variable, set as an encrypted secret in the
-Pages dashboard — **never** committed here.
-
-To protect a project:
-
-1. Set `protected: true` on its entry in `src/data/site.ts`. That drives the
-   badge on the card, so visitors know before they click.
-2. Add both `/<slug>` and `/protected/<slug>` to `PROTECTED_PREFIXES`.
-3. Put its artwork in `public/protected/<slug>/`, not `src/assets/<slug>/`.
-
-Step 3 is the easy one to miss. Astro flattens `src/assets/**` into a shared
-`dist/_astro/` directory that also holds every public page's images, so it
-cannot be gated per project — artwork left there stays publicly fetchable
-while the page asks for a password. Files in `public/` are copied verbatim and
-land somewhere a path rule can cover. The cost is losing `<Image>`
-optimisation, so export those webp files at their display size (2x for
-retina).
-
-`isProtected()` normalizes the path before matching, and that normalization is
-load-bearing rather than defensive tidying. Three spellings served the full
-protected page in local testing against a plain `startsWith` check:
-`//wemolo-ds/` (leading double slash), `/WEMOLO-DS/` (Cloudflare's asset
-lookup is case-insensitive), and `/wemolo-ds%2f` (percent-encoded separator).
-Don't simplify that function without re-running those cases.
-
-Two things that follow from the gate:
-
-- Protected content must never be committed to a public repository. Git
-  history is permanent; making a repo private afterwards retracts nothing.
-- Basic Auth sends the password on every request, so the site must stay
-  HTTPS-only. Cloudflare provides that; leave Always Use HTTPS on.
+Every case study is public. The site previously kept one study behind an
+HTTP Basic Auth gate at the edge (`functions/_middleware.ts`), which is why
+it moved off GitHub Pages; that gate has been removed and all artwork now
+lives in `src/assets/<slug>/`, where Astro can optimise it. If a study ever
+needs gating again, the old middleware is in git history — but note that a
+gate only works in front of an origin the public cannot reach around, so a
+live `github.io` origin would have to be retired first.
 
 Deploys happen on push. The monthly rebuild that refreshes the baked-in
 copyright year runs from `.github/workflows/refresh.yml`, which calls a
@@ -258,8 +230,6 @@ src/
   pages/        index.astro, [slug].astro
   styles/       tokens.css (design tokens), global.css (reset, fonts, base)
 public/fonts/   self-hosted WOFF2
-public/protected/<slug>/  artwork for password-gated case studies
-functions/      Cloudflare Pages Functions — the password gate
 ```
 
 ## Commands
